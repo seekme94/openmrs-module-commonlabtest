@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/module/commonlabtest/addLabTestType.form")
@@ -31,9 +32,14 @@ public class LabTestTypeController {
 	CommonLabTestService commonLabTestService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String showForm(ModelMap model) {
-		LabTestType testType = commonLabTestService.getLabTestType(1);
-		model.addAttribute("labTestType", commonLabTestService.getLabTestType(1));
+	public String showForm(ModelMap model, @RequestParam("uuid") String uuid) {
+		LabTestType testType ;
+		if(uuid==null || uuid.equalsIgnoreCase("")){
+			testType=new LabTestType();
+		}else {
+			testType = commonLabTestService.getLabTestTypeByUuid(uuid);
+		}
+		model.addAttribute("labTestType",testType );
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
