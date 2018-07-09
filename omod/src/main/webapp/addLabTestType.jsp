@@ -30,34 +30,39 @@
    			 <b><spring:message code="commonlabtest.labtesttype.add" /></b>
 	 </div>
 	 <div class="box">
-	 
-	  <form id="saveTestType" name="saveTestType" method="post" >
-			<table>
+
+	<frm:form commandName="schema" method="post">
+	<%-- <form id="saveTestType" name="saveTestType" method="post" >
+	--%>		<table>
 				<tr>
 					<td><label for ="referenceconcept">Reference Concept</label></td>
-					<td><input type="text" id="referenceConcept" name="referenceConcept" placeholder="Concept..." required > </td> 
+					<td> <frm:input path="form.referenceConcept.name" size="50"/></td>
+					<td><input type="text" id="referenceConcept" name="referenceConcept" placeholder="Concept..." value="${labTestType.referenceConcept.name}" required > </td>
 				</tr>
 				
 				<tr>
-				  <td><label for="testname">Test Name</label></td>		
-				  <td><input type="text" id="testName" name="testName"  placeholder="Test name.." required > </td>
+				  <td><label for="testname">Test Name</label></td>
+					<td> <frm:input path="form.name" size="50"/></td>
+				  <td><input type="text" id="testName" name="testName"  value="${labTestType.name}" placeholder="Test name.." required > </td>
 				</tr>
 				<tr>
-				  <td><label for="shortname">Short Name</label></td>		
+				  <td><label for="shortname">Short Name</label></td>
+					<td> <frm:input path="form.shortName" size="50"/></td>
 				  <td><input type="text" id="shortname" name="shortName" value="${labTestType.shortName}" placeholder="Short name.." required > </td>
 				</tr>
 				<tr>
-				  <td><label for="description">Description</label></td>		
-				  <td><textarea class="form-control" rows="3" id="discription"></textarea> </td>
+				  <td><label for="description">Description</label></td>
+					<td> <frm:input path="form.discription" size="50"/></td>
+				  <td><textarea class="form-control" rows="3" id="discription" value="${labTestType.description}"></textarea> </td>
 				</tr>
 				<tr>
 				  <td><label for="testgroup">Test Group</label></td>
 				  <td>
-					<select name="testGroup" id="testGroup">
-				              <c:forEach items="${listTestGroup}">
-								<option value="${listTestGroup}">${listTestGroup}</option>
+				<%--	<select name="testGroup" id="testGroup">
+				              <c:forEach items="${labTestType.listTestGroup}" var="q">
+								<option value="${q}">${q}</option>
 							  </c:forEach>
-				    </select>
+				    </select>--%>
 				   </td>
 				</tr>
 				<tr>
@@ -78,7 +83,7 @@
 			
 		  </table>
 	    
-		</form>
+		</frm:form>
 	</div> 
 </div>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

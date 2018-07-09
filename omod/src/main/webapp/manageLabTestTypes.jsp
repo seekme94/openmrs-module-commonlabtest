@@ -69,7 +69,7 @@
 				<tbody>
 					<c:forEach var="tt" items="${labTestTypes}">
 						<tr>
-							<td>${tt.name}</td>
+							<td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid=${tt.uuid}">${tt.name}</a></td>
 							<td>${tt.shortName}</td>
 							<td>${tt.testGroup}</td>
 							<td>${tt.referenceConcept.name}</td>
