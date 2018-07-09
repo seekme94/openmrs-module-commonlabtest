@@ -20,41 +20,7 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<context:component-scan base-package="org.openmrs.module.commonlabtest" />
-
 	<!-- Wraps CommonLabTestService methods in DB transactions and OpenMRS interceptors, which set audit info like dateCreated, changedBy, 
 		etc. -->
-	<bean id="commonlabtest.CommonLabTestService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.dao.impl.CommonLabTestDaoImpl">
-				<property name="sessionFactory">
-					<ref bean="sessionFactory" />
-				</property>
-			</bean>
-		</property>
-<!-- 		<property name="target"> -->
-<!-- 			<bean class="org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl"> -->
-<!-- 				<property name="dao" ref="commonlabtest." /> -->
-<!-- 			</bean> -->
-<!-- 		</property> -->
-		<property name="preInterceptors">
-			<ref bean="serviceInterceptors" />
-		</property>
-		<property name="transactionAttributeSource">
-			<ref bean="transactionAttributeSource" />
-		</property>
-	</bean>
-
-	<!-- Adds CommonLabTestService to OpenMRS context so it can be accessed calling Context.getService(CommonLabTestService.class) -->
-	<bean parent="serviceContext">
-		<property name="moduleService">
-			<list>
-				<value>${project.parent.groupId}.${project.parent.artifactId}.api.CommonLabTestService</value>
-				<ref bean="commonlabtest.CommonLabTestService" />
-			</list>
-		</property>
-	</bean>
+	
 </beans>
