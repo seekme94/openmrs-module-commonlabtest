@@ -20,7 +20,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequestMapping(value = "/module/commonlabtest/addLabTestType.form")
-public class AddLabTestTypeController {
+public class LabTestTypeController {
 	
 	private final String SUCCESS_ADD_FORM_VIEW = "/module/commonlabtest/addLabTestType";
 	
@@ -32,7 +32,7 @@ public class AddLabTestTypeController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showForm(ModelMap model) {
-	   LabTestType testType =commonLabTestService.getLabTestType(1);
+		LabTestType testType = commonLabTestService.getLabTestType(1);
 		model.addAttribute("labTestType", commonLabTestService.getLabTestType(1));
 		return SUCCESS_ADD_FORM_VIEW;
 	}

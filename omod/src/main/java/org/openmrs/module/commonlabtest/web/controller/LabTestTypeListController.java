@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/module/commonlabtest/manageLabTestTypes.form")
-public class ManageTestTypesController {
+public class LabTestTypeListController {
 	
 	/** Success form view name */
 	private final String SUCCESS_FORM_VIEW = "/module/commonlabtest/manageLabTestTypes";
