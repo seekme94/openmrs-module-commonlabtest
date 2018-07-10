@@ -44,9 +44,14 @@ public class LabTestTypeController {
 			testType = commonLabTestService.getLabTestTypeByUuid(uuid);
 		}
 		ConceptClass conceptClass = Context.getConceptService().getConceptClassByName("Test");
+		System.out.println("=====================================================");
+		System.out.println("CONCEPT CLASS ID :::::: " + conceptClass.getConceptClassId());
 		List<Concept> conceptlist = Context.getConceptService().getConceptsByClass(conceptClass);
+		System.out.println("=====================================================");
+		System.out.println("Concept Size ::: " + conceptlist.size());
+		System.out.println(conceptlist.get(0).getName().getName());
 		model.addAttribute("labTestType", testType);
-		model.addAttribute("concepts",conceptlist);
+		model.addAttribute("concepts", conceptlist);
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
@@ -57,13 +62,6 @@ public class LabTestTypeController {
 			///error show 
 		} else {
 			
-			labTestType.setUuid(UUID.randomUUID().toString());
-			Concept concept = new Concept();
-			concept.setConceptId(2);
-			//labTestType.setCreator();
-			
-			//labTestType.setDateCreated(new Date());
-			labTestType.setReferenceConcept(concept);
 			commonLabTestService.saveLabTestType(labTestType);
 		}
 		
