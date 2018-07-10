@@ -526,7 +526,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	public LabTestType saveLabTestType(LabTestType labTestType) {
-		sessionFactory.getCurrentSession().save(labTestType);
+		sessionFactory.getCurrentSession().saveOrUpdate(labTestType);
 		return labTestType;
 	}
 }
