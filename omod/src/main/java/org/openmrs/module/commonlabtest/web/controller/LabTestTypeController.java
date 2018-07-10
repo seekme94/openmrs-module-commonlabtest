@@ -1,5 +1,7 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +10,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.ConceptClass;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.springframework.ui.ModelMap;
@@ -32,14 +36,17 @@ public class LabTestTypeController {
 	CommonLabTestService commonLabTestService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String showForm(ModelMap model, @RequestParam("uuid") String uuid) {
-		LabTestType testType ;
-		if(uuid==null || uuid.equalsIgnoreCase("")){
-			testType=new LabTestType();
-		}else {
+	public String showForm(ModelMap model, @RequestParam(value = "uuid", required = false) String uuid) {
+		LabTestType testType;
+		if (uuid == null || uuid.equalsIgnoreCase("")) {
+			testType = new LabTestType();
+		} else {
 			testType = commonLabTestService.getLabTestTypeByUuid(uuid);
 		}
-		model.addAttribute("labTestType",testType );
+		ConceptClass conceptClass = Context.getConceptService().getConceptClassByName("Test");
+		List<Concept> conceptlist = Context.getConceptService().getConceptsByClass(conceptClass);
+		model.addAttribute("labTestType", testType);
+		model.addAttribute("concepts",conceptlist);
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
@@ -53,6 +60,9 @@ public class LabTestTypeController {
 			labTestType.setUuid(UUID.randomUUID().toString());
 			Concept concept = new Concept();
 			concept.setConceptId(2);
+			//labTestType.setCreator();
+			
+			//labTestType.setDateCreated(new Date());
 			labTestType.setReferenceConcept(concept);
 			commonLabTestService.saveLabTestType(labTestType);
 		}
