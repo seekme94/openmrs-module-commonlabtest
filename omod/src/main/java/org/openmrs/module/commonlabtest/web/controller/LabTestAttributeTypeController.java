@@ -22,27 +22,27 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@RequestMapping("/module/commonlabtest/addLabTestAttributeType.form")
 public class LabTestAttributeTypeController {
 	
 	private final String SUCCESS_ADD_FORM_VIEW = "/module/commonlabtest/addLabTestAttributeType";
-
+	
 	@ModelAttribute("datatypes")
 	public Collection<String> getDatatypes() {
 		return CustomDatatypeUtil.getDatatypeClassnames();
 	}
-
+	
 	@ModelAttribute("handlers")
 	public Collection<String> getHandlers() {
 		return CustomDatatypeUtil.getHandlerClassnames();
 	}
+	
 	/** Logger for this class */
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	@Autowired
 	CommonLabTestService commonLabTestService;
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET,value="/module/commonlabtest/addLabTestAttributeType.form")
 	public String showForm(ModelMap model, @RequestParam(value = "uuid", required = false) String uuid) {
 		LabTestAttributeType attributeType;
 		if (uuid == null || uuid.equalsIgnoreCase("")) {
@@ -54,16 +54,29 @@ public class LabTestAttributeTypeController {
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST,value = "/module/commonlabtest/addLabTestAttributeType.form")
 	public void onSubmit(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
 	        HttpServletRequest request, @ModelAttribute("attributeType") LabTestAttributeType attributeType,
-	         BindingResult result) {
+	        BindingResult result) {
 		if (result.hasErrors()) {
 			///error show
 		} else {
-
+			
 			commonLabTestService.saveLabTestAttributeType(attributeType);
 		}
 		
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtesttype.form")
+	public String onRetire(HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid,
+						   @RequestParam("retireReason") String retireReason) {
+		LabTestAttributeType attributeType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
+		attributeType.setRetired(true);
+		attributeType.setDateRetired(new Date());
+		attributeType.setRetiredBy(Context.getAuthenticatedUser());
+		attributeType.setRetireReason(retireReason);
+		commonLabTestService.saveLabTestAttributeType(attributeType);
+		return "redirect:manageLabTestAttributeTypes.form";
+		//return "/module/commonlabtest/manageLabTestTypes.form";
 	}
 }

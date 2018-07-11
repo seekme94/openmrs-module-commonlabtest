@@ -42,9 +42,10 @@ body {
 		<form:form commandName="labTestType">
 			<table>
 				<tr>
+					<form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>
 					<td><form:label path="referenceConcept">Reference Concept</form:label></td>
-					<td><input id="ref_concept"></input></td>
-					<td><form:input path="referenceConcept"  type="hidden" id="referenceConcept"></form:input></td>
+
+					<td><form:input path="referenceConcept"   id="referenceConcept"></form:input></td>
 				</tr>
 				<tr>
 					<td><form:label path="name">Test Name</form:label></td>
@@ -74,6 +75,7 @@ body {
 				</tr>
 
 				<c:if test="${not empty testType.shortName}">
+
 					<tr>
 						<td><form:label path="creator">Created By </form:label></td>
 						<td><c:out value="${testType.creator.personName}" /> - <c:out
@@ -86,6 +88,7 @@ body {
 										value="${testType.uuid}" /></sub></font></td>
 					</tr>
 				</c:if>
+
 				<tr>
 					<td>
 						<div id="saveDeleteButtons" style="margin-top: 15px">
@@ -103,14 +106,18 @@ body {
 	
 	<c:if test="${not empty testType.shortName}">
 		<div class="box">
-					<form:form commandName="labTestType">
+					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtesttype.form" >
+
 						<table>
 							<tr>
 								<td><h2>Retire Test Type</h2></td>
 							</tr>
 							<tr>
-								<td><form:label path="retireReason">Retire Reason</form:label></td>
-								<td><form:input path="retireReason" id="retire_reason"></form:input></td>
+
+								<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
+
+								<td><label path="retireReason">Retire Reason</label></td>
+								<td><input value="${labTestType.retireReason}" id="retireReason" name="retireReason"></input></td>
 							</tr>
 							<tr>
 								<td>
@@ -120,7 +127,7 @@ body {
 								</td>
 							</tr>
 						</table>
-				</form:form>
+				</form>
 		</div>	
 	</c:if>
 	
@@ -181,7 +188,7 @@ body {
 	});
 	/*autocomplete ...  */
 	$(function() {
-		 $("#ref_concept").autocomplete({
+		 $("#referenceConcept").autocomplete({
 			 source : function(request, response) {
 				response($.map(local_source, function(item) {
 					return {
