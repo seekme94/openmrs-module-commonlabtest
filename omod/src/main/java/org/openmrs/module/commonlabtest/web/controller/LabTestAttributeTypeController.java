@@ -57,21 +57,11 @@ public class LabTestAttributeTypeController {
 	@RequestMapping(method = RequestMethod.POST)
 	public void onSubmit(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
 	        HttpServletRequest request, @ModelAttribute("attributeType") LabTestAttributeType attributeType,
-	        @RequestParam("formType") int formType, BindingResult result) {
+	         BindingResult result) {
 		if (result.hasErrors()) {
 			///error show
 		} else {
-			if (formType == 1) {
-				attributeType.setCreator(Context.getAuthenticatedUser());
-				attributeType.setDateCreated(new Date());
-			} else if (formType == 2) {
-				
-				attributeType.setChangedBy(Context.getAuthenticatedUser());
-				attributeType.setDateChanged(new Date());
-			} else if (formType == 3) {
-				attributeType.setRetiredBy(Context.getAuthenticatedUser());
-				attributeType.setDateRetired(new Date());
-			}
+
 			commonLabTestService.saveLabTestAttributeType(attributeType);
 		}
 		
