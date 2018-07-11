@@ -99,7 +99,6 @@ function relocate_home()
 $(document).ready(function() {
 
     $('#tb-test-type tr').click(function() {
-       alert("is ca,");
     });
 
 });
