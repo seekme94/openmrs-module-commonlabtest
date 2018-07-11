@@ -3,6 +3,7 @@ package org.openmrs.module.commonlabtest.web.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.customdatatype.CustomDatatypeUtil;
 import org.openmrs.module.commonlabtest.LabTestAttributeType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +26,16 @@ import java.util.List;
 public class LabTestAttributeTypeController {
 	
 	private final String SUCCESS_ADD_FORM_VIEW = "/module/commonlabtest/addLabTestAttributeType";
-	
+
+	@ModelAttribute("datatypes")
+	public Collection<String> getDatatypes() {
+		return CustomDatatypeUtil.getDatatypeClassnames();
+	}
+
+	@ModelAttribute("handlers")
+	public Collection<String> getHandlers() {
+		return CustomDatatypeUtil.getHandlerClassnames();
+	}
 	/** Logger for this class */
 	protected final Log log = LogFactory.getLog(getClass());
 	
