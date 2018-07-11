@@ -1,14 +1,13 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.api.context.Context;
@@ -44,14 +43,20 @@ public class LabTestTypeController {
 			testType = commonLabTestService.getLabTestTypeByUuid(uuid);
 		}
 		ConceptClass conceptClass = Context.getConceptService().getConceptClassByName("Test");
-		System.out.println("=====================================================");
-		System.out.println("CONCEPT CLASS ID :::::: " + conceptClass.getConceptClassId());
 		List<Concept> conceptlist = Context.getConceptService().getConceptsByClass(conceptClass);
-		System.out.println("=====================================================");
-		System.out.println("Concept Size ::: " + conceptlist.size());
-		System.out.println(conceptlist.get(0).getName().getName());
 		model.addAttribute("labTestType", testType);
-		model.addAttribute("concepts", conceptlist);
+
+		
+		List<Map<String,String>> mapConceptList=new ArrayList<Map<String, String>>();
+		for(Concept c: conceptlist) {
+			Map<String, String> obj = new HashMap<String, String>();
+			obj.put("id", c.getId()+"");
+			obj.put("name",c.getName()!=null?c.getName().getName():"");
+			obj.put("shortName",c.getShortNameInLocale(Locale.ENGLISH)!=null?c.getShortNameInLocale(Locale.ENGLISH).getName():"");
+			obj.put("description",c.getDescription()!=null?c.getDescription().getDescription():"");
+			mapConceptList.add(obj);
+		}
+		model.addAttribute("concepts", mapConceptList);
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
