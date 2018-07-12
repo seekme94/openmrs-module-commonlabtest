@@ -80,6 +80,14 @@ public class LabTestType extends BaseOpenmrsMetadata {
 		return labTestTypeId;
 	}
 	
+	public Integer getLabTestTypeId() {
+		return labTestTypeId;
+	}
+	
+	public void setLabTestTypeId(Integer id) {
+		setId(id);
+	}
+	
 	@Override
 	public void setId(Integer id) {
 		this.labTestTypeId = id;
