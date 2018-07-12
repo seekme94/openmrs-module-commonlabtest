@@ -41,7 +41,7 @@ body {
 			<table>
 				<tr>
 					<td><form:label path="labTestType"><spring:message code="general.labTestType" /></form:label></td>
-					<td><form:input path="labTestType"  id="lab_test_type"></form:input></td>
+					<td><form:input path="labTestType" placeholder="Search test type..." id="lab_test_type"></form:input></td>
 				</tr>
 				<tr>
 					<td><form:label path="name"><spring:message code="general.name" /></form:label></td>
@@ -67,11 +67,28 @@ body {
 								<option value="${datatype}" <c:if test="${datatype == status.value}">selected</c:if>><spring:message code="${datatype}.name"/></option>
 							</c:forEach>
 						</form:select></td>
+						<td><span id="datatypeDescription"></span></td>						
 				</tr>
 				<tr>
 					<td><form:label path="datatypeConfig"><spring:message code="general.datatypeConfiguration" /></form:label></td>
 					<td><form:textarea path="datatypeConfig" id="datatypeConfig"></form:textarea></td>
 				</tr>
+				
+				<tr>
+					<td><form:label path="preferredHandlerClassname"><spring:message code="general.preferredHandler" /></form:label></td>
+					<td><form:select path="preferredHandlerClassname" id="preferred_handler_name">
+							<form:options items="${handlers}" />
+							<c:forEach items="${handlers}"  var="handler">
+								<option value="${handler}" <c:if test="${handler == status.value}">selected</c:if>><spring:message code="${handler}.name"/></option>
+							</c:forEach>
+						</form:select></td>
+						<td><span id="handlerDescription"></span></td>
+				</tr>
+				<tr>
+					<td><form:label path="handlerConfig"><spring:message code="general.handlerConfiguration" /></form:label></td>
+					<td><form:textarea path="handlerConfig" id="handlerConfig"></form:textarea></td>
+				</tr>
+				
 				
 				<c:if test="${not empty testAttributeType.name}">
 					<tr>
@@ -133,12 +150,12 @@ body {
 			<form  method="post">
 				<table>
 				<tr>
-					<td><h2><spring:message code="general.delete" /></h2></td>
+					<td><h2><spring:message code="general.foreverDelete" /></h2></td>
 				</tr>
 				<tr>
 					<td>
 						<div id="delete" style="margin-top: 15px">
-							<input type="submit" value="<spring:message code="general.delete" />">
+							<input type="submit" value="<spring:message code="general.foreverDelete" />">
 						</div>
 					</td>
 				</tr>
@@ -200,6 +217,24 @@ body {
 			return false;
 		}
 	}
+	
+	/*  */
+	
+	$j(function() {
+		$j('select[name="datatypeClassname"]').change(function() {
+			$j('#datatypeDescription').load(openmrsContextPath + '/q/message.form', { key: $j(this).val() + '.description' });
+		});
+		$j('select[name="preferredHandlerClassname"]').change(function() {
+			$j('#handlerDescription').load(openmrsContextPath + '/q/message.form', { key: $j(this).val() + '.description' });  
+		});
+		<c:if test="${ not empty attributeType.datatypeClassname }">
+			$j('#datatypeDescription').load(openmrsContextPath + '/q/message.form', { key: '${ attributeType.datatypeClassname }.description' });
+		</c:if>
+		<c:if test="${ not empty attributeType.preferredHandlerClassname }">
+			$j('#handlerDescription').load(openmrsContextPath + '/q/message.form', { key: '${ attributeType.preferredHandlerClassname }.description' });
+		</c:if>
+	});
+	
 
 </script>
 <%@ include file="/WEB-INF/template/footer.jsp"%>
