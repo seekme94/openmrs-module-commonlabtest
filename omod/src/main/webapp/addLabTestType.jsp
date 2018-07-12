@@ -42,25 +42,25 @@ body {
 		<form:form commandName="labTestType">
 			<table>
 				<tr>
-					<form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>
-					<td><form:label path="referenceConcept">Reference Concept</form:label></td>
-
-					<td><form:input path="referenceConcept"   id="referenceConcept"></form:input></td>
+					<form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>				
+					<td><form:label path="referenceConcept"><spring:message code="general.referenceConcept" /></form:label></td>
+					<td><input value="${testType.referenceConcept.conceptId}"  id="reference_concept"></input></td>
+					<td><form:input path="referenceConcept"  hidden="true"  id="referenceConcept"></form:input></td>
 				</tr>
 				<tr>
-					<td><form:label path="name">Test Name</form:label></td>
+					<td><form:label path="name"><spring:message code="general.testName" /></form:label></td>
 					<td><form:input path="name" id="name"></form:input></td>
 				</tr>
 				<tr>
-					<td><form:label path="shortName">Short Name</form:label></td>
+					<td><form:label path="shortName"><spring:message code="general.shortName" /></form:label></td>
 					<td><form:input path="shortName" id="short_name"></form:input></td>
 				</tr>
 				<tr>
-					<td><form:label path="description">Description</form:label></td>
+					<td><form:label path="description"><spring:message code="general.description" /></form:label></td>
 					<td><form:textarea path="description" id="description"></form:textarea></td>
 				</tr>
 				<tr>
-					<td><form:label path="testGroup">Test Group</form:label></td>
+					<td><form:label path="testGroup"><spring:message code="general.testGroup" /></form:label></td>
 					<td><form:select path="testGroup" id="testGroup">
 							<form:options items="${LabTestGroup}" />
 							<c:forEach items="${LabTestGroup}">
@@ -69,7 +69,7 @@ body {
 						</form:select></td>
 				</tr>
 				<tr>
-					<td><form:label path="requiresSpecimen">Requires Specimen</form:label></td>
+					<td><form:label path="requiresSpecimen"><spring:message code="general.requiresSpecimen" /></form:label></td>
 					<td><form:radiobutton path="requiresSpecimen" value="true" />Yes
 						<form:radiobutton path="requiresSpecimen" value="false" />No</td>
 				</tr>
@@ -77,7 +77,7 @@ body {
 				<c:if test="${not empty testType.shortName}">
 
 					<tr>
-						<td><form:label path="creator">Created By </form:label></td>
+						<td><form:label path="creator"><spring:message code="general.createdBy" /></form:label></td>
 						<td><c:out value="${testType.creator.personName}" /> - <c:out
 								value="${testType.dateCreated}" /></td>
 					</tr>
@@ -91,7 +91,7 @@ body {
 
 				<tr>
 					<td>
-						<div id="saveDeleteButtons" style="margin-top: 15px">
+						<div id=""saveUpdateButton"" style="margin-top: 15px">
 							<input type="submit" value="Submit Test Type"></input>
 						</div>
 					</td>
@@ -110,19 +110,18 @@ body {
 
 						<table>
 							<tr>
-								<td><h2>Retire Test Type</h2></td>
+								<td><h2><spring:message code="general.test.retire" /></h2></td>
 							</tr>
 							<tr>
-
 								<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
 
-								<td><label path="retireReason">Retire Reason</label></td>
+								<td><label path="retireReason"><spring:message code="general.retireReason" /></label></td>
 								<td><input value="${labTestType.retireReason}" id="retireReason" name="retireReason"></input></td>
 							</tr>
 							<tr>
 								<td>
 									<div id="retireButton" style="margin-top: 15px">
-										<input type="submit" value="Retire Encounter Type"></input>
+										<input type="submit" value="Retire Test Type"></input>
 									</div>
 								</td>
 							</tr>
@@ -134,20 +133,21 @@ body {
 	<br>
     <c:if test="${not empty testType.shortName}">
 		<div class="box">
-			<form:form  method="post">
+			<form  method="post" action ="${pageContext.request.contextPath}/module/commonlabtest/deletelabtesttype.form" onsubmit="return confirmDelete()">
 				<table>
 				<tr>
-					<td><h2>Delete Test Type forever</h2></td>
+					<td><h2><spring:message code="general.foreverDelete" /></h2></td>
 				</tr>
 				<tr>
 					<td>
+						<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
 						<div id="delete" style="margin-top: 15px">
-							<input type="submit" value="Delete Test Type forever">
+							<input type="submit" value="<spring:message code="general.foreverDelete" />" />
 						</div>
 					</td>
 				</tr>
 				</table>
-			</form:form>
+			</form>
 		 </div>
 	</c:if>
 	
@@ -173,22 +173,16 @@ body {
 	jQuery(document).ready(function() {
 		 
 		local_source = new Array();
-	        <c:if test="${empty concepts}">
-	        	local_source.push("No customers Found"); 
-	        </c:if>         
-	        <c:forEach var="concept" items="${concepts}" varStatus="status">
-	        	local_source.push({id:"${concept.id}",value:"${concept.name}",description:"${concept.description}" ,shortName : "${concept.shortName}"});
-	        </c:forEach>
-	        
-	       /*  var i;
-	        for (i = 0; i < local_source.length; i++) { 
-	           alert(local_source[i].description);
-	        } */
+	        <c:if test="${not empty concepts}">
+		        <c:forEach var="concept" items="${concepts}" varStatus="status">
+		        	local_source.push({id:"${concept.id}",value:"${concept.name}",description:"${concept.description}" ,shortName : "${concept.shortName}"});
+		        </c:forEach>
+	        </c:if>     
 	        
 	});
 	/*autocomplete ...  */
 	$(function() {
-		 $("#referenceConcept").autocomplete({
+		 $("#reference_concept").autocomplete({
 			 source : function(request, response) {
 				response($.map(local_source, function(item) {
 					return {
@@ -201,6 +195,7 @@ body {
 			},
 			select : function(event, ui) {
 				$(this).val(ui.item.value)
+				//document.getElementById('referenceConcept').value = '';
 				$("#referenceConcept").val(ui.item.id);
 				$("#short_name").val(ui.item.shortName);
 				$("#name").val(ui.item.value);
@@ -210,6 +205,17 @@ body {
 			autoFocus : true
 		});	     
 	});
+	
+	/*  */
+	function confirmDelete() {
+		//onsubmit="return confirmDelete()"
+		if (confirm("Are you sure you want to Delete this Test Type? It will be permanently removed from the system.")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
