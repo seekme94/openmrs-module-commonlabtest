@@ -72,44 +72,66 @@ public class LabTestTypeController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/addLabTestType.form")
-	public String onAdd(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
+	public String onAdd(ModelMap model,HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
 	        HttpServletRequest request, @ModelAttribute("labTestType") LabTestType labTestType, BindingResult result) {
-		
+        String status="";
 		if (result.hasErrors()) {
-			///error show
-			//result.error
-			System.out.println("------------------------------------");
-			System.out.println("Errors");
-			System.out.println(result.getFieldError());
-			//return;
+
 		} else {
-			System.out.println("------------------------------------");
-			System.out.println("Test Type ID:: " + labTestType.getId());
+            try {
 			commonLabTestService.saveLabTestType(labTestType);
+            StringBuilder sb=new StringBuilder();
+            sb.append("Lab Test Attribute with Uuid :");
+            sb.append(labTestType.getUuid());
+            sb.append(" is  saved!");
+            status=sb.toString();
+            }catch (Exception e){
+                e.printStackTrace();
+                status=e.getLocalizedMessage();
+            }
 		}
+        model.addAttribute("status",status);
 		return "redirect:manageLabTestTypes.form";
-		//return "/module/commonlabtest/manageLabTestTypes.form";
+
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtesttype.form")
-	public String onRetire(HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid,
+	public String onRetire(ModelMap model,HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid,
 	        @RequestParam("retireReason") String retireReason) {
 		LabTestType labTestType = commonLabTestService.getLabTestTypeByUuid(uuid);
-		labTestType.setRetired(true);
-		labTestType.setDateRetired(new Date());
-		labTestType.setRetiredBy(Context.getAuthenticatedUser());
-		labTestType.setRetireReason(retireReason);
-		commonLabTestService.saveLabTestType(labTestType);
+        String status;
+        try {
+		commonLabTestService.retireLabTestType(labTestType,retireReason);
+            StringBuilder sb=new StringBuilder();
+            sb.append("Lab Test Type with Uuid :");
+            sb.append(labTestType.getUuid());
+            sb.append(" is permanently retired!");
+            status=sb.toString();
+        }catch (Exception exception){
+            exception.printStackTrace();
+            status=exception.getLocalizedMessage();
+        }
+        model.addAttribute("status",status);
 		return "redirect:manageLabTestTypes.form";
 		//return "/module/commonlabtest/manageLabTestTypes.form";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/deletelabtesttype.form")
-	public String onRetire(HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid
-						   ) {
+	public String onDelete(ModelMap model,HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid  ) {
 		LabTestType labTestType = commonLabTestService.getLabTestTypeByUuid(uuid);
-
+        String status;
+        try {
 		commonLabTestService.deleteLabTestType(labTestType);
+            StringBuilder sb=new StringBuilder();
+            sb.append("Lab Test Type with Uuid :");
+            sb.append(labTestType.getUuid());
+            sb.append(" is permanently deleted!");
+            status=sb.toString();
+        }catch (Exception exception){
+            exception.printStackTrace();
+            status=exception.getLocalizedMessage();
+        }
+        model.addAttribute("status",status);
 		return "redirect:manageLabTestTypes.form";
 
 	}
