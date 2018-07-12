@@ -305,4 +305,5 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 		}
 		return null;
 	}
+
 }
