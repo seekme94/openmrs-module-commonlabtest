@@ -2,6 +2,7 @@ package org.openmrs.module.commonlabtest.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.CustomDatatypeUtil;
 import org.openmrs.module.commonlabtest.LabTestAttributeType;
@@ -50,43 +51,76 @@ public class LabTestAttributeTypeController {
 		} else {
 			attributeType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
 		}
-		
+        model.addAttribute("attributeType",attributeType);
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST,value = "/module/commonlabtest/addLabTestAttributeType.form")
-	public void onSubmit(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
+	public String onSubmit(ModelMap model,HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
 	        HttpServletRequest request, @ModelAttribute("attributeType") LabTestAttributeType attributeType,
 	        BindingResult result) {
-		if (result.hasErrors()) {
-			///error show
+        String status="";
+	    if (result.hasErrors()) {
+
 		} else {
-			
+
+            try {
 			commonLabTestService.saveLabTestAttributeType(attributeType);
+                StringBuilder sb=new StringBuilder();
+                sb.append("Lab Test Attribute with Uuid :");
+                sb.append(attributeType.getUuid());
+                sb.append(" is  saved!");
+                status=sb.toString();
+            }catch (Exception e){
+                e.printStackTrace();
+                status=e.getLocalizedMessage();
+            }
+
 		}
+        model.addAttribute("status",status);
+        return "redirect:manageLabTestAttributeTypes.form";
 		
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtestattributetype.form")
-	public String onRetire(HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid,
+	public String onRetire(ModelMap model,HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid,
 						   @RequestParam("retireReason") String retireReason) {
 		LabTestAttributeType attributeType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
-		attributeType.setRetired(true);
-		attributeType.setDateRetired(new Date());
-		attributeType.setRetiredBy(Context.getAuthenticatedUser());
-		attributeType.setRetireReason(retireReason);
-		commonLabTestService.saveLabTestAttributeType(attributeType);
+        String status;
+        try {
+            commonLabTestService.retireLabTestAttributeType(attributeType, retireReason);
+            StringBuilder sb=new StringBuilder();
+            sb.append("Lab Test Attribute with Uuid :");
+            sb.append(attributeType.getUuid());
+            sb.append(" is  retired!");
+            status=sb.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            status=e.getLocalizedMessage();
+        }
+        model.addAttribute("status",status);
 		return "redirect:manageLabTestAttributeTypes.form";
 		//return "/module/commonlabtest/manageLabTestTypes.form";
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/deletelabtestattributetyp.form")
-	public String onRetire(HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid
+	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/deletelabtestattributetype.form")
+	public String onDelete(ModelMap model,HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid
 	) {
-		LabTestAttributeType labTestType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
-
-		commonLabTestService.deleteLabTestAttributeType(labTestType);
-		return "redirect:manageLabTestTypes.form";
+		LabTestAttributeType attributeType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
+		String status;
+        try {
+            commonLabTestService.deleteLabTestAttributeType(attributeType);
+            StringBuilder sb=new StringBuilder();
+            sb.append("Lab Test Attribute with Uuid :");
+            sb.append(attributeType.getUuid());
+            sb.append(" is permanently deleted!");
+            status=sb.toString();
+        }catch (Exception exception){
+            exception.printStackTrace();
+            status=exception.getLocalizedMessage();
+        }
+        model.addAttribute("status",status);
+		return "redirect:manageLabTestAttributeTypes.form";
 
 	}
 }
