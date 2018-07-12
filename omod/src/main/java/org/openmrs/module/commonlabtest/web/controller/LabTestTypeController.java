@@ -103,22 +103,14 @@ public class LabTestTypeController {
 		return "redirect:manageLabTestTypes.form";
 		//return "/module/commonlabtest/manageLabTestTypes.form";
 	}
-	/*
-		@RequestMapping(method = RequestMethod.POST, value = "/update")
-		public void onUpdate(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
-		        HttpServletRequest request, LabTestType labTestType, BindingResult result) {
-			if (result.hasErrors()) {
-				///error show
-			} else {
-				if (labTestType.getChangedBy() != null) {
-					labTestType.setDateChanged(new Date());
-				}
-				if (labTestType.getRetiredBy() != null) {
-					labTestType.setDateRetired(new Date());
-				}
-				
-				commonLabTestService.saveLabTestType(labTestType);
-			}
-			//return "/module/commonlabtest/manageLabTestTypes.form";
-		}*/
+
+	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/deletelabtesttype.form")
+	public String onRetire(HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid
+						   ) {
+		LabTestType labTestType = commonLabTestService.getLabTestTypeByUuid(uuid);
+
+		commonLabTestService.deleteLabTestType(labTestType);
+		return "redirect:manageLabTestTypes.form";
+
+	}
 }

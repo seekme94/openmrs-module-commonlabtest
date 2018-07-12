@@ -67,7 +67,7 @@ public class LabTestAttributeTypeController {
 		
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtesttype.form")
+	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtestattributetype.form")
 	public String onRetire(HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid,
 						   @RequestParam("retireReason") String retireReason) {
 		LabTestAttributeType attributeType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
@@ -78,5 +78,15 @@ public class LabTestAttributeTypeController {
 		commonLabTestService.saveLabTestAttributeType(attributeType);
 		return "redirect:manageLabTestAttributeTypes.form";
 		//return "/module/commonlabtest/manageLabTestTypes.form";
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/deletelabtestattributetyp.form")
+	public String onRetire(HttpSession httpSession, HttpServletRequest request, @RequestParam("uuid") String uuid
+	) {
+		LabTestAttributeType labTestType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
+
+		commonLabTestService.deleteLabTestAttributeType(labTestType);
+		return "redirect:manageLabTestTypes.form";
+
 	}
 }
