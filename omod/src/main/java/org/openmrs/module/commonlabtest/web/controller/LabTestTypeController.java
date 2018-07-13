@@ -16,8 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import groovy.json.JsonOutput;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.util.*;
 
 @Controller
@@ -54,17 +61,20 @@ public class LabTestTypeController {
 		List<Concept> conceptlist = Context.getConceptService().getConceptsByClass(conceptClass);
 		model.addAttribute("labTestType", testType);
 		
-		List<Map<String, String>> mapConceptList = new ArrayList<Map<String, String>>();
+		JsonArray jsonArray = new JsonArray();
 		for (Concept c : conceptlist) {
-			Map<String, String> obj = new HashMap<String, String>();
-			obj.put("id", c.getId() + "");
-			obj.put("name", c.getName() != null ? c.getName().getName() : "");
-			obj.put("shortName", c.getShortNameInLocale(Locale.ENGLISH) != null ? c.getShortNameInLocale(Locale.ENGLISH)
-			        .getName() : "");
-			obj.put("description", c.getDescription() != null ? c.getDescription().getDescription() : "");
-			mapConceptList.add(obj);
+			JsonObject json = new JsonObject();
+			
+			json.addProperty("id", c.getId() + "");
+			json.addProperty("name", c.getName() != null ? c.getName().getName() : "");
+			json.addProperty("shortName",
+			    c.getShortNameInLocale(Locale.ENGLISH) != null ? c.getShortNameInLocale(Locale.ENGLISH).getName() : "");
+			json.addProperty("description", c.getDescription() != null ? c.getDescription().getDescription() : "");
+			
+			jsonArray.add(json);
 		}
-		model.addAttribute("concepts", mapConceptList);
+		
+		model.addAttribute("conceptsJson", jsonArray);
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	

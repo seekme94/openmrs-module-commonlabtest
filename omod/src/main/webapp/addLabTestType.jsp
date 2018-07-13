@@ -20,13 +20,6 @@ body {
 	font-size: 12px;
 }
 </style>
-<!-- <script type="text/javascript">
-    function getConcepts(){
-    	return ${model};
-    }
-    
-    console.log(getConcepts());
-</script> -->
 <body>
 
 	<c:set var="testType" scope="session" value="${labTestType}" />
@@ -178,23 +171,31 @@ body {
 	var local_source;
 
 	jQuery(document).ready(function() {
-		 // console.log(getConcepts());
+	/* 	 console.log(getConcepts());
 		local_source = new Array();
 	        <c:if test="${not empty concepts}">
 		        <c:forEach var="concept" items="${concepts}" varStatus="status">
-		        	local_source.push({id:"${concept.id}",value:'${concept.name}',description:'${concept.description}' ,shortName : '${concept.shortName}'});
+		       /*    var conceptDescriptionContainingNewLine = "'${concept.description}'";
+		          var conceptDescription =conceptDescriptionContainingNewLine.replace(/(\r\n|\n|\r)/gm, "");
+		          alert(conceptDescription); */
+		      /*   local_source.push({id:"${concept.id}",value: '${concept.name}' ,description: '${concept.description}' ,shortName : '${concept.shortName}'});
 		        </c:forEach>
-	        </c:if>     
-	        
+	        </c:if>      */
 	});
+	 //get all concepts
+	 function getConcepts(){
+	    	return JSON.parse(JSON.stringify(${conceptsJson}));
+	    }
+	
 	/*autocomplete ...  */
 	$(function() {
 		 $("#reference_concept").autocomplete({
 			 source : function(request, response) {
-				response($.map(local_source, function(item) {
+				response($.map(getConcepts(), function(item) {
+					console.log(item);
 					return {
 						id : item.id,
-						value : item.value,
+						value : item.name,
 						shortName: item.shortName,
 						description :item.description
 					}
