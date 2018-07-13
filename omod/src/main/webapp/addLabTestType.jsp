@@ -15,11 +15,18 @@
 	rel="stylesheet" />
 
 <style>
+
 body {
 	font-size: 12px;
 }
 </style>
-
+<!-- <script type="text/javascript">
+    function getConcepts(){
+    	return ${model};
+    }
+    
+    console.log(getConcepts());
+</script> -->
 <body>
 
 	<c:set var="testType" scope="session" value="${labTestType}" />
@@ -156,7 +163,6 @@ body {
 
 
 
-
 <script
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/jquery-3.3.1.min.js"></script>
 <script
@@ -167,15 +173,16 @@ body {
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery-ui.min.js"></script>
 
 
+
 <script>
 	var local_source;
 
 	jQuery(document).ready(function() {
-		 
+		 // console.log(getConcepts());
 		local_source = new Array();
 	        <c:if test="${not empty concepts}">
 		        <c:forEach var="concept" items="${concepts}" varStatus="status">
-		        	local_source.push({id:"${concept.id}",value:"${concept.name}",description:"${concept.description}" ,shortName : "${concept.shortName}"});
+		        	local_source.push({id:"${concept.id}",value:'${concept.name}',description:'${concept.description}' ,shortName : '${concept.shortName}'});
 		        </c:forEach>
 	        </c:if>     
 	        

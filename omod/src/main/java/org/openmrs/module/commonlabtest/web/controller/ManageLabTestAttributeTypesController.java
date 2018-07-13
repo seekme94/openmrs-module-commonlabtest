@@ -27,9 +27,9 @@ public class ManageLabTestAttributeTypesController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showLabTestAttributeTypes(ModelMap model) {
-		/*List<LabTestAttributeType> list = commonLabTestService.getAllLabTestAttributeTypes(Boolean.FALSE);
+		List<LabTestAttributeType> list = commonLabTestService.getAllLabTestAttributeTypes(Boolean.FALSE);
+		model.put("labTestAttributeTypes", list);
 		
-		model.put("labTestAttributeTypes", list);*/
 		return SUCCESS_FORM_VIEW;
 	}
 }

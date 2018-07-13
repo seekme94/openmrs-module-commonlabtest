@@ -39,12 +39,14 @@ body {
 	<div class="box">
 		<form:form commandName="attributeType">
 			<table>
-				<tr>
+				<tr> <form:input path="labTestAttributeTypeId"  hidden="true" id="labTestAttributeTypeId"></form:input>				
 					<td><form:label path="labTestType"><spring:message code="general.labTestType" /></form:label></td>
-					<td><form:input path="labTestType" placeholder="Search test type..." id="lab_test_type"></form:input></td>
+					<td><input  placeholder="Search test type..." id="lab_test_type" /></td>
+					<td><form:input path="labTestType.labTestTypeId"  hidden="true" id="labTestType" /></td>
+				
 				</tr>
 				<tr>
-					<td><form:label path="name"><spring:message code="general.name" /></form:label></td>
+					<td><form:label path="name"><spring:message code="general.name" /><span class="required">*</span></form:label></td>
 					<td><form:input path="name" id="name"></form:input></td>
 				</tr>
 				<tr>
@@ -120,7 +122,7 @@ body {
 	
 	<c:if test="${not empty testAttributeType.name}">
 		<div class="box">
-					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType/retirelabtesttype.form"  >
+					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtestattributetype.form"  >
 
 						<table>
 							<tr>
@@ -147,15 +149,16 @@ body {
 	<br>
     <c:if test="${not empty testAttributeType.name}">
 		<div class="box">
-			<form  method="post">
+			<form  method="post" action ="${pageContext.request.contextPath}/module/commonlabtest/deletelabtestattributetype.form" onsubmit="return confirmDelete()">
 				<table>
 				<tr>
 					<td><h2><spring:message code="general.foreverDelete" /></h2></td>
 				</tr>
 				<tr>
 					<td>
+						<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
 						<div id="delete" style="margin-top: 15px">
-							<input type="submit" value="<spring:message code="general.foreverDelete" />">
+							<input type="submit" value="<spring:message code="general.foreverDelete" />" />
 						</div>
 					</td>
 				</tr>
@@ -184,7 +187,7 @@ body {
 		local_source = new Array();
 	        <c:if test="${not empty listTestType}">
 		        <c:forEach var="testType" items="${listTestType}" varStatus="status">
-		        	local_source.push({value:"${testType.name}"});
+		        	local_source.push({value:"${testType.name}",id:"${testType.labTestTypeId}"});
 		        </c:forEach>
 	        </c:if>     
 	        
@@ -195,13 +198,15 @@ body {
 			 source : function(request, response) {
 				response($.map(local_source, function(item) {
 					return {
-						value : item.value
+						value : item.value,
+						id:item.id
 					}
 				}))
 			},
 			select : function(event, ui) {
-				$(this).val(ui.item.value)
-				//$("#referenceConcept").val(ui.item.id);
+				$(this).val(ui.item.value);
+				alert(ui.item.id);
+				$("#labTestType").val(ui.item.id);
 			},
 			minLength : 0,
 			autoFocus : true
@@ -219,6 +224,15 @@ body {
 	}
 	
 	/*  */
+	function confirmDelete() {
+		//onsubmit="return confirmDelete()"
+		if (confirm("Are you sure you want to retire this Test Type? It will be permanently removed from the system.")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	
 	$j(function() {
 		$j('select[name="datatypeClassname"]').change(function() {
