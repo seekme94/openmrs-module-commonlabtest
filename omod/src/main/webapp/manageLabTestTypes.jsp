@@ -47,7 +47,6 @@
 		</h2>
 	</div>
 	<br>
-
 	<div>
 	 <a href="addLabTestType.form" ><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtesttype.add" /> </a>
 	</div>

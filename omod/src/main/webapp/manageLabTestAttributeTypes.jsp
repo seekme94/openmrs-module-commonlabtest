@@ -48,10 +48,6 @@
 	</div>
 	<br>
 	<div>
-	  <c:if test="${status != ''}"><span class="error">${status}</span></c:if>
-	</div>
-	<br>
-	<div>
 	 <a href="addLabTestAttributeType.form" ><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestattributetype.add" /> </a>
 	</div>
 	<br>
