@@ -243,8 +243,8 @@ legend.scheduler-border {
 			            testTypeOption = "<option value=\"" + this.id + "\">" + testTypeName + "</option>";
 			            jQuery('#testTypeOptions').append(testTypeOption);
 			            testTypeId = this.id; 
-			            testTypeObject = {testTypeId,name: testTypeName};
-			            //testTypeObject[conceptId] = drugName;
+			            //testTypeObject = {testTypeId,name: testTypeName};
+			            testTypeObject[conceptId] = drugName;
 				});
 			}
 			
