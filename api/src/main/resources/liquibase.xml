@@ -341,5 +341,20 @@
 		</addColumn>
 
 	</changeSet>
+	
+	
+	
+	<changeSet id="commonlabtest-2018-07-16-1" author="tahira.niazi">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="commonlabtest_sample"
+					columnName="test_sample_id" />
+			</not>
+
+		</preConditions>
+		
+		<renameColumn tableName="commonlabtest_sample" oldColumnName="test_attribute_id" newColumnName="test_sample_id" columnDataType="int"/>
+	
+	</changeSet>
 
 </databaseChangeLog>
