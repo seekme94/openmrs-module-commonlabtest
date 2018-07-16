@@ -63,8 +63,6 @@ public class LabTestTypeController {
 		
 		JsonArray jsonArray = new JsonArray();
 		for (Concept c : conceptlist) {
-			if (c.getRetired())
-				continue;
 			JsonObject json = new JsonObject();
 			
 			json.addProperty("id", c.getId() + "");
