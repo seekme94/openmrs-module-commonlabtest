@@ -41,11 +41,15 @@ body {
 	<div class="box">
 		<form:form commandName="labTestType">
 			<table>
-				<tr>
-					<form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>				
-					<td><form:label path="referenceConcept"><spring:message code="general.referenceConcept" /></form:label></td>
+				<tr> 
+				     <form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>			
+				    <td><form:label path="referenceConcept"><spring:message code="general.referenceConcept" /></form:label></td>
+				    <td><form:input id="conceptSuggestBox" path="referenceConcept" class="capitalize" list="conceptOptions" placeholder="Search Concept..." ></form:input>
+						<datalist class="lowercase" id="conceptOptions"></datalist>
+				    </td>
+				<%-- 	
 					<td><input value="${testType.referenceConcept.conceptId}"  id="reference_concept"></input></td>
-					<td><form:input path="referenceConcept"  hidden="true"  id="referenceConcept"></form:input></td>
+					<td><form:input path="referenceConcept"  hidden="true"  id="referenceConcept"></form:input></td> --%>
 				</tr>
 				<tr>
 					<td><form:label path="name"><spring:message code="general.testName" /></form:label></td>
@@ -171,8 +175,10 @@ body {
 	var local_source;
 
 	jQuery(document).ready(function() {
+		
+		local_source = getConcepts();
 	/* 	 console.log(getConcepts());
-		local_source = new Array();
+	
 	        <c:if test="${not empty concepts}">
 		        <c:forEach var="concept" items="${concepts}" varStatus="status">
 		       /*    var conceptDescriptionContainingNewLine = "'${concept.description}'";
@@ -181,38 +187,87 @@ body {
 		      /*   local_source.push({id:"${concept.id}",value: '${concept.name}' ,description: '${concept.description}' ,shortName : '${concept.shortName}'});
 		        </c:forEach>
 	        </c:if>      */
+	        
+	        var datalist = document.getElementById("conceptOptions");
+			var dataListLength = datalist.options.length;
+			if(dataListLength > 0 ) {
+				jQuery("#conceptOptions option").remove();
+			}
+			
+			if(local_source.length > 0) {
+				conceptObject = {};
+				jQuery(local_source).each(function() {
+					var conceptName = toTitleCase(this.name.toLowerCase());
+					var shortName = toTitleCase(this.shortName.toLowerCase());
+					var description = toTitleCase(this.description.toLowerCase()); 
+			            conceptOption = "<option value=\"" + this.id + "\">" + conceptName + "</option>";
+			            jQuery('#conceptOptions').append(conceptOption);
+			            conceptId = this.id; 
+			            conceptObject = {id:conceptId,name: conceptName ,description: description ,shortName : shortName};
+			            //conceptObject[conceptId] = drugName;
+				});
+			}
+			
+			jQuery('#conceptSuggestBox').on('input', function(){
+				
+				var val = this.value;
+				if(jQuery('#conceptOptions option').filter(function(){
+			        return this.value === val;        
+			    }).length) {
+					var datalist = document.getElementById("conceptOptions");
+					var options = datalist.options;
+				    jQuery("#name").val(conceptObject["name"]);
+				    jQuery("#short_name").val(conceptObject["shortName"]);
+				    jQuery("#description").val(conceptObject["description"]);
+				}
+			});
+			
+		/* 	jQuery('#drugSetList').change(function() {
+				alert("change is called");
+			}); */
+	        
+	        
+	        
 	});
+	
+	function toTitleCase(str) {
+	    return str.replace(/(?:^|\s)\w/g, function(match) {
+	        return match.toUpperCase();
+	    });
+	}
+	
 	 //get all concepts
 	 function getConcepts(){
 	    	return JSON.parse(JSON.stringify(${conceptsJson}));
 	    }
 	
-	/*autocomplete ...  */
-	$(function() {
+	/* /*autocomplete ...  */
+	/* $(function() {
 		 $("#reference_concept").autocomplete({
 			 source : function(request, response) {
-				response($.map(getConcepts(), function(item) {
+				response($.map(local_source, function(item) {
 					console.log(item);
 					return {
 						id : item.id,
 						value : item.name,
-						shortName: item.shortName,
-						description :item.description
+						/* shortName: item.shortName,
+						description :item.description  
 					}
 				}))
 			},
-			select : function(event, ui) {
+	   	select : function(event, ui) {
 				$(this).val(ui.item.value)
 				//document.getElementById('referenceConcept').value = '';
-				$("#referenceConcept").val(ui.item.id);
+				/* $("#referenceConcept").val(ui.item.id);
 				$("#short_name").val(ui.item.shortName);
 				$("#name").val(ui.item.value);
-				$("#description").val(ui.item.description);
+				$("#description").val(ui.item.description); */
+				/*  event.preventDefault();
 			},
-			minLength : 0,
-			autoFocus : true
+			minLength : 3,
+			autoFocus : false
 		});	     
-	});
+	});   */
 	
 	/*  */
 	function confirmDelete() {
