@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/template/header.jsp"%>
 <%@ include
 	file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
-<!-- <link type="text/css" rel="stylesheet" href="/openmrs/moduleResources/commonlabtest/css/commonlabtestform.css" /> -->
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link
@@ -46,31 +45,130 @@ legend.scheduler-border {
         padding:0 10px;
         border-bottom:none;
     }
+.row{
+ margin-bottom:15px;
+ 
+ }
 </style>
+
+<!--Note: 
+ All the commented code will be remove in the production..
+  -->
 <body>
  <div class="container">
 	<c:set var="testType" scope="session" value="${labTestType}" />
     <fieldset  class="scheduler-border">
-		<c:if test="${empty testType.shortName}">
+		<c:if test="${empty testType.name}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.labtesttype.add" /></legend>
 		</c:if>
-		<c:if test="${not empty testType.shortName}">
+		<c:if test="${not empty testType.name}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.labtesttype.edit" /></legend>
 		</c:if>
-		<form:form commandName="labTestType">
-			<table>
+		<form:form commandName="labTestType" id="form">
+			<!-- Concept Reference -->
+			 <div class="row" >
+			   <div class="col-md-2">
+			   		<form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>
+			        <form:label  class="control-label" path="referenceConcept"><spring:message code="general.referenceConcept" /><span class="required">*</span></form:label>
+			   </div>
+			   <div class="col-md-6">
+			   		<form:input id="conceptSuggestBox" path="referenceConcept" class="form-control" list="conceptOptions" placeholder="Search Concept..." required="required" ></form:input>
+					<datalist class="lowercase" id="conceptOptions"></datalist>
+			   </div>
+			 </div>
+			 <!-- Test Name -->
+			 <div class="row">
+			   <div class="col-md-2">
+			   		<form:label  class="control-label" path="name"><spring:message code="general.testName" /></form:label>
+			   </div>
+			   <div class="col-md-6">
+			   		<form:input class="form-control" path="name" id="name"  name="name"></form:input>
+			   </div>
+			 </div>
+			  <!-- Short Name -->
+			 <div class="row">
+			   <div class="col-md-2">
+					<form:label  class="control-label" path="shortName"><spring:message code="general.shortName" /></form:label>
+			   </div>
+			   <div class="col-md-6">
+			   		<form:input  class="form-control"  path="shortName" id="short_name" ></form:input>
+			   </div>
+			 </div>
+			  <!-- Description -->
+			 <div class="row">
+			   <div class="col-md-2">
+					<form:label class="control-label" path="description"><spring:message code="general.description" /></form:label>
+			   </div>
+			   <div class="col-md-6">
+			   		<form:textarea class="form-control" path="description" id="description" rows="5"></form:textarea>
+			   </div>
+			 </div>
+			  <!-- Test Group -->
+			 <div class="row">
+			   <div class="col-md-2">
+					<form:label  class="control-label" path="testGroup"><spring:message code="general.testGroup" /></form:label>
+			   </div>
+			   <div class="col-md-6">
+			   		<form:select class="form-control" path="testGroup" id="testGroup" >
+								<form:options items="${LabTestGroup}" />
+								<c:forEach items="${LabTestGroup}">
+									<option value="${LabTestGroup}">${LabTestGroup}</option>
+								</c:forEach>
+					</form:select>
+			   </div>
+			 </div>
+			 <!-- Specimen -->
+			 <div class="row">
+			   <div class="col-md-2">
+					<form:label  class="form-check-label"  path="requiresSpecimen"><spring:message code="general.requiresSpecimen" /></form:label>
+			   </div>
+			   <div class="col-md-6">
+			   		<span style="margin-right: 25px"></span>
+			   		<form:radiobutton class="form-check-input" path="requiresSpecimen" value="true" />Yes 
+			   		<span style="margin-right: 25px"></span>
+					<form:radiobutton class="form-check-input"  path="requiresSpecimen" value="false" />No
+			   </div>
+			 </div>
+			<c:if test="${not empty testType.name}">
+				 <!-- Date Create -->
+				 <div class="row">
+				   <div class="col-md-2">
+						<form:label  class="control-label" path="creator"><spring:message code="general.createdBy" /></form:label>
+				   </div>
+				   <div class="col-md-6">
+				   		<c:out value="${testType.creator.personName}" /> - <c:out value="${testType.dateCreated}" />
+				   </div>
+				 </div>
+				  <!-- UUID -->
+				 <div class="row">
+				   <div class="col-md-2">
+						<font color="#D0D0D0"><sub><spring:message code="general.uuid" /></sub></font>
+				   </div>
+				   <div class="col-md-6">
+				   		<font color="#D0D0D0"><sub><c:out value="${testType.uuid}" /></sub></font>
+				   </div>
+				 </div>
+		    </c:if>
+		    <!-- Save -->
+			 <div class="row">
+			   <div class="col-md-2">
+					<input type="submit" value="Save Test Type"></input>
+			   </div>
+			 </div>		 
+			
+<%-- 			<table>
 				 <div class="form-group">
 					<tr> 
 					     <form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>			
-					    <td><form:label  class="control-label" path="referenceConcept"><spring:message code="general.referenceConcept" /></form:label></td>
+					     <td><form:label  class="control-label" path="referenceConcept"><spring:message code="general.referenceConcept" /></form:label></td>
 					     <div class="col-md-6">
 						    <td><form:input id="conceptSuggestBox" path="referenceConcept" class="form-control" list="conceptOptions" placeholder="Search Concept..." required="required" ></form:input>
 								<datalist class="lowercase" id="conceptOptions"></datalist>
 						    </td>
 						 </div>   
-					<%-- 	
+						
 						<td><input value="${testType.referenceConcept.conceptId}"  id="reference_concept"></input></td>
-						<td><form:input path="referenceConcept"  hidden="true"  id="referenceConcept"></form:input></td> --%>
+						<td><form:input path="referenceConcept"  hidden="true"  id="referenceConcept"></form:input></td>
 					</tr>
 				 </div>	
 				 <div class="form-group">
@@ -128,22 +226,40 @@ legend.scheduler-border {
 				<tr>
 					<td>
 						<div id="saveUpdateButton" style="margin-top: 15px">
-							<input type="submit" value="Submit Test Type"></input>
+							<input type="submit" value="Save Test Type"></input>
 						</div>
 					</td>
 				</tr>
 
-			</table>
+			</table> --%>
 
 		</form:form>
+
     </fieldset>
 	<br>
+	<c:if test="${not empty testType.name}">
 	
-	<c:if test="${not empty testType.shortName}">
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.test.retire" /></legend>
 					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtesttype.form" >
-						<table>						
+						 <!-- UUID -->
+						 <div class="row">
+						   <div class="col-md-2">
+								<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
+								<label  class="control-label" path="retireReason"><spring:message code="general.retireReason" /><span class="required">*</span></label>
+						   </div>
+						   <div class="col-md-6">
+						   		<input class="form-control" value="${labTestType.retireReason}" id="retireReason" name="retireReason" required="required">
+						   </div>
+						 </div>
+						 <!-- Retire -->
+						 <div class="row">
+						   <div class="col-md-2" >
+						 		 <input type="submit" value="Retire Test Type"></input>
+						   </div>
+						 </div>
+						
+						<%-- <table>						
 							<tr>
 								<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
 								<td><label  class="control-label" path="retireReason"><spring:message code="general.retireReason" /></label></td>
@@ -156,16 +272,25 @@ legend.scheduler-border {
 									</div>
 								</td>
 							</tr>
-						</table>
+						</table> --%>
 				</form>
         </fieldset>
 	</c:if>
 	<br>
-    <c:if test="${not empty testType.shortName}">
+    <c:if test="${not empty testType.name}">
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.foreverDelete" /></legend>
 			<form  method="post" action ="${pageContext.request.contextPath}/module/commonlabtest/deletelabtesttype.form" onsubmit="return confirmDelete()">
-				<table>				
+				
+				 <!-- Delete -->
+				 <div class="row">
+				   <div class="col-md-2" >
+				  		 <input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
+				 		 <input type="submit" value="<spring:message code="general.foreverDelete" />" />
+				   </div>
+				 </div>
+				
+				<%-- <table>				
 				<tr>
 					<td>
 						<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
@@ -174,7 +299,7 @@ legend.scheduler-border {
 						</div>
 					</td>
 				</tr>
-				</table>
+				</table> --%>
 			</form>
 		 </fieldset>
 	</c:if>
@@ -224,10 +349,7 @@ legend.scheduler-border {
 			
 				jQuery(local_source).each(function() {
 					var conceptName = toTitleCase(this.name.toLowerCase());
-					var shortName = toTitleCase(this.shortName.toLowerCase());
-					var description = toTitleCase(this.description.toLowerCase()); 
-			            conceptOption = "<option value=\"" + this.id + "\">" + conceptName + "</option>";
- 		            
+			        conceptOption = "<option value=\"" + this.id + "\">" + conceptName + "</option>";
 					jQuery('#conceptOptions').append(conceptOption);
 		            conceptId = this.id; 
 		           	conceptObject[conceptId] = conceptName;
@@ -235,7 +357,7 @@ legend.scheduler-border {
 			}
 			
 			jQuery('#conceptSuggestBox').on('input', function(){
-				refresh();
+				//refresh();
 				var val = this.value;
 				if(jQuery('#conceptOptions option').filter(function(){
 			        return this.value === val;        
@@ -244,9 +366,9 @@ legend.scheduler-border {
 					var options = datalist.options;
 				    var conceptId = jQuery(this).val();
 				    var concepts = local_source.find(o => o.id == conceptId);
-				   jQuery("#name").val(concepts.name);
-				   jQuery("#short_name").val(concepts.shortName);
-				   jQuery("#description").val(concepts.description); 
+				   jQuery("#name").val(concepts.name.toLowerCase());
+				   jQuery("#short_name").val(concepts.shortName.toLowerCase());
+				   jQuery("#description").val(concepts.description.toLowerCase()); 
 				}
 			});
 			
@@ -258,12 +380,6 @@ legend.scheduler-border {
 	        
 	});
 	
-	function refresh(){
-		 jQuery("#name").val('');
-		  jQuery("#short_name").val('');
-		  jQuery("#description").val('');
-	
-	}
 	function toTitleCase(str) {
 	    return str.replace(/(?:^|\s)\w/g, function(match) {
 	        return match.toUpperCase();
@@ -312,6 +428,12 @@ legend.scheduler-border {
 			return false;
 		}
 	}
+  
+	/*Form Validation  */
+
+	
+	
+	
 	
 </script>
 

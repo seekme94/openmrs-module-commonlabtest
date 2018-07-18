@@ -6,6 +6,15 @@
 <link   href="/openmrs/moduleResources/commonlabtest/font-awesome/css/font-awesome.min.css" rel="stylesheet" /> 
 <link   href="/openmrs/moduleResources/commonlabtest/css/bootstrap.min.css" rel="stylesheet" />
 
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
+<link
+	href="/openmrs/moduleResources/commonlabtest/font-awesome/css/font-awesome.min.css"
+	rel="stylesheet" />
+<link
+	href="/openmrs/moduleResources/commonlabtest/css/bootstrap.min.css"
+	rel="stylesheet" />
+
 <style>
  body{
     font-size: 12px;
@@ -47,6 +56,12 @@
 		</h2>
 	</div>
 	<br>
+	<c:if test="${not empty status}">
+		<div class="alert alert-success">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Success!</strong> <c:out value="${status}" />
+		</div>
+	</c:if>
 	<div>
 	 <a href="addLabTestAttributeType.form" ><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestattributetype.add" /> </a>
 	</div>
@@ -92,6 +107,9 @@ function relocate_home()
 } 
 
 $(document).ready(function() {
+	console.log("${status}");
+	
+	
 });
 
 

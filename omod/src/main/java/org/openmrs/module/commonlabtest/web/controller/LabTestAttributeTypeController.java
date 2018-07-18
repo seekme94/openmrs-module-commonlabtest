@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -60,28 +61,27 @@ public class LabTestAttributeTypeController {
 	        @ModelAttribute("anyRequestObject") Object anyRequestObject, HttpServletRequest request,
 	        @ModelAttribute("attributeType") LabTestAttributeType attributeType, BindingResult result) {
 		String status = "";
-		
-		///attributeType.setLabTestType(commonLabTestService.getLabTestType(labTestTypeId));
-		
-		//try {
-		//		if (result.hasErrors()) {
-		//			
-		//		} else {
-		
-		commonLabTestService.saveLabTestAttributeType(attributeType);
-		StringBuilder sb = new StringBuilder();
-		sb.append("Lab Test Attribute with Uuid :");
-		sb.append(attributeType.getUuid());
-		sb.append(" is  saved!");
-		status = sb.toString();
-		
-		//}
-		/*	}
+		try {
+			if (result.hasErrors()) {
+				
+			} else {
+				
+				commonLabTestService.saveLabTestAttributeType(attributeType);
+				StringBuilder sb = new StringBuilder();
+				sb.append("Lab Test Attribute with Uuid :");
+				sb.append(attributeType.getUuid());
+				sb.append(" is  saved!");
+				status = sb.toString();
+			}
+		}
 		catch (Exception e) {
-		status = e.getLocalizedMessage();
-		e.printStackTrace();
-		
-		}*/
+			status = e.getLocalizedMessage();
+			/*	//e.printStackTrace();
+				model.addAttribute("status", status);
+				//model.addAttribute("uuid", attributeType == null ? "" : attributeType.getUuid());
+				return SUCCESS_ADD_FORM_VIEW;//"redirect:addLabTestAttributeType.form";//"redirect:manageLabTestAttributeTypes.form";
+			 	*/
+		}
 		model.addAttribute("status", status);
 		return "redirect:manageLabTestAttributeTypes.form";
 		

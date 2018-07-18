@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/template/header.jsp"%>
 <%@ include
 	file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
-<!-- <link type="text/css" rel="stylesheet" href="/openmrs/moduleResources/commonlabtest/css/commonlabtestform.css" /> -->
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link
@@ -47,6 +46,13 @@ legend.scheduler-border {
 </style>
 
 <body>
+	<%-- <c:if test="${not empty status}">
+		<div class="alert alert-danger fade in">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Success!</strong> <c:out value="${status}" />
+		</div>
+	</c:if>	 --%>
+
  <div class="container">
     
 	<c:set var="testAttributeType" scope="session" value="${attributeType}" />
@@ -61,9 +67,9 @@ legend.scheduler-border {
 			<table>
 				 <div class="form-group">
 				     <tr> <form:input path="labTestAttributeTypeId"  hidden="true" id="labTestAttributeTypeId"></form:input>				
-					   <td><form:label path="labTestType" class="control-label"><spring:message code="general.labTestType" /></form:label></td>
+					   <td><form:label path="labTestType" class="control-label"><spring:message code="general.labTestType" /><span class="required">*</span></form:label></td>
 					   <div class="col-md-6">
-					    <td><form:input class="form-control"  id="testTypeSuggestBox" path="labTestType.labTestTypeId" list="testTypeOptions" placeholder="Search Test Type..." ></form:input>
+					    <td><form:input class="form-control"  id="testTypeSuggestBox" path="labTestType.labTestTypeId" list="testTypeOptions" placeholder="Search Test Type..." required="required" ></form:input>
 						<datalist class="lowercase" id="testTypeOptions"></datalist>
 				   		 </td>		  
 						<%-- 	<td><input class="form-control"  value="${testAttributeType.labTestType.labTestTypeId}" required="required" placeholder="Search test type..." id="lab_test_type"  /></td>
@@ -82,20 +88,20 @@ legend.scheduler-border {
 				</div>
 				<div class="form-group">	
 					<tr>
-						<td><form:label path="description" class="control-label"><spring:message code="general.description" /></form:label></td>
+						<td><form:label path="description" class="control-label"><spring:message code="general.description" /><span class="required">*</span></form:label></td>
 						<td><form:textarea class="form-control" path="description" id="description" required="required"></form:textarea></td>
 					</tr>
 				</div>
 				<div class="form-group">	
 					<tr>
-						<td><form:label path="minOccurs" class="control-label"><spring:message code="general.minOccurs" /></form:label></td>
-						<td><form:input class="form-control" path="minOccurs" id="min_occurs" required="required"></form:input></td>
+						<td><form:label path="minOccurs" class="control-label"><spring:message code="general.minOccurs" /><span class="required">*</span></form:label></td>
+						<td><form:input class="form-control" pattern="\d*" maxlength="2" path="minOccurs" id="min_occurs" required="required"></form:input></td>
 					</tr>
 				</div>
 				<div class="form-group">	
 					<tr>
 						<td><form:label path="maxOccurs" class="control-label"><spring:message code="general.maxOccurs" /></form:label></td>
-						<td><form:input  class="form-control" path="maxOccurs" id="max_occurs" required="required"></form:input></td>
+						<td><form:input  class="form-control" pattern="\d*" maxlength="2"  path="maxOccurs" id="max_occurs" ></form:input></td>
 					</tr>
 				</div>
 				<div class="form-group">	
@@ -106,33 +112,33 @@ legend.scheduler-border {
 								<c:forEach items="${datatypes}"  var="datatype">
 									<option value="${datatype}" <c:if test="${datatype == status.value}">selected</c:if>><spring:message code="${datatype}.name"/></option>
 								</c:forEach>
-							</form:select></td>
-							<td><span id="datatypeDescription"></span></td>						
+							</form:select></td>		
+					</tr>
+					<tr><td></td><td><font color="#1aac9b"><span id="datatypeDescription"></span></font></td></tr>
+				</div>
+				<div class="form-group">	
+					<tr>
+						<td><form:label path="datatypeConfig" class="control-label"><spring:message code="general.datatypeConfiguration" /></form:label></td>
+						<td><form:textarea class="form-control" path="datatypeConfig" id="datatypeConfig" ></form:textarea></td>
 					</tr>
 				</div>
 				<div class="form-group">	
-				<tr>
-					<td><form:label path="datatypeConfig" class="control-label"><spring:message code="general.datatypeConfiguration" /></form:label></td>
-					<td><form:textarea class="form-control" path="datatypeConfig" id="datatypeConfig" required="required"></form:textarea></td>
-				</tr>
+					<tr>
+						<td><form:label path="preferredHandlerClassname" class="control-label"><spring:message code="general.preferredHandler" /></form:label></td>
+						<td><form:select class="form-control" path="preferredHandlerClassname" id="preferred_handler_name">
+								<form:options items="${handlers}" />
+								<c:forEach items="${handlers}"  var="handler">
+									<option value="${handler}" <c:if test="${handler == status.value}">selected</c:if>><spring:message code="${handler}.name"/></option>
+								</c:forEach>
+							</form:select></td>
+					</tr>
+					<tr><td></td><td><font color="#1aac9b"><span id="handlerDescription"></span></font></td></tr>
 				</div>
 				<div class="form-group">	
-				<tr>
-					<td><form:label path="preferredHandlerClassname" class="control-label"><spring:message code="general.preferredHandler" /></form:label></td>
-					<td><form:select class="form-control" path="preferredHandlerClassname" id="preferred_handler_name">
-							<form:options items="${handlers}" />
-							<c:forEach items="${handlers}"  var="handler">
-								<option value="${handler}" <c:if test="${handler == status.value}">selected</c:if>><spring:message code="${handler}.name"/></option>
-							</c:forEach>
-						</form:select></td>
-						<td><span id="handlerDescription"></span></td>
-				</tr>
-				</div>
-				<div class="form-group">	
-				<tr>
-					<td><form:label class="control-label" path="handlerConfig"><spring:message code="general.handlerConfiguration" /></form:label></td>
-					<td><form:textarea class="form-control" path="handlerConfig" id="handlerConfig" required="required"></form:textarea></td>
-				</tr>
+					<tr>
+						<td><form:label class="control-label" path="handlerConfig"><spring:message code="general.handlerConfiguration" /></form:label></td>
+						<td><form:textarea class="form-control" path="handlerConfig" id="handlerConfig" ></form:textarea></td>
+					</tr>
 				</div>
 				
 				<c:if test="${not empty testAttributeType.name}">
@@ -170,7 +176,7 @@ legend.scheduler-border {
 							 <div class="form-group">
 								<tr>
 									<input value="${testAttributeType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-									<td><label class="control-label" value="retireReason"><spring:message code="general.retireReason" /></label></td>
+									<td><label class="control-label" value="retireReason"><spring:message code="general.retireReason" /><span class="required">*</span></label></td>
 									<td><input class="form-control" value="${testAttributeType.retireReason}" id="retireReason" name="retireReason" required="required"></input></td>
 								</tr>
 							</div>
@@ -185,7 +191,7 @@ legend.scheduler-border {
 				</form>
         </fieldset>
 	</c:if>
-	
+
 	<br>
     <c:if test="${not empty testAttributeType.name}">
 		 <fieldset  class="scheduler-border">
@@ -207,7 +213,7 @@ legend.scheduler-border {
  </div>
 </body>
 
-
+<!--Java Script  -->
 <script
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/jquery-3.3.1.min.js"></script>
 <script
@@ -244,7 +250,7 @@ legend.scheduler-border {
 			            jQuery('#testTypeOptions').append(testTypeOption);
 			            testTypeId = this.id; 
 			            //testTypeObject = {testTypeId,name: testTypeName};
-			            testTypeObject[conceptId] = drugName;
+			            testTypeObject[testTypeId] = testTypeName;
 				});
 			}
 			
@@ -327,6 +333,11 @@ legend.scheduler-border {
 			$j('#handlerDescription').load(openmrsContextPath + '/q/message.form', { key: '${ attributeType.preferredHandlerClassname }.description' });
 		</c:if>
 	});
+   
+	/* Validation */
+	
+   	console.log("${status}");
+	
 	
 
 </script>

@@ -9,8 +9,10 @@ import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/module/commonlabtest/manageLabTestAttributeTypes.form")
@@ -26,10 +28,12 @@ public class ManageLabTestAttributeTypesController {
 	CommonLabTestService commonLabTestService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String showLabTestAttributeTypes(ModelMap model) {
+	public String showLabTestAttributeTypes(@RequestParam(required = false) String status, ModelMap model) {
 		List<LabTestAttributeType> list = commonLabTestService.getAllLabTestAttributeTypes(Boolean.FALSE);
+		
 		model.put("labTestAttributeTypes", list);
 		
+		model.addAttribute("status", status);
 		return SUCCESS_FORM_VIEW;
 	}
 }
