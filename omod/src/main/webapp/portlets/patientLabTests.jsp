@@ -49,9 +49,13 @@ legend.scheduler-border {
 
 <body>
 	<br>
+	<!-- <div>
+		<a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
+	</div> -->
 	<div>
-		<a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#viewModal"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
+	 <a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
 	</div>
+	<br>
 	<!--List of Test Order  -->
 	<div class=" boxHeader" style="background-color: #1aac9b">
 			<span></span> <b><spring:message code="commonlabtest.order.list" /></b>
@@ -62,53 +66,57 @@ legend.scheduler-border {
 	            <tr>
 					<th> Test Type</th>
 					<th>Lab Reference Number</th>
+					<th>Edit</th>
+					<th>View</th>
+					<th>Test Sample</th>
+					<th>Test Result</th>
 				</tr>
 	        </thead>
 	        <tbody>
-		        <c:forEach var="order" items="${testOrder}">
+		       <%--  <c:forEach var="order" items="${testOrder}">
 							<tr>
 								<td><a
 									href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${order.uuid}">${order.labTestType.name}</a></td>
 								<td>${order.labReferenceNumber}</td>
+								<td>
+								    <span class="table-remove"><i class="fa fa-edit"></i></span>
+								</td>
 							</tr>
-				 </c:forEach>
+				 </c:forEach> --%>
+				 <tr>
+			            <td>abcc</td>
+			             <td>1234</td>
+ 						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
+			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
+			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
+			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
+			             
+			             </tr>
+			        <tr>
+			            <td>abc</td>
+			             <td>567888</td>
+ 						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
+			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
+			       	     <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
+			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
+			             
+			        </tr>
+			         <tr>
+			             <td>sdfdasfas</td>
+			             <td>sdfdsdfsdf</td>
+			             <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
+			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
+			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
+			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
+			             
+			       </tr>
 	        </tbody>
 	    </table>
 	 </div>
-
-	<!-- Add Modal -->
-	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold">Add Test Order</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body mx-6">
-     			<form id="form">
-                    <div class="form-group">
-                        <label for="name"><spring:message code="general.testType" /></label>
-			   			<input class="form-control" for="labTestType" id="labTestType"  name="labTestType" required="required"></input>
-                    </div>
-                    <div class="form-group">
-                        <label for="emailid"><spring:message code="commonlabtest.order.labReferenceNo" /></label>
-			   			<input class="form-control" for="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber" required="required"></input>
-                    </div>
-         
-                </form>
-            </div>
-            <div class="modal-footer d-flex justify-content-center">
-				 <input type="submit" value="Save"></input>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- View Modal -->
+	 
+	 <!-- View Modal -->
 	<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
                 <h4 class="modal-title w-100 font-weight-bold">View Test Order</h4>
@@ -167,7 +175,7 @@ legend.scheduler-border {
 						 </div>
 						 <!-- Retire -->
 						 <div class="row">
-						   <div class="col-md-4" align="center">
+						   <div class="col-md-4">
 						 		 <input type="submit" value="Retire Test Order"></input>
 						   </div>
 						 </div>
@@ -194,7 +202,7 @@ legend.scheduler-border {
         </div>
     </div>
 </div>
-
+	 
 
 </body>
 
@@ -216,12 +224,32 @@ legend.scheduler-border {
 <script type="text/javascript">
 $(document).ready(function () {
 	
-	$('#testOrderTable').DataTable({
+	$('#testOrderTable').dataTable({
 		 "bPaginate": true
 	  });
 	  $('.dataTables_length').addClass('bs-select');
 	  
-	  
+	/*View Test Order */
+	  $('.table-sample').click(function () {
+		 
+		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId};  
+		  
+		  
+		    //$('#addModal').modal('show'); 
+		  
+		    //$(this).parents('tr').detach();
+		 	 var $row = $(this).closest("tr");    // Find the row
+		     var $tds = $row.find("td:first");
+		     console.log($(this).text());
+		    $.each($tds, function() {
+		        console.log($(this).text());
+		    });
+		});
+	  $('.table-view').click(function () {
+			 
+		    $('#viewModal').modal('show'); 
+		  
+		});
 	  
 });
 </script>

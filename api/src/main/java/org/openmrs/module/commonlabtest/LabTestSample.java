@@ -346,13 +346,11 @@ public class LabTestSample extends BaseOpenmrsData {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-
-
+	
 	public Integer getLabTestSampleId() {
 		return labTestSampleId;
 	}
-
-
+	
 	public void setLabTestSampleId(Integer id) {
 		this.labTestSampleId = id;
 	}
