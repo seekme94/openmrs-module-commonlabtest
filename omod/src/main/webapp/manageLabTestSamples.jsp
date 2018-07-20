@@ -78,6 +78,7 @@ legend.scheduler-border {
 					<th>Sample ID</th>
 					<th>Specimen Type</th>
 					<th>Specimen Site</th>
+					<th>Collected On</th>
 					<th>Status</th>
 					<th></th>
 					<th></th>
@@ -98,22 +99,59 @@ legend.scheduler-border {
 			            <td>11825613065</td>
 			            <td>SPUTUM</td>
 			            <td>dummy data</td>
+			            <td>13-July-2018</td>
 			            <td>COLLECTED</td>
-						<td><button type="button" class="btn  accept" >Reject</button></td> 
- 						<td><button type="button" class="btn  process" >Accept</button></td> 		
+						<td><button type="button" class="btn  reject" >Reject</button></td> 
+ 						<td><button type="button" class="btn  accept" >Accept</button></td> 		
  				</tr>
 			    
 			     <tr style="color: red;">
 			            <td>11825613023</td>
 			            <td>BLOOD</td>
 			            <td>dummy data</td>
+			            <td>10-July-2018</td>
 			            <td>EXPIRED</td>
-			            <td><button type="button" class="btn  accept" >Reject</button></td> 
- 						<td><button type="button" class="btn  process" >Accept</button></td> 
+			            <td><button type="button" class="btn  reject" >Reject</button></td> 
+ 						<td><button type="button" class="btn  accept" >Accept</button></td> 
  				</tr>		
 	        </tbody>
 	    </table>
 	 </div>
+	 
+	  <!-- Rejected Reason Modal -->
+	<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Enter Reject Reason</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                 <!-- UUID -->
+						 <div class="row">
+						   <div class="col-md-4">
+								<label  class="control-label">Reason<span class="required">*</span></label>
+						   </div>
+						   <div class="col-md-6">
+						   		<input class="form-control" value="" id="retireReason" required="required">
+						   </div>
+						 </div>
+						 <!-- Retire -->
+						 <div class="row">
+						    <div class="col-md-4">
+						    </div>
+						   <div class="col-md-4">
+						 		 <input type="submit" data-dismiss="modal"  value="Submit"></input>
+						   </div>
+						 </div>
+            </div>
+        </div>
+    </div>
+</div>
+	 
+	 
 
 </body>
 
@@ -143,8 +181,8 @@ $(document).ready(function () {
 	  $('.accept').click(function () {
 		   
 		});
-	  $('.process').click(function () {
-		   
+	  $('.reject').click(function () {
+		  $('#rejectModal').modal('show'); 
 		});
 	  
 });
