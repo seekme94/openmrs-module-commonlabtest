@@ -75,7 +75,7 @@ legend.scheduler-border {
 		 <table id="testOrderTable" class="table table-striped table-bordered" style="width:100%">
 	        <thead>
 	            <tr>
-					<th>Test Order Id</th>
+					<th>Sample ID</th>
 					<th>Specimen Type</th>
 					<th>Specimen Site</th>
 					<th>Status</th>
@@ -95,8 +95,8 @@ legend.scheduler-border {
 							</tr>
 				 </c:forEach> --%>
 				 <tr>
-			            <td>1</td>
-			            <td>dummy data</td>
+			            <td>11825613065</td>
+			            <td>SPUTUM</td>
 			            <td>dummy data</td>
 			            <td>COLLECTED</td>
 						<td><button type="button" class="btn  accept" >Reject</button></td> 
@@ -104,8 +104,8 @@ legend.scheduler-border {
  				</tr>
 			    
 			     <tr style="color: red;">
-			            <td>1</td>
-			            <td>dummy data</td>
+			            <td>11825613023</td>
+			            <td>BLOOD</td>
 			            <td>dummy data</td>
 			            <td>EXPIRED</td>
 			            <td><button type="button" class="btn  accept" >Reject</button></td> 
