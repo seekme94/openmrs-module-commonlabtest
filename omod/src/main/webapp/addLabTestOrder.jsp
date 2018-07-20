@@ -54,10 +54,10 @@ legend.scheduler-border {
 <div class="container">
 	<c:set var="testOrder" scope="session" value="${labTest}" />
     <fieldset  class="scheduler-border">
-		<c:if test="${empty testOrder.labReferenceNumber}">
+		<c:if test="${empty labTest.labReferenceNumber}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.order.add" /></legend>
 		</c:if>
-		<c:if test="${not empty testOrder.labReferenceNumber}">
+		<c:if test="${not empty labTest.labReferenceNumber}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.order.edit" /></legend>
 		</c:if>
 		<form:form commandName="labTest" id="form">
@@ -73,8 +73,7 @@ legend.scheduler-border {
 			<!-- Test Type -->
 			 <div class="row" >
 			   <div class="col-md-4">
-<!-- 			   		<form:input path="testOrderId"  hidden="true" id="testOrderId"></form:input>
- -->			        <form:label  class="control-label" path="labTestType"><spring:message code="general.testType" /><span class="required">*</span></form:label>
+			        <form:label  class="control-label" path="labTestType"><spring:message code="general.testType" /><span class="required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
 			   		<form:input id="testTypeSuggestBox" path="labTestType" class="form-control" list="testTypeOptions" placeholder="Search Test Type..." required="required" ></form:input>
@@ -105,7 +104,9 @@ legend.scheduler-border {
 			   		<form:label  class="control-label" path="order.scheduledDate"><spring:message code="general.scheduledDate" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" path="order.scheduledDate" id="scheduledDate"  name="scheduledDate"></form:input>
+			     	     <openmrs_tag:dateField formFieldName="startDateSet" startValue=""/>
+<!-- 			   		<form:input class="form-control" path="order.scheduledDate" id="scheduledDate"  name="scheduledDate"></form:input>
+ -->					
 			   </div>
 			 </div>
 		    <!-- Save -->

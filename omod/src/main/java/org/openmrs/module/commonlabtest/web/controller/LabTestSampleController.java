@@ -29,15 +29,15 @@ public class LabTestSampleController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestSample.form")
 	public String showLabTestTypes(@RequestParam(required = true) Integer patientId,
-	        @RequestParam(required = false) Integer testOrderId, ModelMap model) {
+	        @RequestParam(required = false) Integer testSampleId, ModelMap model) {
 		
 		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
 		LabTestSample test;
-		if (testOrderId == null) {
+		if (testSampleId == null) {
 			test = new LabTestSample();
 		} else {
 			
-			test = commonLabTestService.getLabTestSample(testOrderId);
+			test = commonLabTestService.getLabTestSample(testSampleId);
 		}
 		model.addAttribute("testSample", test);
 		model.addAttribute("patientId", patientId);

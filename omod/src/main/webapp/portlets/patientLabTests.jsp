@@ -64,11 +64,11 @@ legend.scheduler-border {
 		 <table id="testOrderTable" class="table table-striped table-bordered" style="width:100%">
 	        <thead>
 	            <tr>
-					<th> Test Type</th>
+					<th>Test Type</th>
 					<th>Lab Reference Number</th>
 					<th>Edit</th>
 					<th>View</th>
-					<th>Test Sample</th>
+					<th>Manage Test Sample</th>
 					<th>Test Result</th>
 				</tr>
 	        </thead>
@@ -84,8 +84,8 @@ legend.scheduler-border {
 							</tr>
 				 </c:forEach> --%>
 				 <tr>
-			            <td>abcc</td>
-			             <td>1234</td>
+			            <td>AFB SMEAR</td>
+			             <td>AFB-4NRL9876543100-52</td>
  						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
 			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
 			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
@@ -93,8 +93,8 @@ legend.scheduler-border {
 			             
 			             </tr>
 			        <tr>
-			            <td>abc</td>
-			             <td>567888</td>
+			            <td>Chest X-Ray</td>
+			             <td>CXR-NRL9876543100-52</td>
  						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
 			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
 			       	     <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
@@ -102,8 +102,17 @@ legend.scheduler-border {
 			             
 			        </tr>
 			         <tr>
-			             <td>sdfdasfas</td>
-			             <td>sdfdsdfsdf</td>
+			             <td>GeneXpert</td>
+			             <td>GXP-IRS12345</td>
+			             <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
+			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
+			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
+			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
+			             
+			       </tr>
+			        <tr>
+			             <td>SEDIMENTATION</td>
+			             <td>SED-6AIRS12345</td>
 			             <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
 			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
 			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
@@ -116,7 +125,7 @@ legend.scheduler-border {
 	 
 	 <!-- View Modal -->
 	<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
                 <h4 class="modal-title w-100 font-weight-bold">View Test Order</h4>
@@ -125,41 +134,82 @@ legend.scheduler-border {
                 </button>
             </div>
             <div class="modal-body">
-     			<form:form commandName="testOrder" id="form">
-	     			 <div class="form-group">
-                        <label ><font color="#D0D0D0"><sub><spring:message code="commonlabtest.order.id" /></sub></font></label>
-			   			<font color="#D0D0D0"><sub><c:out value="${testOrder.id}" /></sub></font>
-                    </div>
-                    <div class="form-group">
-                        <label><font color="#000000"><sub><spring:message code="general.testGroup" /></sub></font></label>
-			   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.testGroup}" /></sub></font>
-                    </div>
-                     <div class="form-group">
-                        <label><font color="#000000"><sub><spring:message code="general.testType" /></sub></font></label>
-			   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType}" /></sub></font>
-                    </div>
-                     <div class="form-group">
-                        <label><font color="#000000"><sub><spring:message code="commonlabtest.order.labReferenceNo" /></sub></font></label>
-			   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labReferenceNumber}" /></sub></font>
-                    </div>
-                    <div class="form-group">
-                        <label><font color="#000000"><sub><spring:message code="general.requiresSpecimen" /></sub></font></label>
-			   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.requiresSpecimen}" /></sub></font>
-                    </div>
-                     <div class="form-group">
-                        <label><font color="#000000"><sub><spring:message code="general.createdBy" /></sub></font></label>
-			   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.dateCreated}" /></sub></font>
-                    </div>
-                     <div class="form-group">
-                        <label><font color="#000000"><sub><spring:message code="general.changedBy" /></sub></font></label>
-			   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.changedBy}" /></sub></font>
-                    </div>
-                     <div class="form-group">
-                        <label>	<font color="#D0D0D0"><sub><spring:message code="general.uuid" /></sub></font></label>
-			   			<font color="#D0D0D0"><sub><c:out value="${testOrder.uuid}" /></sub></font>
-                    </div>
-    
-                </form:form>
+            
+               <fieldset  class="scheduler-border">
+      	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.order.detail" /></legend>
+			
+	     			<form:form commandName="testOrder" id="form">
+		     			 <div class="form-group">
+	                        <label ><font color="#D0D0D0"><sub><spring:message code="commonlabtest.order.id" /></sub></font></label>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.id}" /></sub></font>
+	                    </div>
+	                    <div class="form-group">
+	                        <label><font color="#000000"><sub><spring:message code="general.testGroup" /></sub></font></label>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.testGroup}" /></sub></font>
+	                    </div>
+	                     <div class="form-group">
+	                        <label><font color="#000000"><sub><spring:message code="general.testType" /></sub></font></label>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType}" /></sub></font>
+	                    </div>
+	                     <div class="form-group">
+	                        <label><font color="#000000"><sub><spring:message code="commonlabtest.order.labReferenceNo" /></sub></font></label>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labReferenceNumber}" /></sub></font>
+	                    </div>
+	                    <div class="form-group">
+	                        <label><font color="#000000"><sub><spring:message code="general.requiresSpecimen" /></sub></font></label>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.requiresSpecimen}" /></sub></font>
+	                    </div>
+	                     <div class="form-group">
+	                        <label><font color="#000000"><sub><spring:message code="general.createdBy" /></sub></font></label>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.dateCreated}" /></sub></font>
+	                    </div>
+	                     <div class="form-group">
+	                        <label><font color="#000000"><sub><spring:message code="general.changedBy" /></sub></font></label>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.changedBy}" /></sub></font>
+	                    </div>
+	                     <div class="form-group">
+	                        <label>	<font color="#D0D0D0"><sub><spring:message code="general.uuid" /></sub></font></label>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.uuid}" /></sub></font>
+	                    </div>
+	    
+	                </form:form>
+	            </fieldset>    
+               
+               <!--Test Sample Details -->
+               <fieldset  class="scheduler-border">
+      	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.labtestsample.detail" /></legend>
+						<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">
+									<thead>
+										<tr>
+											 <th><a>Test Order</a></th>
+											 <th><a>Spacimen Type</a></th>
+											 <th><a>Spacimen Site</a></th>
+											 <th><a>Status</a></th>
+										</tr>
+									</thead>
+									<tbody>
+										 <tr>
+									            <td>1</td>
+									            <td>dummy data</td>
+									            <td>dummy data</td>
+									            <td>Collected</td>
+								        </tr>
+								         <tr>
+									            <td>1</td>
+									            <td>dummy data</td>
+									            <td>dummy data</td>
+									            <td>Collected</td>
+								        </tr>
+									</tbody>
+							</table>
+       			 </fieldset>
+       			 
+       			  <!--Test Sample Details -->
+               <fieldset  class="scheduler-border">
+      	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.result.detail" /></legend>
+					
+       			 </fieldset>
+               
                 <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="general.test.retire" /></legend>
 					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtesttype.form" >
@@ -196,7 +246,7 @@ legend.scheduler-border {
 						</table> --%>
 					</form>
        			 </fieldset>
-                
+
                 
             </div>
         </div>
@@ -248,6 +298,18 @@ $(document).ready(function () {
 	  $('.table-view').click(function () {
 			 
 		    $('#viewModal').modal('show'); 
+		  
+		});
+	  
+	  $('.table-edit').click(function () {
+			 
+		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+${model.patient.patientId}; //+"&testOrderId="+2;  
+		  
+		});
+	  
+	  $('.table-result').click(function () {
+			 
+		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId="+${model.patient.patientId};  
 		  
 		});
 	  

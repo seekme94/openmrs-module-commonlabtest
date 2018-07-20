@@ -106,6 +106,12 @@ legend.scheduler-border {
 				</div>
 				<div class="form-group">	
 					<tr>
+						<td><form:label path="sortWeight" class="control-label"><spring:message code="general.sortWeight" /><span class="required">*</span></form:label></td>
+						<td><form:input class="form-control" pattern="\d*" path="sortWeight" id="sortWeight" required="required" ></form:input></td>
+					</tr>
+				</div>
+				<div class="form-group">	
+					<tr>
 						<td><form:label path="datatypeClassname" class="control-label"><spring:message code="general.dataType" /></form:label></td>
 						<td><form:select class="form-control" path="datatypeClassname" id="data_type_name">
 								<form:options items="${datatypes}" />

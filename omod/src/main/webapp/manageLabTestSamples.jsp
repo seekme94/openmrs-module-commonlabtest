@@ -26,6 +26,16 @@ input[type=submit] {
 	cursor: pointer;
 	
 }
+input[type=button] {
+	background-color: #1aac9b;
+	color: white;
+	padding: 8px 22px;
+	border: none;
+	border-radius: 2px;
+	cursor: pointer;
+	
+}
+
 fieldset.scheduler-border {
     border: 1px groove #ddd !important;
     padding: 0 1.4em 1.4em 1.4em !important;
@@ -70,6 +80,7 @@ legend.scheduler-border {
 					<th>Specimen Site</th>
 					<th>Status</th>
 					<th></th>
+					<th></th>
 				</tr>
 	        </thead>
 	        <tbody>
@@ -87,30 +98,19 @@ legend.scheduler-border {
 			            <td>1</td>
 			            <td>dummy data</td>
 			            <td>dummy data</td>
-			            <td>Collect</td>
- 						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span> <br><span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></td> 
-			     </tr>
-			     <tr>
+			            <td>COLLECTED</td>
+						<td><button type="button" class="btn  accept" >Reject</button></td> 
+ 						<td><button type="button" class="btn  process" >Accept</button></td> 		
+ 				</tr>
+			    
+			     <tr style="color: red;">
 			            <td>1</td>
 			            <td>dummy data</td>
 			            <td>dummy data</td>
-			            <td>Collect</td>
- 						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span> <br><span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></td> 
-			     </tr>
-			     <tr>
-			            <td>1</td>
-			            <td>dummy data</td>
-			            <td>dummy data</td>
-			            <td>Collect</td>
- 						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span> <br><span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></td> 
-			     </tr>
-			     <tr>
-			            <td>1</td>
-			            <td>dummy data</td>
-			            <td>dummy data</td>
-			            <td>Collect</td>
- 						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span> <br><span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></td> 
-			     </tr>
+			            <td>EXPIRED</td>
+			            <td><button type="button" class="btn  accept" >Reject</button></td> 
+ 						<td><button type="button" class="btn  process" >Accept</button></td> 
+ 				</tr>		
 	        </tbody>
 	    </table>
 	 </div>
@@ -140,23 +140,11 @@ $(document).ready(function () {
 	  });
 	  $('.dataTables_length').addClass('bs-select');
 	  
-	/*View Test Order */
-	  $('.table-edit').click(function () {
-		 
-		    $('#addModal').modal('show'); 
-		  
-		    //$(this).parents('tr').detach();
-		 	 var $row = $(this).closest("tr");    // Find the row
-		     var $tds = $row.find("td:first");
-		     console.log($(this).text());
-		    $.each($tds, function() {
-		        console.log($(this).text());
-		    });
+	  $('.accept').click(function () {
+		   
 		});
-	  $('.table-view').click(function () {
-			 
-		    $('#viewModal').modal('show'); 
-		  
+	  $('.process').click(function () {
+		   
 		});
 	  
 });
