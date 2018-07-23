@@ -100,8 +100,8 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<LabTestType> getLabTestTypes(String name, String shortName, LabTestGroup testGroup,
-	        Concept referenceConcept, boolean includeRetired) {
+	public List<LabTestType> getLabTestTypes(String name, String shortName, LabTestGroup testGroup, 
+			Concept referenceConcept, boolean includeRetired) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestType.class);
 		if (name != null) {
 			criteria.add(Restrictions.ilike("name", name, MatchMode.START));
@@ -227,6 +227,22 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 			criteria.add(Restrictions.eq("retired", false));
 		}
 		criteria.addOrder(Order.asc("name")).addOrder(Order.asc("retired")).list();
+		return criteria.list();
+	}
+	
+	/**
+	 * @see org.openmrs.module.commonlabtest.api.dao.CommonLabTestDao#getLabTestAttributeTypes(org.openmrs.module.commonlabtest.LabTestType,
+	 *      boolean)
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<LabTestAttributeType> getLabTestAttributeTypes(LabTestType labTestType, boolean includeRetired) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestAttributeType.class);
+		criteria.add(Restrictions.eq("labTestType", labTestType));
+		if (!includeRetired) {
+			criteria.add(Restrictions.eq("retired", false));
+		}
+		criteria.addOrder(Order.asc("sortWeight")).addOrder(Order.asc("retired")).list();
 		return criteria.list();
 	}
 	
@@ -490,7 +506,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	public LabTest saveLabTest(LabTest labTest) {
-		sessionFactory.getCurrentSession().save(labTest);
+		sessionFactory.getCurrentSession().saveOrUpdate(labTest);
 		return labTest;
 	}
 	
@@ -499,7 +515,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	public LabTestAttribute saveLabTestAttribute(LabTestAttribute labTestAttribute) {
-		sessionFactory.getCurrentSession().save(labTestAttribute);
+		sessionFactory.getCurrentSession().saveOrUpdate(labTestAttribute);
 		return labTestAttribute;
 	}
 	
@@ -508,7 +524,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	public LabTestAttributeType saveLabTestAttributeType(LabTestAttributeType labTestAttributeType) {
-		sessionFactory.getCurrentSession().save(labTestAttributeType);
+		sessionFactory.getCurrentSession().saveOrUpdate(labTestAttributeType);
 		return labTestAttributeType;
 	}
 	
@@ -517,7 +533,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	public LabTestSample saveLabTestSample(LabTestSample labTestSample) {
-		sessionFactory.getCurrentSession().save(labTestSample);
+		sessionFactory.getCurrentSession().saveOrUpdate(labTestSample);
 		return labTestSample;
 	}
 	

@@ -158,6 +158,16 @@ public interface CommonLabTestService extends OpenmrsService {
 	        throws APIException;
 	
 	/**
+	 * Get a list of LabTestAttributeType objects against a LabTestType object
+	 * 
+	 * @param labTestType
+	 * @param includeRetired
+	 * @return
+	 * @throws APIException
+	 */
+	List<LabTestAttributeType> getLabTestAttributeTypes(LabTestType labTestType, boolean includeRetired) throws APIException;
+	
+	/**
 	 * Returns a LabTest object by uuid. It can be called by any authenticated user. It is fetched
 	 * in read only transaction.
 	 * 
