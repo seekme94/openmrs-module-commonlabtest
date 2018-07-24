@@ -49,9 +49,7 @@ legend.scheduler-border {
 
 <body>
 	<br>
-	<!-- <div>
-		<a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
-	</div> -->
+	<c:set var="testOrder" scope="session" value="${testOrder}" />
 	<div>
 	 <a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
 	</div>
@@ -73,17 +71,19 @@ legend.scheduler-border {
 				</tr>
 	        </thead>
 	        <tbody>
-		       <%--  <c:forEach var="order" items="${testOrder}">
+		        <c:forEach var="order" items="${testOrder}">
 							<tr>
 								<td><a
 									href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${order.uuid}">${order.labTestType.name}</a></td>
 								<td>${order.labReferenceNumber}</td>
-								<td>
-								    <span class="table-remove"><i class="fa fa-edit"></i></span>
-								</td>
+								 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
+					             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
+					             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
+					             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
+					             
 							</tr>
-				 </c:forEach> --%>
-				 <tr>
+				 </c:forEach>
+				<!--  <tr>
 			            <td>AFB SMEAR</td>
 			             <td>AFB-4NRL9876543100-52</td>
  						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
@@ -118,7 +118,7 @@ legend.scheduler-border {
 			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
 			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
 			             
-			       </tr>
+			       </tr> -->
 	        </tbody>
 	    </table>
 	 </div>
