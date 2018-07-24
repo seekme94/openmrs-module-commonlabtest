@@ -2,7 +2,7 @@ package org.openmrs.module.commonlabtest.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Order;
+import org.openmrs.Encounter;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @Controller
 public class LabTestOrderController {
@@ -31,28 +34,30 @@ public class LabTestOrderController {
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestOrder.form")
 	public String showLabTestTypes(@RequestParam(required = true) Integer patientId,
 	        @RequestParam(required = false) Integer testOrderId, ModelMap model) {
-		
-		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
 		LabTest test;
 		if (testOrderId == null) {
 			test = new LabTest();
 		} else {
-			/*LabTest labTest = new LabTest();
-			labTest.setLabReferenceNumber("GXP-IRS12345");
-			Order order = Context.getOrderService().getOrder(2);
-			System.out.println(" Order ID : " + order.getOrderNumber());
-			labTest.setOrder(order);
-			labTest.setLabTestType(commonLabTestService.getLabTestType(2));
-			labTest.setCreator(Context.getAuthenticatedUser());*/
-			test = commonLabTestService.getLabTest(2);
-			System.out.println("===================Test Order==========================");
-			System.out.println("Test Order ID : " + testOrderId);
-		  //System.out.println("Test Order : " + test.getLabReferenceNumber());
-		
-		}
-		
+            test = commonLabTestService.getLabTest(testOrderId);
+        }
+        //Patient patient =Context.getPatientService().getPatient(patientId);
+
+        List<Encounter> list = Context.getEncounterService().getEncountersByPatientId(patientId);
+        if (list.size() > 0) {
+            Collections.sort(list, new Comparator<Encounter>() {
+
+                @Override
+                public int compare(Encounter o1, Encounter o2) {
+                    return o2.getEncounterDatetime().compareTo(o1.getEncounterDatetime());
+                }
+            });
+			/*for (Encounter e : list.subList(0, list.size() - 1)) {
+				System.out.println(e.getEncounterDatetime());
+			}*/
+        }
 		model.addAttribute("labTest", test);
 		model.addAttribute("patientId", patientId);
+        model.addAttribute("encounters", list.subList(0, list.size() - 1));
 		
 		return SUCCESS_ADD_FORM_VIEW;
 	}
@@ -62,12 +67,12 @@ public class LabTestOrderController {
 	        @ModelAttribute("anyRequestObject") Object anyRequestObject, HttpServletRequest request,
 	        @ModelAttribute("labTest") LabTest labTest, BindingResult result) {
 		String status = "";
-		/*try {
+        try {
 			if (result.hasErrors()) {
 				
 			} else {
-				//   labTest.set
-				commonLabTestService.saveLabTest(labTest);
+
+                commonLabTestService.saveLabTest(labTest);
 				StringBuilder sb = new StringBuilder();
 				sb.append("Lab Test Order with Uuid :");
 				sb.append(labTest.getUuid());
@@ -77,13 +82,13 @@ public class LabTestOrderController {
 		}
 		catch (Exception e) {
 			status = e.getLocalizedMessage();
-				//e.printStackTrace();
-				model.addAttribute("status", status);
-				//model.addAttribute("uuid", attributeType == null ? "" : attributeType.getUuid());
-				return SUCCESS_ADD_FORM_VIEW;//"redirect:addLabTestAttributeType.form";//"redirect:manageLabTestAttributeTypes.form";
-			 	
-		}*/
-		//model.addAttribute("status", status);
+            //e.printStackTrace();
+            model.addAttribute("status", status);
+            //model.addAttribute("uuid", attributeType == null ? "" : attributeType.getUuid());
+            return SUCCESS_ADD_FORM_VIEW;//"redirect:addLabTestAttributeType.form";//"redirect:manageLabTestAttributeTypes.form";
+
+        }
+        model.addAttribute("status", status);
 		return "redirect:patientLabTests.form";
 	}
 	
