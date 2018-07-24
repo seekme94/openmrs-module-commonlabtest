@@ -14,6 +14,11 @@
 <link
 	href="/openmrs/moduleResources/commonlabtest/css/bootstrap.min.css"
 	rel="stylesheet" />
+<link
+	href="/openmrs/moduleResources/commonlabtest/css/dataTables.bootstrap4.min.css"
+	rel="stylesheet" />
+
+
 
 <style>
  body{
@@ -45,10 +50,6 @@
 }
 </style>
 
-
-<!-- Container  -->
-<div class="container">
-
 	<!-- Heading -->
 	<div>
 		<h2>
@@ -66,38 +67,45 @@
 	 <a href="addLabTestAttributeType.form" ><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestattributetype.add" /> </a>
 	</div>
 	<br>
-	<div class="card card-cascade narrower">
-		<div class="card-header boxHeader" style="background-color: #1aac9b">
+		<div class="boxHeader" style="background-color: #1aac9b">
 			<span><i class="fa fa-list"></i> </span> <b><spring:message code="commonlabtest.labtestattributetype.list" /></b>
 		</div>
-		<form  class="box">
-			<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">
+		<div  class="box">
+		  <table id="manageTestAttributeTypeTable" class="table table-striped table-bordered" style="width:100%">
 				<thead>
 					<tr>
-						 <th class="th-lg"><a> Name <i class="fa fa-sort ml-1"></i></a></th>
-						 <th class="th-lg"><a> Description <i class="fa fa-sort ml-1"></i></a></th>
+						 <th hidden="true"></th>
+						 <th>Name</th>
+						 <th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach var="tt" items="${labTestAttributeTypes}">
 						<tr>
+						    <td hidden="true" id="uuid">${tt.uuid}</td>
 							<td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${tt.uuid}">${tt.name}</a></td>
 							<td>${tt.description}</td>
 						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
-		</form>
-	</div>
-</div>
+		</div>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
 
-<!-- JavaScript Code  -->
-
-<script src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/jquery-3.3.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/popper.min.js" ></script>
-<script src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/bootstrap.min.js" ></script>
+<!--JAVA SCRIPT  -->
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/popper.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/bootstrap.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery-ui.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery.dataTables.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/dataTables.bootstrap4.min.js"></script>
 
 
 <script>
@@ -108,7 +116,24 @@ function relocate_home()
 
 $(document).ready(function() {
 	console.log("${status}");
+	$('#manageTestAttributeTypeTable').dataTable({
+		 "bPaginate": true
+	  });
+	  $('.dataTables_length').addClass('bs-select');
+	  
 	
+	
+	
+	 $('#manageTestAttributeTypeTable td').click(function() {
+    	 //$(this).parents('tr').detach();
+	 	
+    	 var $row = $(this).closest("tr");    // Find the row
+	     var $tds = $row.find("td:first");
+	 	 var uuid =$tds.text();
+		 window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid="+uuid;
+	     
+	     
+    });
 	
 });
 

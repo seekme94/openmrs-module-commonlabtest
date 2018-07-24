@@ -83,10 +83,10 @@ legend.scheduler-border {
 			 <!-- Lab Reference Number -->
 			 <div class="row">
 			   <div class="col-md-4">
-			   		<form:label  class="control-label" path="labReferenceNumber"><spring:message code="commonlabtest.order.labReferenceNo" /></form:label>
+			   		<form:label  class="control-label" path="labReferenceNumber"><spring:message code="commonlabtest.order.labReferenceNo" /><span class="required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" path="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber"></form:input>
+			   		<form:input class="form-control" path="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber" required="required"></form:input>
 			   </div>
 			 </div>
 			  <!-- Care Setting-->
@@ -95,8 +95,11 @@ legend.scheduler-border {
 			   		<form:label  class="control-label" path="order.CareSetting"><spring:message code="general.careSetting" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" path="order.CareSetting" id="careSetting"  name="careSetting"></form:input>
-			   </div>
+			   		<form:radiobutton path="order.CareSetting" value="OutPatient"  checked="checked"/>OutPatient 
+			   		<span style="margin-right: 25px"></span>
+					<form:radiobutton path="order.CareSetting" value="OutPatient"/>InPatient 	
+<!-- 			   		<form:input class="form-control" path="order.CareSetting" id="careSetting"  name="careSetting"></form:input>
+ -->			   </div>
 			 </div>
 			   <!-- Date Scheduled-->
 			 <div class="row">

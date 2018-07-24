@@ -5,40 +5,50 @@
 <link type="text/css" rel="stylesheet" href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link   href="/openmrs/moduleResources/commonlabtest/font-awesome/css/font-awesome.min.css" rel="stylesheet" /> 
 <link   href="/openmrs/moduleResources/commonlabtest/css/bootstrap.min.css" rel="stylesheet" />
+<link
+	href="/openmrs/moduleResources/commonlabtest/css/dataTables.bootstrap4.min.css"
+	rel="stylesheet" />
+
 
 <style>
- body{
-    font-size: 12px;
+body {
+	font-size: 12px;
+}
+input[type=submit] {
+	background-color: #1aac9b;
+	color: white;
+	padding: 8px 22px;
+	border: none;
+	border-radius: 2px;
+	cursor: pointer;
+	
+}
+fieldset.scheduler-border {
+    border: 1px groove #ddd !important;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #1aac9b;
+            box-shadow:  0px 0px 0px 0px #1aac9b;
+}
+
+legend.scheduler-border {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+        width:auto;
+        padding:0 10px;
+        border-bottom:none;
+    }
+.row{
+ margin-bottom:15px;
+ 
  }
  
- .btn {
-    background-color: #1aac9b;
-    border: none;
-    color: white;
-    padding: 12px 16px;
-    font-size: 16px;
-    cursor: pointer;
-}
-.btn:hover {
-    background-color: #1aac9be6;
+;table.display tbody tr:nth-child(even):hover td{
+    background-color: #1aac9b !important;
 }
 
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #E2E4FF;
-}
-.table-striped tbody tr:hover {
-	background-color: #ddd;
-}
-/*continer  */
-.container {
-  margin: 0 auto;
-  max-width: 100%
-}
 </style>
-
-
-<!-- Container  -->
-<div class="container">
 
 	<!-- Heading -->
 	<div>
@@ -47,15 +57,46 @@
 		</h2>
 	</div>
 	<br>
+	<c:if test="${not empty status}">
+		<div class="alert alert-success">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Success!</strong> <c:out value="${status}" />
+		</div>
+	</c:if>
 	<div>
 	 <a href="addLabTestType.form" ><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtesttype.add" /> </a>
 	</div>
 	<br>
-	<div class="card card-cascade narrower">
-		<div class="card-header boxHeader" style="background-color: #1aac9b">
+	<div class="boxHeader" style="background-color: #1aac9b">
 			<span><i class="fa fa-list"></i> </span> <b><spring:message code="commonlabtest.labtesttype.list" /></b>
-		</div>
-		<form  class="box">
+	</div>
+	 <div class="box">
+		 <table id="manageTestTypeTable" class="table table-striped table-bordered" style="width:100%">
+	        <thead>
+	            <tr>
+	            	<th hidden="true"></th>
+					<th>Name</th>
+					<th>Short Name</th>
+					<th>Test Group</th>
+					<th>Reference Concept</th>
+				</tr>
+	        </thead>
+	        <tbody>
+		       <c:forEach var="tt" items="${labTestTypes}">
+						<tr>
+							<td hidden="true" id="uuid">${tt.uuid}</td>
+							<td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid=${tt.uuid}">${tt.name}</a></td>
+							<td>${tt.shortName}</td>
+							<td>${tt.testGroup}</td>
+							<td>${tt.referenceConcept.name}</td>
+						</tr>
+					</c:forEach>
+	        </tbody>
+	    </table>
+	 </div>
+		
+	<%-- 
+		
 			<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">
 				<thead>
 					<tr>
@@ -75,19 +116,23 @@
 						</tr>
 					</c:forEach>
 				</tbody>
-			</table>
-		</form>
-	</div>
-</div>
+			</table> --%>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
 
-<!-- JavaScript Code  -->
-
-<script src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/jquery-3.3.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/popper.min.js" ></script>
-<script src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/bootstrap.min.js" ></script>
-
+<!--JAVA SCRIPT  -->
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/popper.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/bootstrap.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery-ui.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery.dataTables.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
 function relocate_home()
@@ -97,7 +142,21 @@ function relocate_home()
 
 $(document).ready(function() {
 
-    $('#tb-test-type tr').click(function() {
+	$('#manageTestTypeTable').dataTable({
+		 "bPaginate": true
+	  });
+	  $('.dataTables_length').addClass('bs-select');
+	  
+	
+    $('#manageTestTypeTable td').click(function() {
+    	 //$(this).parents('tr').detach();
+	 	
+    	 var $row = $(this).closest("tr");    // Find the row
+	     var $tds = $row.find("td:first");
+	 	 var uuid =$tds.text();
+		 window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid="+uuid;
+	     
+	     
     });
 
 });

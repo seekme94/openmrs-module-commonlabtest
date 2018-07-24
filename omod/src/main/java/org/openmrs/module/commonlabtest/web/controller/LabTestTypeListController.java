@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/module/commonlabtest/manageLabTestTypes.form")
@@ -35,13 +36,13 @@ public class LabTestTypeListController {
 	CommonLabTestService commonLabTestService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String showLabTestTypes(ModelMap model) {
+	public String showLabTestTypes(@RequestParam(required = false) String status, ModelMap model) {
 		
 		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
 		List<LabTestType> list = commonLabTestService.getAllLabTestTypes(Boolean.FALSE);
 		
 		model.put("labTestTypes", list);
-		
+		model.addAttribute("status", status);
 		return SUCCESS_FORM_VIEW;
 	}
 	
