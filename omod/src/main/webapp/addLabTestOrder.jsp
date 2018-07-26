@@ -52,7 +52,7 @@ legend.scheduler-border {
 <body>
 
 <div class="container">
-	<c:set var="labTest" scope="session" value="${labTest}" />
+	<c:set var="testOrder" scope="session" value="${labTest}" />
     <fieldset  class="scheduler-border">
 		<c:if test="${empty labTest.labReferenceNumber}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.order.add" /></legend>
@@ -66,12 +66,8 @@ legend.scheduler-border {
 				        <form:label  class="control-label" path="order.encounter"><spring:message code="general.encounter" /><span class="required">*</span></form:label>
 				   </div>
 				   <div class="col-md-6">
-				   		<form:select class="form-control" path="order.encounter" id="encounter" >
-								<form:options  />
-								<c:forEach var ="encounter" items="${encounters}">
-									<option value="${encounter}">${encounter.getEncounterType().getName()}</option>
-								</c:forEach>
-						</form:select>
+				   		<form:input id="encounterTypeSuggestBox" path="order.encounter" class="form-control" list="encounterTypeOptions" placeholder="Search Encounter..." required="required" ></form:input>
+						<datalist class="lowercase" id="encounterTypeOptions"></datalist>
 				   </div>
 			 </div>
 			<!-- Test Type -->
@@ -80,12 +76,8 @@ legend.scheduler-border {
 			        <form:label  class="control-label" path="labTestType"><spring:message code="general.testType" /><span class="required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:select class="form-control" path="labTestType" id="testType" >
-								<form:options  />
-								<c:forEach var ="testType" items="${testTypes}">
-									<option value="${testType}">${testType.getName()}</option>
-								</c:forEach>
-						</form:select>
+			   		<form:input id="testTypeSuggestBox" path="labTestType" class="form-control" list="testTypeOptions" placeholder="Search Test Type..." required="required" ></form:input>
+					<datalist class="lowercase" id="testTypeOptions"></datalist>
 			   </div>
 			 </div>
 			 <!-- Lab Reference Number -->
