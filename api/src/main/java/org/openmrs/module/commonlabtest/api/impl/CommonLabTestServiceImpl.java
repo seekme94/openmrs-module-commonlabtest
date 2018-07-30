@@ -512,7 +512,7 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 			throw new APIException("org.openmrs.Orderer", (Object[]) null);
 		}
 		Order order = labTest.getOrder();
-		order.setOrderType(Context.getOrderService().getOrderTypeByUuid(OrderType.TEST_ORDER_TYPE_UUID));
+		//order.setOrderType(Context.getOrderService().getOrderTypeByUuid(OrderType.TEST_ORDER_TYPE_UUID));
 		Order saveOrder = Context.getOrderService().saveOrder(order, new OrderContext());
 		labTest.setOrder(saveOrder);
 		// Save Order

@@ -20,6 +20,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -51,6 +53,7 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 	private static final long serialVersionUID = 2561859108258402721L;
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "test_order_id")
 	private Integer testOrderId;
 	

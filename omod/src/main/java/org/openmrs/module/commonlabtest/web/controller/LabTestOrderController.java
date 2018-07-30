@@ -1,9 +1,19 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.security.auth.Refreshable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Order;
+import org.openmrs.TestOrder;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestType;
@@ -16,12 +26,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @Controller
 public class LabTestOrderController {
@@ -66,12 +70,8 @@ public class LabTestOrderController {
 		model.addAttribute("provider",
 		    Context.getProviderService().getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator()
 		            .next());
-        if (list.size() > 10) {
-            model.addAttribute("encounters", list.subList(0, list.size() - 1));
-        } else {
-            model.addAttribute("encounters", list);
-        }
-
+		model.addAttribute("encounters", list.subList(0, list.size() - 1));
+		
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
@@ -109,18 +109,20 @@ public class LabTestOrderController {
 		System.out.println("============ ORDER 4 ==========");
 		//System.out.println("Order Type: " + labTest.getOrder().getOrderType());
 		
-		LabTestType labTestType = labTest.getLabTestType();
-		System.out.println("Checking lab Test type :::: " + labTestType.getName());
-		Concept referenceConcept = labTestType.getReferenceConcept();
-		/*	System.out.println("Checking referece concept :::: " + referenceConcept.getDisplayString() + "   "
-			        + referenceConcept.getId());*/
-		
 		LabTestType lbTestType = commonLabTestService.getLabTestType(labTest.getLabTestType().getLabTestTypeId());
 		Concept referConcept = lbTestType.getReferenceConcept();
 		System.out.println("Checking referece concept :::: " + referConcept.getDisplayString() + "   "
 		        + referConcept.getId());
 		
-		labTest.getOrder().setConcept(referConcept);
+		TestOrder testOrder = new TestOrder();
+		testOrder.setCareSetting(labTest.getOrder().getCareSetting());
+		testOrder.setConcept(referConcept);
+		testOrder.setEncounter(labTest.getOrder().getEncounter());
+		testOrder.setPatient(labTest.getOrder().getPatient());
+		testOrder.setOrderer(labTest.getOrder().getOrderer());
+		Order testParentOrder = (Order) testOrder;
+		
+		labTest.setOrder(testParentOrder);
 		
 		commonLabTestService.saveLabTest(labTest);
 		StringBuilder sb = new StringBuilder();
