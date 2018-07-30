@@ -1,10 +1,20 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.security.auth.Refreshable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
+import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,12 +24,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @Controller
 public class LabTestOrderController {
@@ -38,26 +42,33 @@ public class LabTestOrderController {
 		if (testOrderId == null) {
 			test = new LabTest();
 		} else {
-            test = commonLabTestService.getLabTest(testOrderId);
-        }
-        //Patient patient =Context.getPatientService().getPatient(patientId);
-
-        List<Encounter> list = Context.getEncounterService().getEncountersByPatientId(patientId);
-        if (list.size() > 0) {
-            Collections.sort(list, new Comparator<Encounter>() {
-
-                @Override
-                public int compare(Encounter o1, Encounter o2) {
-                    return o2.getEncounterDatetime().compareTo(o1.getEncounterDatetime());
-                }
-            });
+			test = commonLabTestService.getLabTest(testOrderId);
+		}
+		//Patient patient =Context.getPatientService().getPatient(patientId);
+		
+		List<Encounter> list = Context.getEncounterService().getEncountersByPatientId(patientId);
+		list.get(0).getEncounterType().getName();
+		if (list.size() > 0) {
+			Collections.sort(list, new Comparator<Encounter>() {
+				
+				@Override
+				public int compare(Encounter o1, Encounter o2) {
+					return o2.getEncounterDatetime().compareTo(o1.getEncounterDatetime());
+				}
+			});
 			/*for (Encounter e : list.subList(0, list.size() - 1)) {
 				System.out.println(e.getEncounterDatetime());
 			}*/
-        }
+		}
+		List<LabTestType> testType = commonLabTestService.getAllLabTestTypes(Boolean.FALSE);
+		
 		model.addAttribute("labTest", test);
 		model.addAttribute("patientId", patientId);
-        model.addAttribute("encounters", list.subList(0, list.size() - 1));
+		model.addAttribute("testTypes", testType);
+		model.addAttribute("provider",
+		    Context.getProviderService().getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator()
+		            .next());
+		model.addAttribute("encounters", list.subList(0, list.size() - 1));
 		
 		return SUCCESS_ADD_FORM_VIEW;
 	}
@@ -67,28 +78,65 @@ public class LabTestOrderController {
 	        @ModelAttribute("anyRequestObject") Object anyRequestObject, HttpServletRequest request,
 	        @ModelAttribute("labTest") LabTest labTest, BindingResult result) {
 		String status = "";
-        try {
+		/*try {
 			if (result.hasErrors()) {
 				
-			} else {
-
-                commonLabTestService.saveLabTest(labTest);
-				StringBuilder sb = new StringBuilder();
-				sb.append("Lab Test Order with Uuid :");
-				sb.append(labTest.getUuid());
-				sb.append(" is  saved!");
-				status = sb.toString();
-			}
+			} else {*/
+		
+		/*	Encounter encounter = labTest.getOrder().getEncounter();
+			Order order = new Order();
+			order.setConcept(Context.getConceptService().getConcept(165737));
+			order.setOrderer(Context.getProviderService()
+			        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next());
+			order.setCareSetting(Context.getOrderService().getCareSetting(1));
+			order.setEncounter(encounter);
+			order.set
+			
+			labTest.setOrder(order);
+			labTest.setLabTestType(commonLabTestService.getLabTestType(3));
+			*/
+		System.out.println("============ ORDER ==========");
+		System.out.println("Encounter : " + labTest.getOrder().getEncounter().getEncounterId());
+		
+		System.out.println("============ ORDER 2==========");
+		System.out.println("Care Setting : " + labTest.getOrder().getCareSetting());
+		
+		System.out.println("============ ORDER 3 ==========");
+		System.out.println("lab Test Type: " + labTest.getLabTestType());
+		
+		System.out.println("============ ORDER 4 ==========");
+		//System.out.println("Order Type: " + labTest.getOrder().getOrderType());
+		
+		LabTestType labTestType = labTest.getLabTestType();
+		System.out.println("Checking lab Test type :::: " + labTestType.getName());
+		Concept referenceConcept = labTestType.getReferenceConcept();
+	/*	System.out.println("Checking referece concept :::: " + referenceConcept.getDisplayString() + "   "
+		        + referenceConcept.getId());*/
+		
+		LabTestType lbTestType = commonLabTestService.getLabTestType(labTest.getLabTestType().getLabTestTypeId());
+		Concept referConcept = lbTestType.getReferenceConcept();
+		System.out.println("Checking referece concept :::: " + referConcept.getDisplayString() + "   "
+		        + referConcept.getId());
+		
+		labTest.getOrder().setConcept(referConcept);
+		
+		commonLabTestService.saveLabTest(labTest);
+		StringBuilder sb = new StringBuilder();
+		sb.append("Lab Test Order with Uuid :");
+		sb.append(labTest.getUuid());
+		sb.append(" is  saved!");
+		status = sb.toString();
+		/*	}
 		}
 		catch (Exception e) {
 			status = e.getLocalizedMessage();
-            //e.printStackTrace();
-            model.addAttribute("status", status);
-            //model.addAttribute("uuid", attributeType == null ? "" : attributeType.getUuid());
-            return SUCCESS_ADD_FORM_VIEW;//"redirect:addLabTestAttributeType.form";//"redirect:manageLabTestAttributeTypes.form";
-
-        }
-        model.addAttribute("status", status);
+			//e.printStackTrace();
+			model.addAttribute("status", status);
+			//model.addAttribute("uuid", attributeType == null ? "" : attributeType.getUuid());
+			return SUCCESS_ADD_FORM_VIEW;//"redirect:addLabTestAttributeType.form";//"redirect:manageLabTestAttributeTypes.form";
+			
+		}*/
+		//model.addAttribute("status", status);
 		return "redirect:patientLabTests.form";
 	}
 	

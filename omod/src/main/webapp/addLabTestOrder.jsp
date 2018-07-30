@@ -61,30 +61,41 @@ legend.scheduler-border {
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.order.edit" /></legend>
 		</c:if>
 		<form:form commandName="labTest" id="form">
+		  	<form:input  path="order.patient" hidden="true" value="${patientId}"></form:input>
+			<form:input  path="order.concept.conceptId" hidden="true"  id="conceptId"></form:input>	
+			<form:input  path="order.orderer.providerId" hidden="true" value="${provider.providerId}"></form:input>	
+			<form:input  path="order.orderType.orderTypeId" hidden="true" value="3"></form:input>	
+		
 		    <div class="row" >
 				   <div class="col-md-4">
 				        <form:label  class="control-label" path="order.encounter"><spring:message code="general.encounter" /><span class="required">*</span></form:label>
 				   </div>
 				   <div class="col-md-6">
+				  
 				   		<form:select class="form-control" path="order.encounter" id="encounter" >
 								<form:options  />
-								<c:forEach var= "encounter" items="${encounters}">
-									<option value="${encounter}">${encounter.getEncounterType().getName()}</option>
-								</c:forEach>
+								 <c:if test="${not empty encounters}">
+										<c:forEach var= "encounter" items="${encounters}">
+											<form:option item ="${encounter}" value="${encounter}">${encounter.getEncounterType().getName()}</form:option>
+										</c:forEach>
+					 			</c:if>
 						</form:select>
+	
 				   </div>
 			 </div>
 			<!-- Test Type -->
 			 <div class="row" >
 			   <div class="col-md-4">
-			        <form:label  class="control-label" path="labTestType"><spring:message code="general.testType" /><span class="required">*</span></form:label>
+			        <form:label  class="control-label" path="labTestType.labTestTypeId"><spring:message code="general.testType" /><span class="required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:select class="form-control" path="labTestType" id="testType" >
+			   		<form:select class="form-control" path="labTestType.labTestTypeId" id="testType" >
 								<form:options  />
-								<c:forEach var= "testType" items="${testTypes}">
-									<option value="${testType}">${testType.getName()}</option>
-								</c:forEach>
+								 <c:if test="${not empty testTypes}">
+									<c:forEach var= "testType" items="${testTypes}">
+										<form:option item ="${testType.labTestTypeId}" value="${testType.labTestTypeId}">${testType.getName()}</form:option>
+									</c:forEach>
+								</c:if>
 					</form:select>
 			   </div>
 			 </div>
@@ -100,12 +111,12 @@ legend.scheduler-border {
 			  <!-- Care Setting-->
 			 <div class="row">
 			   <div class="col-md-4">
-			   		<form:label  class="control-label" path="order.CareSetting"><spring:message code="general.careSetting" /></form:label>
+			   		<form:label  class="control-label" path="order.CareSetting.careSettingId"><spring:message code="general.careSetting" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:radiobutton path="order.CareSetting" value="OutPatient"  checked="checked"/>OutPatient 
+			   		<form:radiobutton path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
 			   		<span style="margin-right: 25px"></span>
-					<form:radiobutton path="order.CareSetting" value="OutPatient"/>InPatient 	
+					<form:radiobutton path="order.CareSetting.careSettingId" value="2"/>InPatient 	
 <!-- 			   		<form:input class="form-control" path="order.CareSetting" id="careSetting"  name="careSetting"></form:input>
  -->			   </div>
 			 </div>
@@ -157,3 +168,28 @@ legend.scheduler-border {
  </div>
 
 </body>
+
+<!--JAVA SCRIPT  -->
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/popper.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/bootstrap.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery-ui.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery.dataTables.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/dataTables.bootstrap4.min.js"></script>
+
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		 $('#testType').change(function(){
+			  $('#conceptId').val(document.getElementById("testType").value);
+		 });
+		
+	});
+</script>
+
