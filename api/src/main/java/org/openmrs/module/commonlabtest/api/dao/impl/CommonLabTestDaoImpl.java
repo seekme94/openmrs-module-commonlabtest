@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.commonlabtest.api.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -27,16 +23,16 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
-import org.openmrs.module.commonlabtest.LabTest;
-import org.openmrs.module.commonlabtest.LabTestAttribute;
-import org.openmrs.module.commonlabtest.LabTestAttributeType;
-import org.openmrs.module.commonlabtest.LabTestSample;
+import org.openmrs.module.commonlabtest.*;
 import org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus;
-import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.LabTestType.LabTestGroup;
 import org.openmrs.module.commonlabtest.api.dao.CommonLabTestDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -100,8 +96,8 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<LabTestType> getLabTestTypes(String name, String shortName, LabTestGroup testGroup, 
-			Concept referenceConcept, boolean includeRetired) {
+    public List<LabTestType> getLabTestTypes(String name, String shortName, LabTestGroup testGroup,
+                                             Concept referenceConcept, boolean includeRetired) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestType.class);
 		if (name != null) {
 			criteria.add(Restrictions.ilike("name", name, MatchMode.START));
@@ -271,7 +267,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 			criteria.add(Restrictions.eq("labTestType", labTestType));
 		}
 		if (patient != null) {
-			criteria.add(Restrictions.eq("o.patient.patientId", patient.getPatientId()));
+            criteria.add(Restrictions.eq("o.patient.id", patient.getPatientId()));
 		}
 		if (orderNumber != null) {
 			criteria.add(Restrictions.ilike("o.orderReference", orderNumber, MatchMode.START));
