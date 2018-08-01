@@ -43,6 +43,10 @@ legend.scheduler-border {
         padding:0 10px;
         border-bottom:none;
     }
+  .row{
+ margin-bottom:15px;
+ 
+ }
 </style>
 
 <body>
@@ -63,8 +67,145 @@ legend.scheduler-border {
 	   <c:if test="${not empty testAttributeType.name}">
 		 <legend  class="scheduler-border">	<spring:message code="commonlabtest.labtestattributetype.edit" /></legend>
 	   </c:if>
- 	   <form:form commandName="attributeType">
-			<table>
+ 	   <form:form commandName="attributeType" onsubmit="return validate()">
+ 	        		 <div class="row">
+						   <div class="col-md-2">
+						   		<form:input path="labTestAttributeTypeId"  hidden="true" id="labTestAttributeTypeId"></form:input>
+								<form:label path="labTestType" class="control-label"><spring:message code="general.labTestType" /><span class="text-danger required">*</span></form:label>
+							</div>
+						   <div class="col-md-6">
+						   		<form:input class="form-control"  id="testTypeSuggestBox" path="labTestType.labTestTypeId" list="testTypeOptions" placeholder="Search Test Type..." ></form:input>
+								<datalist class="lowercase" id="testTypeOptions"></datalist>
+							    <span id="labtesttypeid" class="text-danger "> </span>
+						   </div>
+					  </div>
+					  <!--Test Attribute Type Name  -->
+					  <div class="row">
+						   <div class="col-md-2">
+						   		<form:label path="name" class="control-label"><spring:message code="general.name" /><span class="text-danger required">*</span></form:label>
+						   	</div>
+						   <div class="col-md-6">
+						   		<form:input class="form-control" path="name" id="name" ></form:input>
+							    <span id="testatrname" class="text-danger "> </span>
+						   	</div>
+					  </div>
+					  <!-- Description -->
+					   <div class="row">
+						   <div class="col-md-2">
+					  			<form:label path="description" class="control-label"><spring:message code="general.description" /><span class="text-danger required">*</span></form:label>
+						   	</div>
+						   <div class="col-md-6">
+								<form:textarea class="form-control" path="description" id="description" ></form:textarea>
+							    <span id="atrdescription" class="text-danger "> </span>
+						   	</div>
+					  </div>
+					  <!-- Min Ocurance -->
+					    <div class="row">
+						   <div class="col-md-2">
+								<form:label path="minOccurs" class="control-label"><spring:message code="general.minOccurs" /><span class="required">*</span></form:label>
+							</div>
+						   <div class="col-md-6">
+								<form:input class="form-control"  path="minOccurs" id="min_occurs"></form:input></td>
+							    <span id="minoccurs" class="text-danger "> </span>
+						   	</div>
+					 	 </div>
+					 	 <!-- max occurs -->
+					 	  <div class="row">
+							   <div class="col-md-2">
+									<form:label path="maxOccurs" class="control-label"><spring:message code="general.minOccurs" /><span class="required">*</span></form:label>
+								</div>
+							   <div class="col-md-6">
+									<form:input class="form-control"  path="maxOccurs" id="max_occurs"></form:input>
+								    <span id="maxoccurs" class="text-danger "> </span>
+							   	</div>
+					 	 </div>
+					 	 <!-- sort Weight -->
+					 	  <div class="row">
+							   <div class="col-md-2">
+					 	 			<form:label path="sortWeight" class="control-label"><spring:message code="general.sortWeight" /><span class="text-danger required">*</span></form:label>
+								</div>
+							   <div class="col-md-6">
+									<form:input class="form-control" path="sortWeight" id="sortWeight" ></form:input>
+								    <span id="sortweight" class="text-danger "> </span>
+							   	</div>
+					 	   </div>
+					 	   <!-- datatypeClassname -->
+					 	    <div class="row">
+							   <div class="col-md-2">
+									<form:label path="datatypeClassname" class="control-label"><spring:message code="general.dataType" /></form:label>							
+							   </div> 
+							   <div class="col-md-6">
+									<form:select class="form-control" path="datatypeClassname" id="data_type_name">
+										<form:options items="${datatypes}" />
+										<c:forEach items="${datatypes}"  var="datatype">
+											<option value="${datatype}" <c:if test="${datatype == status.value}">selected</c:if>><spring:message code="${datatype}.name"/></option>
+										</c:forEach>
+									</form:select>
+							   	</div>
+							   	<div class ="col-md-4">
+							   		<font color="#1aac9b"><span id="datatypeDescription"></span></font>
+							   	</div>
+					 	   </div>
+					 	   <!-- datatypeConfig -->
+							<div class="row">
+							   <div class="col-md-2">
+					 	  		   <form:label path="datatypeConfig" class="control-label"><spring:message code="general.datatypeConfiguration" /></form:label>
+								</div>
+							   <div class="col-md-6">
+									<form:textarea class="form-control" path="datatypeConfig" id="datatypeConfig" ></form:textarea>
+							   	</div>
+					 	   </div>
+					 	     <!-- preferredHandlerClassname -->
+					 	    <div class="row">
+							   <div class="col-md-2">
+									<form:label path="preferredHandlerClassname" class="control-label"><spring:message code="general.preferredHandler" /></form:label>								   </div> 
+							   <div class="col-md-6">
+									<form:select class="form-control" path="preferredHandlerClassname" id="preferred_handler_name">
+										<form:options items="${handlers}" />
+										<c:forEach items="${handlers}"  var="handler">
+											<option value="${handler}" <c:if test="${handler == status.value}">selected</c:if>><spring:message code="${handler}.name"/></option>
+										</c:forEach>
+									</form:select>
+							   	</div>
+							   	<div class ="col-md-4">
+							   		<font color="#1aac9b"><span id="handlerDescription"></span></font>
+							   	</div>
+					 	   </div>
+							<!-- handlerConfig-->
+ 	   						<div class="row">
+							   <div class="col-md-2">
+ 	 				    			<form:label class="control-label" path="handlerConfig"><spring:message code="general.handlerConfiguration" /></form:label>
+								</div>
+							   <div class="col-md-6">
+									<form:textarea class="form-control" path="handlerConfig" id="handlerConfig" ></form:textarea>
+							   	</div>
+					 	   </div>	
+ 	   						<c:if test="${not empty testAttributeType.name}">
+								<div class="row">
+									   <div class="col-md-2">
+											<form:label path="creator"><spring:message code="general.createdBy" /></form:label>					
+										</div>
+									   <div class="col-md-6">
+										    <c:out value="${testAttributeType.creator.personName}" /> - <c:out value="${testAttributeType.dateCreated}" />	
+								       </div>
+							    </div>	
+							    <div class="row">
+									   <div class="col-md-2">
+											<font color="#D0D0D0"><sub><spring:message code="general.uuid" /></sub></font>		
+										</div>
+									   <div class="col-md-6">
+											<font color="#D0D0D0"><sub><c:out value="${testAttributeType.uuid}" /></sub></font>	
+										</div>
+							    </div>	
+							</c:if>
+							  <!-- Save -->
+							 <div class="row">
+							   <div class="col-md-2">
+									<input type="submit" value="<spring:message code="commonlabtest.labtestattributetype.save" />"  ></input>
+							   </div>
+							 </div>	
+ 	   
+			<%-- <table>
 				 <div class="form-group">
 				     <tr> <form:input path="labTestAttributeTypeId"  hidden="true" id="labTestAttributeTypeId"></form:input>				
 					   <td><form:label path="labTestType" class="control-label"><spring:message code="general.labTestType" /><span class="required">*</span></form:label></td>
@@ -72,9 +213,9 @@ legend.scheduler-border {
 					    <td><form:input class="form-control"  id="testTypeSuggestBox" path="labTestType.labTestTypeId" list="testTypeOptions" placeholder="Search Test Type..." required="required" ></form:input>
 						<datalist class="lowercase" id="testTypeOptions"></datalist>
 				   		 </td>		  
-						<%-- 	<td><input class="form-control"  value="${testAttributeType.labTestType.labTestTypeId}" required="required" placeholder="Search test type..." id="lab_test_type"  /></td>
+							<td><input class="form-control"  value="${testAttributeType.labTestType.labTestTypeId}" required="required" placeholder="Search test type..." id="lab_test_type"  /></td>
 							<td><form:input path="labTestType.labTestTypeId"  hidden="true" id="labTestType"  /></td>
-					  --%>     
+					      
 						</div>
 					 </tr>
 				 </div>
@@ -85,7 +226,7 @@ legend.scheduler-border {
 							<td><form:input class="form-control" path="name" id="name" required="required" ></form:input></td>
 						  </div>
 					</tr>
-				</div>
+				</div> 
 				<div class="form-group">	
 					<tr>
 						<td><form:label path="description" class="control-label"><spring:message code="general.description" /><span class="required">*</span></form:label></td>
@@ -169,16 +310,33 @@ legend.scheduler-border {
 				</tr>
 
 			</table>
-
+--%>
 		 </form:form>
     </fieldset>
 	<br>
 	<c:if test="${not empty testAttributeType.name}">
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.test.retire" /></legend>
-      	 		<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtestattributetype.form"  >
-
-						<table>
+      	 		<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtestattributetype.form" onsubmit="return retireValidate()" >
+						 <!-- UUID -->
+						 <div class="row">
+						   <div class="col-md-2">
+								<input value="${testAttributeType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
+								<label  class="control-label" path="retireReason"><spring:message code="general.retireReason" /><span class="text-danger required">*</span></label>
+						   </div>
+						   <div class="col-md-6">
+						   		<input class="form-control" value="${testAttributeType.retireReason}" id="retireReason" name="retireReason" >
+						 		 <span id="retirereason" class="text-danger "> </span>
+						 
+						   </div>
+						 </div>
+						 <!-- Retire -->
+						 <div class="row">
+						   <div class="col-md-2" >
+						 		 <input type="submit" value="<spring:message code="general.test.retire" />"></input>
+						   </div>
+						 </div>
+					<%-- 	<table>
 							 <div class="form-group">
 								<tr>
 									<input value="${testAttributeType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
@@ -193,7 +351,7 @@ legend.scheduler-border {
 									</div>
 								</td>
 							</tr>
-						</table>
+						</table> --%>
 				</form>
         </fieldset>
 	</c:if>
@@ -203,6 +361,14 @@ legend.scheduler-border {
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.foreverDelete" /></legend>
 				<form  method="post" action ="${pageContext.request.contextPath}/module/commonlabtest/deletelabtestattributetype.form" onsubmit="return confirmDelete()">
+					 <!-- Delete -->
+					 <div class="row">
+					   <div class="col-md-2" >
+					  		 <input value="${testAttributeType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
+					 		 <input type="submit" value="<spring:message code="general.foreverDelete" />" />
+					   </div>
+					 </div>	
+				<%-- 	
 					<table>
 					<tr>
 						<td>
@@ -212,7 +378,7 @@ legend.scheduler-border {
 							</div>
 						</td>
 					</tr>
-					</table>
+					</table> --%>
 				</form>
       </fieldset>
 	</c:if>
@@ -341,9 +507,110 @@ legend.scheduler-border {
 	});
    
 	/* Validation */
+	function validate(){
+		var testAttributeName = document.getElementById('name').value;
+		var labTestType = document.getElementById('testTypeSuggestBox').value;
+		var description = document.getElementById('description').value;
+		var minOccurs = document.getElementById('min_occurs').value;
+		var maxOccurs = document.getElementById('max_occurs').value;
+		var sortWeight = document.getElementById('sortWeight').value;
+		
+
+		
+		var isValidate =true; 
+		
+		if(labTestType == ""){
+			document.getElementById('labtesttypeid').innerHTML ="Please fill the Lab Test Type field";
+			isValidate = false;
+		}
+		else if(isNaN(labTestType)){
+			document.getElementById('labtesttypeid').innerHTML ="Only the autosearch Lab Test Type Id is accepted";
+			isValidate = false;
+		}	
+		
+		 if(testAttributeName == ""){
+				document.getElementById('testatrname').innerHTML ="Please fill the Test Attribute Name field";
+				isValidate = false;
+			}
+		else if(!isNaN(testAttributeName)){
+				document.getElementById('testatrname').innerHTML ="Only characters are allowed";
+				isValidate = false;
+			}
+		 /*Description  */
+		 if(description == ""){
+				document.getElementById('atrdescription').innerHTML ="Please fill the Test Attribute Description field";
+				isValidate = false;
+			}
+		else if(!isNaN(description)){
+				document.getElementById('atrdescription').innerHTML ="Only characters are allowed";
+				isValidate = false;
+			}
+		 
+		 /*Min Occurs  */
+		 if(minOccurs == ""){
+				document.getElementById('minoccurs').innerHTML ="Please fill the Min Occurs field";
+				isValidate = false;
+			}
+		 
+		 else if(isNaN(minOccurs)){
+				document.getElementById('minoccurs').innerHTML ="Min Occurs should be numeric";
+				isValidate = false;
+
+			}
+			/* if(mobileNumber.length =<2){
+				document.getElementById('minoccurs').innerHTML =" ** Mobile Number must be 10 digits only";
+				return false;
+			} */
+			
+		 /*Min Occurs  */
+		 if(maxOccurs == ""){
+				document.getElementById('maxoccurs').innerHTML ="Please fill the Max Occurs field";
+				isValidate = false;
+			}
+		 
+		 else if(isNaN(maxOccurs)){
+				document.getElementById('maxoccurs').innerHTML ="Max Occurs should be numeric";
+				isValidate = false;
+
+			}			
+		 else if(minOccurs > maxOccurs){
+			document.getElementById('maxoccurs').innerHTML ="Max Occurs should be greater then min Occurs";
+			isValidate = false;
+		}	
+		/* sortWeight */
+		 if(sortWeight == ""){
+				document.getElementById('sortweight').innerHTML ="Please fill the sort weight field";
+				isValidate = false;
+			}
+		 
+		 else if(isNaN(sortWeight)){
+				document.getElementById('sortweight').innerHTML ="Sort weight should be numeric";
+				isValidate = false;
+
+			}	
+				
+		 
+		//console.log(form_data); 
 	
-   	console.log("${status}");
+		return isValidate;
+	}
 	
+	//Retire Validate 
+	
+	function retireValidate(){
+		var retireReason = document.getElementById('retireReason').value;
+		var isValidate= true;
+		if(retireReason == ""){
+			document.getElementById('retirereason').innerHTML ="Please fill the retire reason field";
+			isValidate = false;
+		}
+		else if(!isNaN(retireReason)){
+			document.getElementById('retirereason').innerHTML ="Only characters are allowed";
+			isValidate = false;
+		}
+	
+		return isValidate;
+	}
 	
 
 </script>

@@ -58,32 +58,34 @@ legend.scheduler-border {
  <div class="container">
 	<c:set var="testType" scope="session" value="${labTestType}" />
     <fieldset  class="scheduler-border">
-		<c:if test="${empty testType.name}">
+		<c:if test="${empty testType.referenceConcept.conceptId}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.labtesttype.add" /></legend>
 		</c:if>
-		<c:if test="${not empty testType.name}">
+		<c:if test="${not empty testType.referenceConcept.conceptId}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.labtesttype.edit" /></legend>
 		</c:if>
-		<form:form commandName="labTestType" id="form">
+		<form:form commandName="labTestType" id="testTypeForm" onsubmit="return validate()">
 			<!-- Concept Reference -->
 			 <div class="row" >
 			   <div class="col-md-2">
 			   		<form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>
-			        <form:label  class="control-label" path="referenceConcept"><spring:message code="general.referenceConcept" /><span class="required">*</span></form:label>
+			        <form:label  class="control-label" path="referenceConcept"><spring:message code="general.referenceConcept" /><span class="text-danger font-weight-bold">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input id="conceptSuggestBox" path="referenceConcept" class="form-control" list="conceptOptions" placeholder="Search Concept..." required="required" ></form:input>
+			   		<form:input id="conceptSuggestBox" path="referenceConcept" class="form-control" list="conceptOptions"  placeholder="Search Concept..." ></form:input>
 					<datalist class="lowercase" id="conceptOptions"></datalist>
+					<span id="referenceconcept" class="text-danger "> </span>
 			   </div>
 			 </div>
 			 <!-- Test Name -->
 			 <div class="row">
 			   <div class="col-md-2">
-			   		<form:label  class="control-label" path="name"><spring:message code="general.testName" /></form:label>
+			   		<form:label  class="control-label" path="name"><spring:message code="general.testName" /><span class="text-danger font-weight-bold">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
 			   		<form:input class="form-control" path="name" id="name"  name="name"></form:input>
-			   </div>
+					<span id="testname" class="text-danger"> </span>
+				 </div>
 			 </div>
 			  <!-- Short Name -->
 			 <div class="row">
@@ -129,7 +131,7 @@ legend.scheduler-border {
 					<form:radiobutton class="form-check-input"  path="requiresSpecimen" value="false" />No
 			   </div>
 			 </div>
-			<c:if test="${not empty testType.name}">
+			<c:if test="${not empty testType.referenceConcept.conceptId}">
 				 <!-- Date Create -->
 				 <div class="row">
 				   <div class="col-md-2">
@@ -152,7 +154,7 @@ legend.scheduler-border {
 		    <!-- Save -->
 			 <div class="row">
 			   <div class="col-md-2">
-					<input type="submit" value="Save Test Type"></input>
+					<input type="submit" value="Save Test Type"  ></input>
 			   </div>
 			 </div>		 
 			
@@ -237,11 +239,11 @@ legend.scheduler-border {
 
     </fieldset>
 	<br>
-	<c:if test="${not empty testType.name}">
+	<c:if test="${not empty testType.referenceConcept.conceptId}">
 	
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.test.retire" /></legend>
-					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtesttype.form" >
+					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtesttype.form" onsubmit="return retireValidate()">
 						 <!-- UUID -->
 						 <div class="row">
 						   <div class="col-md-2">
@@ -249,7 +251,9 @@ legend.scheduler-border {
 								<label  class="control-label" path="retireReason"><spring:message code="general.retireReason" /><span class="required">*</span></label>
 						   </div>
 						   <div class="col-md-6">
-						   		<input class="form-control" value="${labTestType.retireReason}" id="retireReason" name="retireReason" required="required">
+						   		<input class="form-control" value="${labTestType.retireReason}" id="retireReason" name="retireReason" >
+						 		 <span id="retirereason" class="text-danger "> </span>
+						 
 						   </div>
 						 </div>
 						 <!-- Retire -->
@@ -258,26 +262,11 @@ legend.scheduler-border {
 						 		 <input type="submit" value="Retire Test Type"></input>
 						   </div>
 						 </div>
-						
-						<%-- <table>						
-							<tr>
-								<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-								<td><label  class="control-label" path="retireReason"><spring:message code="general.retireReason" /></label></td>
-								<td><input class="form-control" value="${labTestType.retireReason}" id="retireReason" name="retireReason" required="required"></input></td>
-							</tr>
-							<tr>
-								<td>
-									<div id="retireButton" style="margin-top: 15px">
-										<input type="submit" value="Retire Test Type"></input>
-									</div>
-								</td>
-							</tr>
-						</table> --%>
 				</form>
         </fieldset>
 	</c:if>
 	<br>
-    <c:if test="${not empty testType.name}">
+    <c:if test="${not empty testType.referenceConcept.conceptId}">
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.foreverDelete" /></legend>
 			<form  method="post" action ="${pageContext.request.contextPath}/module/commonlabtest/deletelabtesttype.form" onsubmit="return confirmDelete()">
@@ -325,6 +314,15 @@ legend.scheduler-border {
 	var local_source;
 
 	jQuery(document).ready(function() {
+		
+		
+		$('#name').on('input', function() {
+			//alert("on is work !");
+			var input=$(this);
+			var is_name=input.val();
+			if(is_name){input.removeClass("invalid").addClass("valid");}
+			else{input.removeClass("valid").addClass("invalid");}
+		});
 		
 		local_source = getConcepts();
 	/* 	 console.log(getConcepts());
@@ -430,8 +428,54 @@ legend.scheduler-border {
 	}
   
 	/*Form Validation  */
-
+   
+	function validate(){
+		var testName = document.getElementById('name').value;
+		var referenceConcept = document.getElementById('conceptSuggestBox').value;
+		console.log(referenceConcept);
+		var isValidate =true; 
+		/*var confirmpass = document.getElementById('conpass').value;
+		var mobileNumber = document.getElementById('mobileNumber').value;
+		var emails = document.getElementById('emails').value; */
+		if(referenceConcept == ""){
+			document.getElementById('referenceconcept').innerHTML ="Please fill the Reference Concept field";
+			isValidate = false;
+		}
+		else if(isNaN(referenceConcept)){
+			document.getElementById('referenceconcept').innerHTML ="Only the autosearch reference concept Id is accepted";
+			isValidate = false;
+		}	
+		
+		if(testName == ""){
+				document.getElementById('testname').innerHTML ="Please fill the Test Name field";
+				isValidate = false;
+			}
+		else if(!isNaN(testName)){
+				document.getElementById('testname').innerHTML ="Only characters are allowed";
+				isValidate = false;
+			}
+		
+		//console.log(form_data); 
 	
+		return isValidate;
+	}
+	
+	//Retire Validate 
+	
+	function retireValidate(){
+		var retireReason = document.getElementById('retireReason').value;
+		var isValidate= true;
+		if(retireReason == ""){
+			document.getElementById('retirereason').innerHTML ="Please fill the retire reason field";
+			isValidate = false;
+		}
+		else if(!isNaN(retireReason)){
+			document.getElementById('retirereason').innerHTML ="Only characters are allowed";
+			isValidate = false;
+		}
+	
+		return isValidate;
+	}
 	
 	
 	
