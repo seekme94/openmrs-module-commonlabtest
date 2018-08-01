@@ -1,4 +1,3 @@
-
 <%@ include file="/WEB-INF/template/include.jsp"%>
 
 <link type="text/css" rel="stylesheet"
@@ -50,7 +49,7 @@ legend.scheduler-border {
 
 <body>
 	<br>
-	<c:set var="testOrder" scope="session" value="${testOrder}" />
+	<c:set var="testOrder" scope="session" value="${model.testOrder}" />
 	<div>
 	 <a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
 	</div>
@@ -63,73 +62,37 @@ legend.scheduler-border {
 		 <table id="testOrderTable" class="table table-striped table-bordered" style="width:100%">
 	        <thead>
 	            <tr>
+	            	<th hidden="true"></th>
 					<th>Test Type</th>
 					<th>Lab Reference Number</th>
 					<th>Edit</th>
 					<th>View</th>
 					<th>Manage Test Sample</th>
 					<th>Test Result</th>
+					
 				</tr>
 	        </thead>
 	        <tbody>
-
-			<c:forEach items="${model.testOrder}" var="test">
-							<tr>
-								<td><a
-										href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${test.uuid}">${test.labTestType.name}</a>
-								</td>
-								<td>${test.labReferenceNumber}</td>
-                                <td><a
-                                        href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}&testOrderId=${test.id}">
-                                    <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span>
-                                </a></td>
+		        <c:forEach var="order" items="${model.testOrder}">
+		       	 <c:if test="${! empty model.testOrder}">
+							<tr id = "mainRow">
+							     <td hidden ="true" id ="rspecimen">&{order.labTestType.requiresSpecimen}</td>
+								 <td><a
+									href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${order.uuid}">${order.labTestType.name}</a></td>
+								 <td>${order.labReferenceNumber}</td>
+								 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
 					             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
 					             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
 					             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
 					             
 							</tr>
+					</c:if>		
 				 </c:forEach>
-				<!--  <tr>
-			            <td>AFB SMEAR</td>
-			             <td>AFB-4NRL9876543100-52</td>
- 						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
-			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
-			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
-			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
-			             
-			             </tr>
-			        <tr>
-			            <td>Chest X-Ray</td>
-			             <td>CXR-NRL9876543100-52</td>
- 						 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
-			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
-			       	     <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
-			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
-			             
-			        </tr>
-			         <tr>
-			             <td>GeneXpert</td>
-			             <td>GXP-IRS12345</td>
-			             <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
-			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
-			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
-			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
-			             
-			       </tr>
-			        <tr>
-			             <td>SEDIMENTATION</td>
-			             <td>SED-6AIRS12345</td>
-			             <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
-			             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
-			             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
-			             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
-			             
-			       </tr> -->
 	        </tbody>
 	    </table>
 	 </div>
 	 
-	 <!-- View Modal -->
+	<%--  <!-- View Modal -->
 	<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -236,7 +199,7 @@ legend.scheduler-border {
 						   </div>
 						 </div>
 						
-						<%-- <table>						
+						<table>						
 							<tr>
 								<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
 								<td><label  class="control-label" path="retireReason"><spring:message code="general.retireReason" /></label></td>
@@ -249,7 +212,7 @@ legend.scheduler-border {
 									</div>
 								</td>
 							</tr>
-						</table> --%>
+						</table>
 					</form>
        			 </fieldset>
 
@@ -258,7 +221,7 @@ legend.scheduler-border {
         </div>
     </div>
 </div>
-	 
+	  --%>
 
 </body>
 
@@ -280,6 +243,8 @@ legend.scheduler-border {
 <script type="text/javascript">
 $(document).ready(function () {
 	
+	//console.log(${model.testOrder});
+	
 	$('#testOrderTable').dataTable({
 		 "bPaginate": true
 	  });
@@ -287,19 +252,15 @@ $(document).ready(function () {
 	  
 	/*View Test Order */
 	  $('.table-sample').click(function () {
+		  
+		  //check whether  speciement Required if speciment 
+		 	var Row = document.getElementById("mainRow");
+			var Cells = Row.getElementsByTagName("td");
+			alert(Cells[0].innerText);
+	 		 var requiresSpecimen =$tds.text();
+	 		  Console.log("Requires Specimen : "+requiresSpecimen);
 		 
-		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId};  
-		  
-		  
-		    //$('#addModal').modal('show'); 
-		  
-		    //$(this).parents('tr').detach();
-		 	 var $row = $(this).closest("tr");    // Find the row
-		     var $tds = $row.find("td:first");
-		     console.log($(this).text());
-		    $.each($tds, function() {
-		        console.log($(this).text());
-		    });
+		//  window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId=${model.patient.patientId}";  
 		});
 	  $('.table-view').click(function () {
 			 
@@ -309,13 +270,13 @@ $(document).ready(function () {
 	  
 	  $('.table-edit').click(function () {
 			 
-		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+${model.patient.patientId}; //+"&testOrderId="+2;  
+		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}"; //+"&testOrderId="+2;  
 		  
 		});
 	  
 	  $('.table-result').click(function () {
 			 
-		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId="+${model.patient.patientId};  
+		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId=${model.patient.patientId}";  
 		  
 		});
 	  
