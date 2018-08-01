@@ -1,3 +1,4 @@
+
 <%@ include file="/WEB-INF/template/include.jsp"%>
 
 <link type="text/css" rel="stylesheet"
@@ -71,11 +72,13 @@ legend.scheduler-border {
 				</tr>
 	        </thead>
 	        <tbody>
-		        <c:forEach var="order" items="${testOrder}">
+
+			<c:forEach items="${model.testOrder}" var="test">
 							<tr>
 								<td><a
-									href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${order.uuid}">${order.labTestType.name}</a></td>
-								<td>${order.labReferenceNumber}</td>
+										href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${test.uuid}">${test.labTestType.name}</a>
+								</td>
+								<td>${test.labReferenceNumber}</td>
 								 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
 					             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
 					             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>

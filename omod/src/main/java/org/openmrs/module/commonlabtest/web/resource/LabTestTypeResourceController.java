@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
-import org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
@@ -32,10 +31,7 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
 
     @Override
     public LabTestType getByUniqueId(String s) {
-        log.info("LabTestType GetByUuid :: " + s);
-        System.out.println("LabTestType GetByUuid :: " + s);
-        log.info("CommonLabTestService Object == " + commonLabTestService);
-        System.out.println("CommonLabTestService Object == " + commonLabTestService);
+
         return commonLabTestService.getLabTestTypeByUuid(s);
     }
 
@@ -46,7 +42,7 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
 
     @Override
     public LabTestType save(LabTestType labTestType) {
-        return Context.getService(CommonLabTestServiceImpl.class).saveLabTestType(labTestType);
+        return commonLabTestService.saveLabTestType(labTestType);
     }
 
     @Override
@@ -94,4 +90,20 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
         }
         return null;
     }
+
+    @Override
+    public DelegatingResourceDescription getCreatableProperties() {
+        DelegatingResourceDescription delegatingResourceDescription = new DelegatingResourceDescription();
+        //delegatingResourceDescription.addProperty();
+
+        delegatingResourceDescription.addProperty("testGroup");
+        delegatingResourceDescription.addProperty("labTestTypeId");
+        delegatingResourceDescription.addProperty("shortName");
+        delegatingResourceDescription.addProperty("requiresSpecimen");
+        delegatingResourceDescription.addProperty("referenceConcept");
+        delegatingResourceDescription.addProperty("name");
+        delegatingResourceDescription.addProperty("description");
+
+        return delegatingResourceDescription;
+	}
 }
