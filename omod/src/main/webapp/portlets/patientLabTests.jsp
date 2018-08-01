@@ -79,7 +79,10 @@ legend.scheduler-border {
 										href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${test.uuid}">${test.labTestType.name}</a>
 								</td>
 								<td>${test.labReferenceNumber}</td>
-								 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
+                                <td><a
+                                        href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}&testOrderId=${test.id}">
+                                    <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span>
+                                </a></td>
 					             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
 					             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
 					             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
