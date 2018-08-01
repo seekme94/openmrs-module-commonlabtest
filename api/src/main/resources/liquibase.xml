@@ -151,7 +151,7 @@
 			Creating the commonlabtest_test table
 		</comment>
 		<createTable tableName="commonlabtest_test">
-			<column name="test_order_id" type="int" autoIncrement="true">
+			<column name="test_order_id" type="int" >
 				<!-- A lab test has one-to-one mapping with orders -->
 				<constraints primaryKey="true" nullable="false" />
 			</column>
