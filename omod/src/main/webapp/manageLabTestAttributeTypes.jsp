@@ -77,6 +77,7 @@
 						 <th hidden="true"></th>
 						 <th>Name</th>
 						 <th>Description</th>
+						 <th>Lab Test Type</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -85,6 +86,7 @@
 						    <td hidden="true" id="uuid">${tt.uuid}</td>
 							<td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${tt.uuid}">${tt.name}</a></td>
 							<td>${tt.description}</td>
+							<td>${tt.labTestType.name}</td>
 						</tr>
 					</c:forEach>
 				</tbody>
