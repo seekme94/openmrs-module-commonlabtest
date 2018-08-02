@@ -16,6 +16,8 @@
 body {
 	font-size: 12px;
 }
+
+
 input[type=submit] {
 	background-color: #1aac9b;
 	color: white;
@@ -53,6 +55,16 @@ legend.scheduler-border {
 	<div>
 	 <a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
 	</div>
+	<%-- <c:if test="${not empty status}">
+		<div class="alert alert-success">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Success!</strong> <c:out value="${status}" />
+		</div>
+	</c:if> --%>
+		 <div class="alert alert-info" hidden ="true" id="specimenalert">
+	      <a href="#" class="close" data-dismiss="alert">&times;</a>
+	      <p>This test order is not required test sample...</p>
+   		 </div>
 	<br>
 	<!--List of Test Order  -->
 	<div class=" boxHeader" style="background-color: #1aac9b">
@@ -62,6 +74,7 @@ legend.scheduler-border {
 		 <table id="testOrderTable" class="table table-striped table-bordered" style="width:100%">
 	        <thead>
 	            <tr>
+	            	<th hidden="true"></th>
 	            	<th hidden="true"></th>
 					<th>Test Type</th>
 					<th>Lab Reference Number</th>
@@ -76,11 +89,11 @@ legend.scheduler-border {
 		        <c:forEach var="order" items="${model.testOrder}">
 		       	 <c:if test="${! empty model.testOrder}">
 							<tr id = "mainRow">
-							     <td hidden ="true" id ="rspecimen">&{order.labTestType.requiresSpecimen}</td>
-								 <td><a
-									href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${order.uuid}">${order.labTestType.name}</a></td>
+							     <td hidden ="true" class ="orderId">${order.testOrderId}</td>
+							     <td hidden ="true" class ="rspecimen">${order.labTestType.requiresSpecimen}</td>
+								 <td>${order.labTestType.name}</td>
 								 <td>${order.labReferenceNumber}</td>
-								 <td> <span class="table-edit"><i class="fa fa-edit fa-2x"></i></span></td>
+								 <td> <span class="table-edit" ><i class="fa fa-edit fa-2x"></i></span></td>
 					             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
 					             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
 					             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
@@ -92,7 +105,7 @@ legend.scheduler-border {
 	    </table>
 	 </div>
 	 
-	<%--  <!-- View Modal -->
+    <!-- View Modal -->
 	<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -106,11 +119,11 @@ legend.scheduler-border {
             
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.order.detail" /></legend>
-			
-	     			<form:form commandName="testOrder" id="form">
+		<%-- 	
+	     			 <form:form commandName="testOrder" id="form">
 		     			 <div class="form-group">
 	                        <label ><font color="#D0D0D0"><sub><spring:message code="commonlabtest.order.id" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.id}" /></sub></font>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.testOrderId}" /></sub></font>
 	                    </div>
 	                    <div class="form-group">
 	                        <label><font color="#000000"><sub><spring:message code="general.testGroup" /></sub></font></label>
@@ -118,7 +131,7 @@ legend.scheduler-border {
 	                    </div>
 	                     <div class="form-group">
 	                        <label><font color="#000000"><sub><spring:message code="general.testType" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType}" /></sub></font>
+				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.name}" /></sub></font>
 	                    </div>
 	                     <div class="form-group">
 	                        <label><font color="#000000"><sub><spring:message code="commonlabtest.order.labReferenceNo" /></sub></font></label>
@@ -141,9 +154,9 @@ legend.scheduler-border {
 				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.uuid}" /></sub></font>
 	                    </div>
 	    
-	                </form:form>
+	                </form:form> --%>
 	            </fieldset>    
-               
+
                <!--Test Sample Details -->
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.labtestsample.detail" /></legend>
@@ -172,56 +185,15 @@ legend.scheduler-border {
 									</tbody>
 							</table>
        			 </fieldset>
-       			 
        			  <!--Test Sample Details -->
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.result.detail" /></legend>
-					
-       			 </fieldset>
-               
-                <fieldset  class="scheduler-border">
-      	 		  <legend  class="scheduler-border"><spring:message code="general.test.retire" /></legend>
-					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtesttype.form" >
-						 <!-- UUID -->
-						 <div class="row">
-						   <div class="col-md-4">
-								<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-								<label  class="control-label" path="retireReason"><spring:message code="general.retireReason" /><span class="required">*</span></label>
-						   </div>
-						   <div class="col-md-6">
-						   		<input class="form-control" value="${labTestType.retireReason}" id="retireReason" name="retireReason" required="required">
-						   </div>
-						 </div>
-						 <!-- Retire -->
-						 <div class="row">
-						   <div class="col-md-4">
-						 		 <input type="submit" value="Retire Test Order"></input>
-						   </div>
-						 </div>
-						
-						<table>						
-							<tr>
-								<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-								<td><label  class="control-label" path="retireReason"><spring:message code="general.retireReason" /></label></td>
-								<td><input class="form-control" value="${labTestType.retireReason}" id="retireReason" name="retireReason" required="required"></input></td>
-							</tr>
-							<tr>
-								<td>
-									<div id="retireButton" style="margin-top: 15px">
-										<input type="submit" value="Retire Test Type"></input>
-									</div>
-								</td>
-							</tr>
-						</table>
-					</form>
-       			 </fieldset>
-
+       			</fieldset>
                 
             </div>
         </div>
     </div>
-</div>
-	  --%>
+  </div>
 
 </body>
 
@@ -240,10 +212,9 @@ legend.scheduler-border {
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/dataTables.bootstrap4.min.js"></script>
 
 
-<script type="text/javascript">
+<script type="text/javascript">	
 $(document).ready(function () {
-	
-	//console.log(${model.testOrder});
+		
 	
 	$('#testOrderTable').dataTable({
 		 "bPaginate": true
@@ -253,32 +224,50 @@ $(document).ready(function () {
 	/*View Test Order */
 	  $('.table-sample').click(function () {
 		  
-		  //check whether  speciement Required if speciment 
-		 	var Row = document.getElementById("mainRow");
-			var Cells = Row.getElementsByTagName("td");
-			alert(Cells[0].innerText);
-	 		 var requiresSpecimen =$tds.text();
-	 		  Console.log("Requires Specimen : "+requiresSpecimen);
+			  var requiresSpecimen = $(this).closest("tr")  
+							          .find(".rspecimen")   
+							          .text(); 
+			 	if(requiresSpecimen == 'false'){
+			 		$('#specimenalert').removeAttr('hidden');
+			 		autoHide();
+			 	}
+			 	else{
+					 window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId=${model.patient.patientId}";  
+			 	}
 		 
-		//  window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId=${model.patient.patientId}";  
 		});
 	  $('.table-view').click(function () {
 			 
-		    $('#viewModal').modal('show'); 
+		   		 $('#viewModal').modal('show'); 
 		  
 		});
 	  
 	  $('.table-edit').click(function () {
-			 
-		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}"; //+"&testOrderId="+2;  
-		  
+			  var testOrderId = $(this).closest("tr")
+						          .find(".orderId") 
+						          .text(); 
+			  if(testOrderId == ""){
+				  				  
+			    }
+			  else{
+				  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId; //+"&testOrderId="+2;  
+			  }
 		});
 	  
 	  $('.table-result').click(function () {
 			 
-		  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId=${model.patient.patientId}";  
+			  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId=${model.patient.patientId}";  
 		  
 		});
 	  
 });
+
+function autoHide(){
+	
+	   $("#specimenalert").fadeTo(2000, 500).slideUp(500, function(){
+           $("#specimenalert").slideUp(500);
+            }); 
+	
+}
+
 </script>

@@ -60,7 +60,7 @@ legend.scheduler-border {
 		<c:if test="${not empty labTest.labReferenceNumber}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.order.edit" /></legend>
 		</c:if>
-		<form:form commandName="labTest" id="form">
+		<form:form commandName="labTest" id="labTestForm" onsubmit="return validate()">
 		  	<form:input  path="order.patient" hidden="true" value="${patientId}"></form:input>
 			<form:input  path="order.concept.conceptId" hidden="true"  id="conceptId"></form:input>	
 			<form:input  path="order.orderer.providerId" hidden="true" value="${provider.providerId}"></form:input>	
@@ -68,10 +68,9 @@ legend.scheduler-border {
 		
 		    <div class="row" >
 				   <div class="col-md-4">
-				        <form:label  class="control-label" path="order.encounter"><spring:message code="general.encounter" /><span class="required">*</span></form:label>
+				        <form:label  class="control-label" path="order.encounter"><spring:message code="general.encounter" /><span class=" text-danger required">*</span></form:label>
 				   </div>
 				   <div class="col-md-6">
-				  
 				   		<form:select class="form-control" path="order.encounter" id="encounter" >
 								<form:options  />
 								 <c:if test="${not empty encounters}">
@@ -80,13 +79,13 @@ legend.scheduler-border {
 										</c:forEach>
 					 			</c:if>
 						</form:select>
-	
+						<span id="encounters" class="text-danger "> </span>
 				   </div>
 			 </div>
 			<!-- Test Type -->
 			 <div class="row" >
 			   <div class="col-md-4">
-			        <form:label  class="control-label" path="labTestType.labTestTypeId"><spring:message code="general.testType" /><span class="required">*</span></form:label>
+			        <form:label  class="control-label" path="labTestType.labTestTypeId"><spring:message code="general.testType" /><span class="text-danger required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
 			   		<form:select class="form-control" path="labTestType.labTestTypeId" id="testType" >
@@ -97,15 +96,18 @@ legend.scheduler-border {
 									</c:forEach>
 								</c:if>
 					</form:select>
+					<span id="testtype" class="text-danger "> </span>
 			   </div>
 			 </div>
 			 <!-- Lab Reference Number -->
 			 <div class="row">
 			   <div class="col-md-4">
-			   		<form:label  class="control-label" path="labReferenceNumber"><spring:message code="commonlabtest.order.labReferenceNo" /><span class="required">*</span></form:label>
+			   		<form:label  class="control-label" path="labReferenceNumber"><spring:message code="commonlabtest.order.labReferenceNo" /><span class="text-danger required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" path="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber" required="required"></form:input>
+			   		<form:input class="form-control" path="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber"></form:input>
+			  		<span id="labreferencenumber" class="text-danger "> </span>
+			  		
 			   </div>
 			 </div>
 			  <!-- Care Setting-->
@@ -145,15 +147,17 @@ legend.scheduler-border {
 	
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="commonlabtest.order.void" /></legend>
-					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtestorder.form" >
+					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/voidlabtestorder.form" onsubmit="return voidValidate()">
 						 <!-- UUID -->
 						 <div class="row">
 						   <div class="col-md-2">
-								<input value="" hidden="true"  id="uuid" name="uuid"></input>
-								<label  class="control-label" path="voidReason"><spring:message code="general.reason" /><span class="required">*</span></label>
+								<input value="${testOrder.uuid}" hidden="true"  id="uuid" name="uuid"></input>
+								<label  class="control-label" path="voidReason"><spring:message code="general.reason" /><span class=" text-danger required">*</span></label>
 						   </div>
 						   <div class="col-md-6">
-						   		<input class="form-control" value="" id="voidReason" name="retireReason" required="required">
+						   		<input class="form-control" value="" id="voidReason" name="voidReason">
+						  		<span id="voidreason" class="text-danger "> </span>
+						  
 						   </div>
 						 </div>
 						 <!-- Retire -->
@@ -191,5 +195,50 @@ legend.scheduler-border {
 		 });
 		
 	});
+	
+	function validate(){
+		var referenceNumber = document.getElementById('labReferenceNumber').value;
+		var testType = document.getElementById('testType').value;
+		var encounter = document.getElementById('encounter').value
+		var isValidate =true; 
+		if(encounter == ""){
+			document.getElementById('encounters').innerHTML ="Please fill the Encounter field";
+			isValidate = false;
+		}
+		if(testType == ""){
+			document.getElementById('testtype').innerHTML ="Please fill the Test Type field";
+			isValidate = false;
+		}
+		
+		if(referenceNumber == ""){
+			document.getElementById('labreferencenumber').innerHTML ="Please fill the Lab Reference Number field";
+			isValidate = false;
+		}
+		/* else if(!isNaN(referenceNumber)){
+			document.getElementById('labreferencenumber').innerHTML ="Only characters are allowed";
+			isValidate = false;
+		} */
+	
+		
+		return isValidate;
+	}
+	
+	function voidValidate(){
+		
+		var retireReason = document.getElementById('voidReason').value;
+		var isValidate= true;
+		if(retireReason == ""){
+			document.getElementById('voidreason').innerHTML ="Please fill the retire reason field";
+			isValidate = false;
+		}
+		else if(!isNaN(retireReason)){
+			document.getElementById('voidreason').innerHTML ="Only characters are allowed";
+			isValidate = false;
+		}
+	
+		return isValidate;
+		
+		
+	}
 </script>
 

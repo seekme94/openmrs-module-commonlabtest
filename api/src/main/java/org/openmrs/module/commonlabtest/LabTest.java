@@ -53,7 +53,6 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 	private static final long serialVersionUID = 2561859108258402721L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "test_order_id")
 	private Integer testOrderId;
 	
@@ -308,5 +307,5 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 		}
 		return null;
 	}
-
+	
 }

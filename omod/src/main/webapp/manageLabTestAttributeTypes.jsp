@@ -58,7 +58,7 @@
 	</div>
 	<br>
 	<c:if test="${not empty status}">
-		<div class="alert alert-success">
+		<div class="alert alert-success" id="success-alert">
 			 <a href="#" class="close" data-dismiss="alert">&times;</a>
 	 		<strong>Success!</strong> <c:out value="${status}" />
 		</div>
@@ -117,7 +117,12 @@ function relocate_home()
 } 
 
 $(document).ready(function() {
-	console.log("${status}");
+	//console.log("${status}");
+		//status auto closs..		
+	   $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+               $("#success-alert").slideUp(500);
+                }); 
+	
 	$('#manageTestAttributeTypeTable').dataTable({
 		 "bPaginate": true
 	  });
