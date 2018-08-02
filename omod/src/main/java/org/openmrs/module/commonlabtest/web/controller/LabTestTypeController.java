@@ -1,5 +1,7 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -16,16 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
-import groovy.json.JsonOutput;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class LabTestTypeController {
@@ -99,10 +95,11 @@ public class LabTestTypeController {
 			catch (Exception e) {
 				status = e.getLocalizedMessage();
 				e.printStackTrace();
-				
+                model.addAttribute("error", status);
+                return "redirect:addLabTestType.form?uuid=" + labTestType.getUuid();
 			}
 		}
-		model.addAttribute("status", status);
+        model.addAttribute("save", status);
 		return "redirect:manageLabTestTypes.form";
 		
 	}
@@ -123,9 +120,10 @@ public class LabTestTypeController {
 		catch (Exception exception) {
 			status = exception.getLocalizedMessage();
 			exception.printStackTrace();
-			
-		}
-		model.addAttribute("status", status);
+            model.addAttribute("error", status);
+            return "redirect:addLabTestType.form?uuid=" + labTestType.getUuid();
+        }
+        model.addAttribute("save", status);
 		return "redirect:manageLabTestTypes.form";
 		
 	}
@@ -146,9 +144,12 @@ public class LabTestTypeController {
 		catch (Exception exception) {
 			status = exception.getLocalizedMessage();
 			exception.printStackTrace();
+
+            model.addAttribute("error", status);
+            return "redirect:addLabTestType.form?uuid=" + labTestType.getUuid();
 			
 		}
-		model.addAttribute("status", status);
+        model.addAttribute("save", status);
 		return "redirect:manageLabTestTypes.form";
 		
 	}
