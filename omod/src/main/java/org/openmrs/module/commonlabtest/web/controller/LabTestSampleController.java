@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestSample;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
@@ -27,9 +28,15 @@ public class LabTestSampleController {
 	@Autowired
 	CommonLabTestService commonLabTestService;
 	
+	@ModelAttribute
+	public void specimenSite() {
+		
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestSample.form")
-	public String showLabTestTypes(@RequestParam(required = true) Integer patientId,
-	        @RequestParam(required = false) Integer testSampleId, ModelMap model) {
+	public String showLabTestTypes(ModelMap model, @RequestParam(required = true) Integer patientId,
+	        @RequestParam(required = false) Integer testSampleId,
+	        @RequestParam(value = "error", required = false) String error) {
 		
 		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
 		LabTestSample test;
@@ -41,18 +48,21 @@ public class LabTestSampleController {
 		}
 		model.addAttribute("testSample", test);
 		model.addAttribute("patientId", patientId);
-		
+		model.addAttribute("error", error);
+		model.addAttribute("provider",
+		    Context.getProviderService().getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator()
+		            .next());
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/labTestSample.form")
-	public void onSubmit(ModelMap model, HttpSession httpSession,
+	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/addLabTestSample.form")
+	public String onSubmit(ModelMap model, HttpSession httpSession,
 	        @ModelAttribute("anyRequestObject") Object anyRequestObject, HttpServletRequest request,
 	        @ModelAttribute("testSample") LabTestSample labTestSample, BindingResult result) {
 		String status = "";
 		try {
 			if (result.hasErrors()) {
-				
+				throw new Exception();
 			} else {
 				//   labTest.set
 				commonLabTestService.saveLabTestSample(labTestSample);
@@ -65,14 +75,20 @@ public class LabTestSampleController {
 		}
 		catch (Exception e) {
 			status = e.getLocalizedMessage();
-			/*	//e.printStackTrace();
-				model.addAttribute("status", status);
-				//model.addAttribute("uuid", attributeType == null ? "" : attributeType.getUuid());
-				return SUCCESS_ADD_FORM_VIEW;//"redirect:addLabTestAttributeType.form";//"redirect:manageLabTestAttributeTypes.form";
-			 	*/
+			e.printStackTrace();
+			model.addAttribute("error", status);
+			if (labTestSample.getLabTestSampleId() == null) {
+				return "redirect:addLabTestSample.form?patientId="
+				        + labTestSample.getLabTest().getOrder().getPatient().getPatientId();
+			} else {
+				return "redirect:addLabTestSample.form?patientId="
+				        + labTestSample.getLabTest().getOrder().getPatient().getPatientId() + "&testSampleId="
+				        + labTestSample.getLabTest().getTestOrderId();
+			}
 		}
 		model.addAttribute("status", status);
 		
+		return "redirect:manageLabTestSamples.form";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtestsample.form")

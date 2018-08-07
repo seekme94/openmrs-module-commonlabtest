@@ -1,5 +1,8 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -32,11 +35,11 @@ public class ManageLabTestSampleController {
 	        @RequestParam(required = false) Integer testOrderId, ModelMap model) {
 		
 		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
-		LabTestSample testSample;
+		List<LabTestSample> testSample = null;
 		if (testOrderId == null) {
-			testSample = new LabTestSample();
-		} else {
-			testSample = commonLabTestService.getLabTestSample(testOrderId);//need to check this get sample method...
+			testSample = new ArrayList<LabTestSample>();
+			LabTest labTest = commonLabTestService.getLabTest(testOrderId);
+			testSample = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);//need to check this get sample method...
 		}
 		model.addAttribute("labSampleTest", testSample);
 		model.addAttribute("patientId", patientId);

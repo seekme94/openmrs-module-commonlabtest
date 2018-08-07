@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/rest/" + RestConstants.VERSION_1 + "/commonlab")
 public class CommonLabModuleResourceController extends MainResourceController {
 
-    @Override
-    public String getNamespace() {
-        return RestConstants.VERSION_1 + "/commonlab";
-    }
+	@Override
+	public String getNamespace() {
+		return RestConstants.VERSION_1 + "/commonlab";
+	}
 }

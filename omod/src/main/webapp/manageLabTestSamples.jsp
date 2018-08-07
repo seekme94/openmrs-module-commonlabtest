@@ -85,35 +85,19 @@ legend.scheduler-border {
 				</tr>
 	        </thead>
 	        <tbody>
-		       <%--  <c:forEach var="order" items="${testOrder}">
-							<tr>
-								<td><a
-									href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${order.uuid}">${order.labTestType.name}</a></td>
-								<td>${order.labReferenceNumber}</td>
-								<td>
-								    <span class="table-remove"><i class="fa fa-edit"></i></span>
-								</td>
-							</tr>
-				 </c:forEach> --%>
-				 <tr>
-			            <td>11825613065</td>
-			            <td>SPUTUM</td>
-			            <td>dummy data</td>
-			            <td>13-July-2018</td>
-			            <td>COLLECTED</td>
-						<td><button type="button" class="btn  reject" >Reject</button></td> 
- 						<td><button type="button" class="btn  accept" >Accept</button></td> 		
- 				</tr>
-			    
-			     <tr style="color: red;">
-			            <td>11825613023</td>
-			            <td>BLOOD</td>
-			            <td>dummy data</td>
-			            <td>10-July-2018</td>
-			            <td>EXPIRED</td>
-			            <td><button type="button" class="btn  reject" >Reject</button></td> 
- 						<td><button type="button" class="btn  accept" >Accept</button></td> 
- 				</tr>		
+		       <c:forEach var="testSample" items="${labSampleTest}">
+		          <c:if test="${! empty labSampleTest}">
+						<tr>
+						    <td>${testSample.labTestSampleId}</td>
+						    <td>${testSample.getSpecimenType().getName()}</td>
+						    <td>${testSample.getSpecimenSite().getName()}</td>
+						    <td>${testSample.collectionDate}</td>
+						    <td>${testSample.getStatus()}</td>
+							<td><button type="button" class="btn  reject" >Reject</button></td> 
+							<td><button type="button" class="btn  accept" >Accept</button></td> 	
+						</tr>
+					</c:if>	
+				 </c:forEach>
 	        </tbody>
 	    </table>
 	 </div>

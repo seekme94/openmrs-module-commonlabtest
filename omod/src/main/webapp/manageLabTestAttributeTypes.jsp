@@ -119,8 +119,8 @@ function relocate_home()
 $(document).ready(function() {
 	//console.log("${status}");
 		//status auto closs..		
-	   $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-               $("#success-alert").slideUp(500);
+	   $("#success-alert").fadeTo(2000, 1000).slideUp(1000, function(){
+               $("#success-alert").slideUp(1000);
                 }); 
 	
 	$('#manageTestAttributeTypeTable').dataTable({
@@ -137,10 +137,28 @@ $(document).ready(function() {
     	 var $row = $(this).closest("tr");    // Find the row
 	     var $tds = $row.find("td:first");
 	 	 var uuid =$tds.text();
-		 window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid="+uuid;
+		 window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid;
 	     
 	     
     });
+	 
+	 jQuery(function() {
+
+			 if (performance.navigation.type == 1) {
+				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+			 }
+
+			 jQuery("body").keydown(function(e){
+	
+			 if(e.which==116){
+				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+			 }
+	
+			 });
+		 });	 
+	 
+	 
+	 
 	
 });
 
