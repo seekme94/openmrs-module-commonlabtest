@@ -56,6 +56,12 @@ legend.scheduler-border {
   -->
 <body>
  <div class="container">
+  	<c:if test="${not empty error}">
+		<div class="alert alert-danger">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Error!</strong> <c:out value="${error}" />
+		</div>
+	</c:if>	 
 	<c:set var="testType" scope="session" value="${labTestType}" />
     <fieldset  class="scheduler-border">
 		<c:if test="${empty testType.referenceConcept.conceptId}">
@@ -83,7 +89,7 @@ legend.scheduler-border {
 			   		<form:label  class="control-label" path="name"><spring:message code="general.testName" /><span class="text-danger font-weight-bold">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" path="name" id="name"  name="name"></form:input>
+			   		<form:input class="form-control" maxlength="50" path="name" id="name"  name="name"></form:input>
 					<span id="testname" class="text-danger"> </span>
 				 </div>
 			 </div>
@@ -93,7 +99,7 @@ legend.scheduler-border {
 					<form:label  class="control-label" path="shortName"><spring:message code="general.shortName" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input  class="form-control"  path="shortName" id="short_name" ></form:input>
+			   		<form:input  class="form-control" maxlength="20"  path="shortName" id="short_name" ></form:input>
 			   </div>
 			 </div>
 			  <!-- Description -->
@@ -102,7 +108,7 @@ legend.scheduler-border {
 					<form:label class="control-label" path="description"><spring:message code="general.description" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:textarea class="form-control" path="description" id="description" rows="5"></form:textarea>
+			   		<form:textarea class="form-control"  maxlength="255" path="description" id="description" rows="5"></form:textarea>
 			   </div>
 			 </div>
 			  <!-- Test Group -->
@@ -265,7 +271,7 @@ legend.scheduler-border {
 				</form>
         </fieldset>
 	</c:if>
-	<br>
+	<%-- <br>
     <c:if test="${not empty testType.referenceConcept.conceptId}">
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.foreverDelete" /></legend>
@@ -279,7 +285,7 @@ legend.scheduler-border {
 				   </div>
 				 </div>
 				
-				<%-- <table>				
+				<table>				
 				<tr>
 					<td>
 						<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
@@ -288,11 +294,11 @@ legend.scheduler-border {
 						</div>
 					</td>
 				</tr>
-				</table> --%>
+				</table>
 			</form>
 		 </fieldset>
 	</c:if>
- 
+  --%>
  </div>
 	
 </body>
@@ -431,29 +437,47 @@ legend.scheduler-border {
    
 	function validate(){
 		var testName = document.getElementById('name').value;
+		var testShortName =document.getElementById('short_name').value;
 		var referenceConcept = document.getElementById('conceptSuggestBox').value;
-		console.log(referenceConcept);
+		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%]*$");
+        console.log(testName);
+		console.log(!reText.test(testName));
 		var isValidate =true; 
-		/*var confirmpass = document.getElementById('conpass').value;
-		var mobileNumber = document.getElementById('mobileNumber').value;
-		var emails = document.getElementById('emails').value; */
+		var emptyErorMessage= 'This field can not be empty';
 		if(referenceConcept == ""){
-			document.getElementById('referenceconcept').innerHTML ="Please fill the Reference Concept field";
+			document.getElementById("referenceconcept").style.display= 'block';	
+			document.getElementById('referenceconcept').innerHTML =emptyErorMessage;
 			isValidate = false;
 		}
 		else if(isNaN(referenceConcept)){
+			document.getElementById("referenceconcept").style.display= 'block';	
 			document.getElementById('referenceconcept').innerHTML ="Only the autosearch reference concept Id is accepted";
 			isValidate = false;
-		}	
+		}
+		else {
+			document.getElementById("referenceconcept").style.display= 'none';		
+		}
+		
 		
 		if(testName == ""){
-				document.getElementById('testname').innerHTML ="Please fill the Test Name field";
+				document.getElementById("testname").style.display= 'block';		
+				document.getElementById('testname').innerHTML =emptyErorMessage;
 				isValidate = false;
 			}
 		else if(!isNaN(testName)){
-				document.getElementById('testname').innerHTML ="Only characters are allowed";
+				document.getElementById("testname").style.display= 'block';		
+			 	document.getElementById('testname').innerHTML ="Only characters are allowed";
 				isValidate = false;
 			}
+		 else if(!reText.test(testName)){
+			    document.getElementById("testname").style.display= 'block';
+				document.getElementById('testname').innerHTML ="Text Contain Invalid characters";
+				isValidate = false;
+		  }
+		else {
+			document.getElementById("testname").style.display= 'none';		
+		}
+		
 		
 		//console.log(form_data); 
 	
@@ -465,8 +489,9 @@ legend.scheduler-border {
 	function retireValidate(){
 		var retireReason = document.getElementById('retireReason').value;
 		var isValidate= true;
+		var emptyErorMessage= 'This field can not be empty';
 		if(retireReason == ""){
-			document.getElementById('retirereason').innerHTML ="Please fill the retire reason field";
+			document.getElementById('retirereason').innerHTML =emptyErorMessage;
 			isValidate = false;
 		}
 		else if(!isNaN(retireReason)){

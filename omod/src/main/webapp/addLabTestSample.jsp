@@ -52,6 +52,13 @@ legend.scheduler-border {
 <body>
 	
 <div class="container">
+
+  	<c:if test="${not empty error}">
+		<div class="alert alert-danger">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Error!</strong> <c:out value="${error}" />
+		</div>
+	</c:if>	 
 	<c:set var="testSample" scope="session" value="${testSample}" />
     <fieldset  class="scheduler-border">
 		<c:if test="${empty testSample.specimenType}">
@@ -60,7 +67,10 @@ legend.scheduler-border {
 		<c:if test="${not empty testSample.specimenType}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.labtestsample.edit" /></legend>
 		</c:if>
-		<form:form commandName="testSample" id="form">
+		<form:form modelAttribute="testSample" id="testSampleform">
+			<form:input  path="collector.providerId" hidden="true" value="${provider.providerId}"></form:input>	
+		    <form:input  path="labTest.order.patient.patientId" hidden="true" value="${patientId}"></form:input>
+		   
 		    <div class="row" >
 				   <div class="col-md-4">
 				        <form:label  class="control-label" path="specimenType"><spring:message code="general.specimenType" /><span class="required">*</span></form:label>
@@ -83,18 +93,23 @@ legend.scheduler-border {
 			   		<form:label  class="control-label" path="status"><spring:message code="general.status" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" path="status" id="status"  name="status"></form:input>
-			   </div>
+			   		<form:select class="form-control" path="status" id="status" >
+								<form:options items="${LabTestSampleStatus}" />
+								<c:forEach items="${LabTestSampleStatus}">
+									<option value="${LabTestSampleStatus}">${LabTestSampleStatus}</option>
+								</c:forEach>
+					</form:select>
+			  </div>
 			 </div>
-			  <!-- collector-->
-			 <div class="row">
+			 <!--collectionDate  -->
+			  <div class="row">
 			   <div class="col-md-4">
-			   		<form:label  class="control-label" path="collector"><spring:message code="general.collector" /></form:label>
+			   		<form:label  class="control-label" path="collectionDate"><spring:message code="commonlabtest.labtestsample.collectionDate" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" path="collector" id="collector"  name="collector"></form:input>
-			   </div>
-			 </div>
+					 <form:input class="form-control" path="collectionDate" type="text" id="datepicker"></form:input>
+				</div>
+			 </div> 
 		    <!-- Save -->
 			 <div class="row">
 			   <div class="col-md-4">
@@ -151,7 +166,24 @@ legend.scheduler-border {
 
 <script type="text/javascript">
 $(document).ready(function () {
-	
+	$("#datepicker").datepicker({
+    dateFormat: 'yy-dd-mm',
+    onSelect: function(datetext){
+        var d = new Date(); // for now
+        var h = d.getHours();
+    		h = (h < 10) ? ("0" + h) : h ;
+
+    		var m = d.getMinutes();
+        m = (m < 10) ? ("0" + m) : m ;
+
+        var s = d.getSeconds();
+        s = (s < 10) ? ("0" + s) : s ;
+
+    		datetext = datetext + " " + h + ":" + m + ":" + s;
+        $('#datepicker').val(datetext);
+    },
+	});
+
 });
 </script>
 

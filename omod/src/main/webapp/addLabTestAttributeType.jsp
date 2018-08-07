@@ -47,18 +47,28 @@ legend.scheduler-border {
  margin-bottom:15px;
  
  }
+ 
+/* #testTypeName
+{
+    overflow: hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    width:150px;
+    display:inline-block;
+} */
 </style>
 
 <body>
-	<%-- <c:if test="${not empty status}">
-		<div class="alert alert-danger fade in">
-			 <a href="#" class="close" data-dismiss="alert">&times;</a>
-	 		<strong>Success!</strong> <c:out value="${status}" />
-		</div>
-	</c:if>	 --%>
+	
 
  <div class="container">
-    
+ 
+     <c:if test="${not empty error}">
+		<div class="alert alert-danger">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Error!</strong> <c:out value="${error}" />
+		</div>
+	</c:if>	 
 	<c:set var="testAttributeType" scope="session" value="${attributeType}" />
 	<fieldset  class="scheduler-border">
 	   <c:if test="${empty testAttributeType.name}">
@@ -71,12 +81,15 @@ legend.scheduler-border {
  	        		 <div class="row">
 						   <div class="col-md-2">
 						   		<form:input path="labTestAttributeTypeId"  hidden="true" id="labTestAttributeTypeId"></form:input>
-								<form:label path="labTestType" class="control-label"><spring:message code="general.labTestType" /><span class="text-danger required">*</span></form:label>
+								<form:label path="labTestType.labTestTypeId" class="control-label"><spring:message code="general.labTestType" /><span class="text-danger required">*</span></form:label>
 							</div>
-						   <div class="col-md-6">
+						   <div class="col-md-6">	
 						   		<form:input class="form-control"  id="testTypeSuggestBox" path="labTestType.labTestTypeId" list="testTypeOptions" placeholder="Search Test Type..." ></form:input>
 								<datalist class="lowercase" id="testTypeOptions"></datalist>
 							    <span id="labtesttypeid" class="text-danger "> </span>
+						   </div>
+						   <div class="col-md-4">  
+						      <font color="#D0D0D0"><span id="testTypeName"></span></font>
 						   </div>
 					  </div>
 					  <!--Test Attribute Type Name  -->
@@ -85,7 +98,7 @@ legend.scheduler-border {
 						   		<form:label path="name" class="control-label"><spring:message code="general.name" /><span class="text-danger required">*</span></form:label>
 						   	</div>
 						   <div class="col-md-6">
-						   		<form:input class="form-control" path="name" id="name" ></form:input>
+						   		<form:input class="form-control" maxlength="50" path="name" id="name" ></form:input>
 							    <span id="testatrname" class="text-danger "> </span>
 						   	</div>
 					  </div>
@@ -95,27 +108,27 @@ legend.scheduler-border {
 					  			<form:label path="description" class="control-label"><spring:message code="general.description" /><span class="text-danger required">*</span></form:label>
 						   	</div>
 						   <div class="col-md-6">
-								<form:textarea class="form-control" path="description" id="description" ></form:textarea>
+								<form:textarea class="form-control" maxlength="255"  path="description" id="description" ></form:textarea>
 							    <span id="atrdescription" class="text-danger "> </span>
 						   	</div>
 					  </div>
 					  <!-- Min Ocurance -->
 					    <div class="row">
 						   <div class="col-md-2">
-								<form:label path="minOccurs" class="control-label"><spring:message code="general.minOccurs" /><span class="required">*</span></form:label>
+								<form:label path="minOccurs" class="control-label"><spring:message code="general.minOccurs" /><span class="text-danger required">*</span></form:label>
 							</div>
 						   <div class="col-md-6">
-								<form:input class="form-control"  path="minOccurs" id="min_occurs"></form:input></td>
+								<form:input class="form-control" maxlength="2"   path="minOccurs" id="min_occurs"></form:input></td>
 							    <span id="minoccurs" class="text-danger "> </span>
 						   	</div>
 					 	 </div>
 					 	 <!-- max occurs -->
 					 	  <div class="row">
 							   <div class="col-md-2">
-									<form:label path="maxOccurs" class="control-label"><spring:message code="general.minOccurs" /><span class="required">*</span></form:label>
+									<form:label path="maxOccurs" class="control-label"><spring:message code="general.maxOccurs" /><span class="text-danger required">*</span></form:label>
 								</div>
 							   <div class="col-md-6">
-									<form:input class="form-control"  path="maxOccurs" id="max_occurs"></form:input>
+									<form:input class="form-control" maxlength="2"   path="maxOccurs" id="max_occurs" onkeypress="return isNumber(event)"></form:input>
 								    <span id="maxoccurs" class="text-danger "> </span>
 							   	</div>
 					 	 </div>
@@ -125,7 +138,7 @@ legend.scheduler-border {
 					 	 			<form:label path="sortWeight" class="control-label"><spring:message code="general.sortWeight" /><span class="text-danger required">*</span></form:label>
 								</div>
 							   <div class="col-md-6">
-									<form:input class="form-control" path="sortWeight" id="sortWeight" ></form:input>
+									<form:input class="form-control" maxlength="2"  path="sortWeight" id="sortWeight" onkeypress="return isNumber(event)"></form:input>
 								    <span id="sortweight" class="text-danger "> </span>
 							   	</div>
 					 	   </div>
@@ -136,14 +149,13 @@ legend.scheduler-border {
 							   </div> 
 							   <div class="col-md-6">
 									<form:select class="form-control" path="datatypeClassname" id="data_type_name">
-										<form:options items="${datatypes}" />
 										<c:forEach items="${datatypes}"  var="datatype">
 											<option value="${datatype}" <c:if test="${datatype == status.value}">selected</c:if>><spring:message code="${datatype}.name"/></option>
 										</c:forEach>
 									</form:select>
 							   	</div>
 							   	<div class ="col-md-4">
-							   		<font color="#1aac9b"><span id="datatypeDescription"></span></font>
+							   		<font color="#D0D0D0"><span id="datatypeDescription"></span></font>
 							   	</div>
 					 	   </div>
 					 	   <!-- datatypeConfig -->
@@ -161,14 +173,14 @@ legend.scheduler-border {
 									<form:label path="preferredHandlerClassname" class="control-label"><spring:message code="general.preferredHandler" /></form:label>								   </div> 
 							   <div class="col-md-6">
 									<form:select class="form-control" path="preferredHandlerClassname" id="preferred_handler_name">
-										<form:options items="${handlers}" />
+										<option value=""><openmrs:message code="general.default"/></option>
 										<c:forEach items="${handlers}"  var="handler">
 											<option value="${handler}" <c:if test="${handler == status.value}">selected</c:if>><spring:message code="${handler}.name"/></option>
 										</c:forEach>
 									</form:select>
 							   	</div>
 							   	<div class ="col-md-4">
-							   		<font color="#1aac9b"><span id="handlerDescription"></span></font>
+							   		<font color="#D0D0D0"><span id="handlerDescription"></span></font>
 							   	</div>
 					 	   </div>
 							<!-- handlerConfig-->
@@ -356,7 +368,7 @@ legend.scheduler-border {
         </fieldset>
 	</c:if>
 
-	<br>
+	<%-- <br>
     <c:if test="${not empty testAttributeType.name}">
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.foreverDelete" /></legend>
@@ -368,7 +380,7 @@ legend.scheduler-border {
 					 		 <input type="submit" value="<spring:message code="general.foreverDelete" />" />
 					   </div>
 					 </div>	
-				<%-- 	
+					
 					<table>
 					<tr>
 						<td>
@@ -378,10 +390,10 @@ legend.scheduler-border {
 							</div>
 						</td>
 					</tr>
-					</table> --%>
+					</table>
 				</form>
       </fieldset>
-	</c:if>
+	</c:if> --%>
  </div>
 </body>
 
@@ -418,7 +430,7 @@ legend.scheduler-border {
 				testTypeObject = {};
 				jQuery(local_source).each(function() {
 					var testTypeName = toTitleCase(this.name.toLowerCase());
-			            testTypeOption = "<option value=\"" + this.id + "\">" + testTypeName + "</option>";
+			            testTypeOption = "<option value=\"" + this.id + "\">" +testTypeName+ "</option>";
 			            jQuery('#testTypeOptions').append(testTypeOption);
 			            testTypeId = this.id; 
 			            //testTypeObject = {testTypeId,name: testTypeName};
@@ -429,11 +441,14 @@ legend.scheduler-border {
 			jQuery('#testTypeSuggestBox').on('input', function(){
 				
 				var val = this.value;
+		
 				if(jQuery('#testTypeOptions option').filter(function(){
 			        return this.value === val;        
 			    }).length) {
 					var datalist = document.getElementById("testTypeOptions");
-					var options = datalist.options;
+					var options = datalist.options; 
+					document.getElementById('testTypeName').innerHTML = testTypeObject[val]; 
+	
 				}
 			});   
 	        
@@ -441,6 +456,16 @@ legend.scheduler-border {
    
 	        
 	});
+	
+	function isNumber(evt) {
+	    evt = (evt) ? evt : window.event;
+	    var charCode = (evt.which) ? evt.which : evt.keyCode;
+	    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+	        return false;
+	    }
+	    return true;
+	}
+	
 	
 	function toTitleCase(str) {
 	    return str.replace(/(?:^|\s)\w/g, function(match) {
@@ -514,49 +539,76 @@ legend.scheduler-border {
 		var minOccurs = document.getElementById('min_occurs').value;
 		var maxOccurs = document.getElementById('max_occurs').value;
 		var sortWeight = document.getElementById('sortWeight').value;
-		
-
-		
+		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%]*$");
+          console.log(""+testAttributeName);
+		 console.log(reText.test(testAttributeName));
+		 console.log("Sort weight : " + isInt(sortWeight));
 		var isValidate =true; 
 		
 		if(labTestType == ""){
+			document.getElementById("labtesttypeid").style.display= 'block';	
 			document.getElementById('labtesttypeid').innerHTML ="Please fill the Lab Test Type field";
 			isValidate = false;
 		}
 		else if(isNaN(labTestType)){
+			document.getElementById("labtesttypeid").style.display= 'block';	
 			document.getElementById('labtesttypeid').innerHTML ="Only the autosearch Lab Test Type Id is accepted";
 			isValidate = false;
-		}	
+		}
+		else {
+			document.getElementById("labtesttypeid").style.display= 'none';	
+		} 
 		
 		 if(testAttributeName == ""){
+			    document.getElementById("testatrname").style.display= 'block';
 				document.getElementById('testatrname').innerHTML ="Please fill the Test Attribute Name field";
 				isValidate = false;
 			}
 		else if(!isNaN(testAttributeName)){
+			    document.getElementById("testatrname").style.display= 'block';
 				document.getElementById('testatrname').innerHTML ="Only characters are allowed";
 				isValidate = false;
 			}
+	
+	   else if(!reText.test(testAttributeName)){
+			   document.getElementById("testatrname").style.display= 'block';
+				document.getElementById('testatrname').innerHTML ="Text Contain Invalid characters";
+				isValidate = false;
+		  }
+		else {
+			document.getElementById("testatrname").style.display= 'none';	
+		} 
 		 /*Description  */
 		 if(description == ""){
-				document.getElementById('atrdescription').innerHTML ="Please fill the Test Attribute Description field";
+			    document.getElementById("atrdescription").style.display= 'block';		
+			    document.getElementById('atrdescription').innerHTML ="Please fill the Test Attribute Description field";
 				isValidate = false;
 			}
 		else if(!isNaN(description)){
+			    document.getElementById("atrdescription").style.display= 'block';	
 				document.getElementById('atrdescription').innerHTML ="Only characters are allowed";
 				isValidate = false;
 			}
+		else {
+				document.getElementById("atrdescription").style.display= 'none';	
+		} 
 		 
 		 /*Min Occurs  */
 		 if(minOccurs == ""){
+			  document.getElementById("minoccurs").style.display= 'block';	
 				document.getElementById('minoccurs').innerHTML ="Please fill the Min Occurs field";
 				isValidate = false;
 			}
 		 
 		 else if(isNaN(minOccurs)){
+			  document.getElementById("minoccurs").style.display= 'block';	
 				document.getElementById('minoccurs').innerHTML ="Min Occurs should be numeric";
 				isValidate = false;
 
 			}
+			else {
+				document.getElementById("minoccurs").style.display= 'none';	
+			} 
 			/* if(mobileNumber.length =<2){
 				document.getElementById('minoccurs').innerHTML =" ** Mobile Number must be 10 digits only";
 				return false;
@@ -564,34 +616,42 @@ legend.scheduler-border {
 			
 		 /*Min Occurs  */
 		 if(maxOccurs == ""){
+			  document.getElementById("maxoccurs").style.display= 'block';	
 				document.getElementById('maxoccurs').innerHTML ="Please fill the Max Occurs field";
 				isValidate = false;
 			}
 		 
 		 else if(isNaN(maxOccurs)){
+			  document.getElementById("maxoccurs").style.display= 'block';	
 				document.getElementById('maxoccurs').innerHTML ="Max Occurs should be numeric";
 				isValidate = false;
 
-			}			
+			}
 		 else if(minOccurs > maxOccurs){
+			 document.getElementById("maxoccurs").style.display= 'block';	
 			document.getElementById('maxoccurs').innerHTML ="Max Occurs should be greater then min Occurs";
 			isValidate = false;
-		}	
+		} else {
+			document.getElementById("maxoccurs").style.display= 'none';	
+		} 
+			
 		/* sortWeight */
 		 if(sortWeight == ""){
+			   document.getElementById("sortweight").style.display= 'block';	
 				document.getElementById('sortweight').innerHTML ="Please fill the sort weight field";
 				isValidate = false;
 			}
 		 
 		 else if(isNaN(sortWeight)){
+			  document.getElementById("sortweight").style.display= 'block';	
 				document.getElementById('sortweight').innerHTML ="Sort weight should be numeric";
 				isValidate = false;
 
-			}	
+			}
+		 else {
+				document.getElementById("sortweight").style.display= 'none';	
+			} 
 				
-		 
-		//console.log(form_data); 
-	
 		return isValidate;
 	}
 	
@@ -611,7 +671,26 @@ legend.scheduler-border {
 	
 		return isValidate;
 	}
-	
+	//check for integer..
+	function isInt(value) {
+		  return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
+		}
+
+	jQuery(function() {
+
+		 if (performance.navigation.type == 1) {
+			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+		 }
+
+		 jQuery("body").keydown(function(e){
+
+		 if(e.which==116){
+			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+		 }
+
+		 });
+	 });	 
+ 
 
 </script>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

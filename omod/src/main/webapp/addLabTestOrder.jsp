@@ -52,6 +52,13 @@ legend.scheduler-border {
 <body>
 
 <div class="container">
+
+ 	<c:if test="${not empty error}">
+		<div class="alert alert-danger">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Error!</strong> <c:out value="${error}" />
+		</div>
+	</c:if>	 
 	<c:set var="testOrder" scope="session" value="${labTest}" />
     <fieldset  class="scheduler-border">
 		<c:if test="${empty labTest.labReferenceNumber}">
@@ -67,11 +74,16 @@ legend.scheduler-border {
 			<form:input  path="order.orderType.orderTypeId" hidden="true" value="3"></form:input>	
 		
 		    <div class="row" >
-				   <div class="col-md-4">
+				   <div class="col-md-3">
 				        <form:label  class="control-label" path="order.encounter"><spring:message code="general.encounter" /><span class=" text-danger required">*</span></form:label>
 				   </div>
 				   <div class="col-md-6">
-				   		<form:select class="form-control" path="order.encounter" id="encounter" >
+				   <c:if test="${not empty labTest.labReferenceNumber}">
+			   			 <form:input class="form-control" path="order.encounter" id="encounter" hidden ="true" name="encounter"></form:input>
+			   		     <form:label class="form-control" path="order.encounter" id="encounter"  name="encounter">${labTest.order.encounter.getEncounterType().getName()}</form:label>
+					 </c:if>
+					  <c:if test="${empty labTest.labReferenceNumber}">
+					  	<form:select class="form-control" path="order.encounter" id="encounter" >
 								<form:options  />
 								 <c:if test="${not empty encounters}">
 										<c:forEach var= "encounter" items="${encounters}">
@@ -79,60 +91,74 @@ legend.scheduler-border {
 										</c:forEach>
 					 			</c:if>
 						</form:select>
+					  </c:if>
 						<span id="encounters" class="text-danger "> </span>
 				   </div>
+				    <div class="col-md-3">  
+					    <font color="#D0D0D0"><span id="encounterDate"></span></font>
+					</div>
 			 </div>
 			<!-- Test Type -->
 			 <div class="row" >
-			   <div class="col-md-4">
+			   <div class="col-md-3">
 			        <form:label  class="control-label" path="labTestType.labTestTypeId"><spring:message code="general.testType" /><span class="text-danger required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:select class="form-control" path="labTestType.labTestTypeId" id="testType" >
-								<form:options  />
-								 <c:if test="${not empty testTypes}">
-									<c:forEach var= "testType" items="${testTypes}">
-										<form:option item ="${testType.labTestTypeId}" value="${testType.labTestTypeId}">${testType.getName()}</form:option>
-									</c:forEach>
-								</c:if>
-					</form:select>
-					<span id="testtype" class="text-danger "> </span>
+				   <c:if test="${not empty labTest.labReferenceNumber}">
+			   			 <form:input class="form-control" path="labTestType.labTestTypeId" id="testType" hidden ="true" name="testType"></form:input>
+			   		     <form:label class="form-control" path="labTestType.labTestTypeId" id="testType"  name="testType">${labTest.labTestType.getName()}</form:label>
+					 </c:if>
+					 <c:if test="${empty labTest.labReferenceNumber}">
+				   		<form:select class="form-control" path="labTestType.labTestTypeId" id="testType" >
+									<form:options  />
+									 <c:if test="${not empty testTypes}">
+										<c:forEach var= "testType" items="${testTypes}">
+											<form:option item ="${testType.labTestTypeId}" value="${testType.labTestTypeId}">${testType.getName()}</form:option>
+										</c:forEach>
+									</c:if>
+						</form:select>
+						<span id="testtype" class="text-danger "> </span>
+					 </c:if>		
 			   </div>
 			 </div>
 			 <!-- Lab Reference Number -->
 			 <div class="row">
-			   <div class="col-md-4">
+			   <div class="col-md-3">
 			   		<form:label  class="control-label" path="labReferenceNumber"><spring:message code="commonlabtest.order.labReferenceNo" /><span class="text-danger required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" path="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber"></form:input>
+			   		<form:input class="form-control" maxlength="30" path="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber"></form:input>
 			  		<span id="labreferencenumber" class="text-danger "> </span>
 			  		
 			   </div>
 			 </div>
 			  <!-- Care Setting-->
 			 <div class="row">
-			   <div class="col-md-4">
+			   <div class="col-md-3">
 			   		<form:label  class="control-label" path="order.CareSetting.careSettingId"><spring:message code="general.careSetting" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:radiobutton path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
-			   		<span style="margin-right: 25px"></span>
-					<form:radiobutton path="order.CareSetting.careSettingId" value="2"/>InPatient 	
-<!-- 			   		<form:input class="form-control" path="order.CareSetting" id="careSetting"  name="careSetting"></form:input>
- -->			   </div>
+			   		 <c:if test="${not empty labTest.labReferenceNumber}">
+				   		 <form:radiobutton disabled ="true"  path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
+				   		<span style="margin-right: 25px"></span>
+						<form:radiobutton  disabled ="true"  path="order.CareSetting.careSettingId" value="2"/>InPatient 	
+			   		 </c:if>
+			   		 <c:if test="${empty labTest.labReferenceNumber}">
+			   		 	<form:radiobutton  path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
+				   		<span style="margin-right: 25px"></span>
+						<form:radiobutton path="order.CareSetting.careSettingId" value="2"/>InPatient 	
+			   		 </c:if>
+			  </div>
 			 </div>
 			   <!-- Date Scheduled-->
-			 <div class="row">
+		<!-- 	 <div class="row">
 			   <div class="col-md-4">
 			   		<form:label  class="control-label" path="order.scheduledDate"><spring:message code="general.scheduledDate" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			     	     <openmrs_tag:dateField formFieldName="startDateSet" startValue=""/>
-<!-- 			   		<form:input class="form-control" path="order.scheduledDate" id="scheduledDate"  name="scheduledDate"></form:input>
- -->					
-			   </div>
-			 </div>
+					 <form:input class="form-control" path="order.scheduledDate" type="text" id="datepicker"></form:input>
+				</div>
+			 </div> -->
 		    <!-- Save -->
 			 <div class="row">
 			   <div class="col-md-4">
@@ -189,40 +215,108 @@ legend.scheduler-border {
 
 
 <script type="text/javascript">
+
+		var local_source;
+		
+		 function getConcepts(){
+		    	return JSON.parse(JSON.stringify('${encounters}'));
+		    }
 	$(document).ready(function () {
+		 
+		local_source = new Array();
+	        <c:if test="${not empty encounters}">
+		        <c:forEach var="encounter" items="${encounters}" varStatus="status">
+		        	local_source.push({date:"${encounter.encounterDatetime}",id:"${encounter.encounterId}"});
+		        </c:forEach>
+	        </c:if>   
+	
 		 $('#testType').change(function(){
 			  $('#conceptId').val(document.getElementById("testType").value);
 		 });
 		
+		 $("#encounter").on("change", function() {
+			    //arrayEn.filter(x => x.id === $("#encounter").find(":selected").val());
+			   
+			    console.log("Local source : "+local_source);
+			    var id =$("#encounter").find(":selected").val();
+			    var encounter = local_source.find(o => o.id == id);
+				console.log(encounter.date);
+				document.getElementById('encounterDate').innerHTML = formatDate(encounter.date);
+		 });
+
+		/*   $("#datepicker").datepicker({
+		        dateFormat: 'yy-dd-mm',
+		        onSelect: function(datetext){
+		            var d = new Date(); // for now
+		            var h = d.getHours();
+		        		h = (h < 10) ? ("0" + h) : h ;
+
+		        		var m = d.getMinutes();
+		            m = (m < 10) ? ("0" + m) : m ;
+
+		            var s = d.getSeconds();
+		            s = (s < 10) ? ("0" + s) : s ;
+
+		        		datetext = datetext + " " + h + ":" + m + ":" + s;
+		            $('#datepicker').val(datetext);
+		        },
+		    });
+		 */
 	});
 	
 	function validate(){
+		
 		var referenceNumber = document.getElementById('labReferenceNumber').value;
 		var testType = document.getElementById('testType').value;
 		var encounter = document.getElementById('encounter').value
+		var  reText = new RegExp("^[ A-Za-z0-9_-]*$");
+
 		var isValidate =true; 
-		if(encounter == ""){
-			document.getElementById('encounters').innerHTML ="Please fill the Encounter field";
-			isValidate = false;
+		var errorMessage= 'This field can not be empty';
+		  //need to review this code...
+		  
+		 if(referenceNumber ===  ""){			 
+				document.getElementById("labreferencenumber").style.display= 'block';	
+				document.getElementById('labreferencenumber').innerHTML = errorMessage;
+				isValidate = false;
 		}
-		if(testType == ""){
-			document.getElementById('testtype').innerHTML ="Please fill the Test Type field";
-			isValidate = false;
-		}
+		 else if(isBlank(referenceNumber)){
+			    document.getElementById("labreferencenumber").style.display= 'block';	
+				document.getElementById('labreferencenumber').innerHTML = errorMessage;
+				isValidate = false;
+		 }
+		 else if(!reText.test(testName)){
+			    document.getElementById("testname").style.display= 'block';
+				document.getElementById('testname').innerHTML ="Text Contain Invalid characters";
+				isValidate = false;
+		  }
+		 else {
+			   document.getElementById("labreferencenumber").style.display= 'none';	
+			}
 		
-		if(referenceNumber == ""){
-			document.getElementById('labreferencenumber').innerHTML ="Please fill the Lab Reference Number field";
+	   if(encounter == ""){
+			document.getElementById("encounters").style.display= 'block';	
+			document.getElementById('encounters').innerHTML =errorMessage;
+			isValidate = false;
+		}else {
+			document.getElementById("encounters").style.display= 'none';	
+		} 
+
+	 	if(testType == ""){
+			document.getElementById("testtype").style.display= 'block';	
+			document.getElementById('testtype').innerHTML =errorMessage;
 			isValidate = false;
 		}
-		/* else if(!isNaN(referenceNumber)){
-			document.getElementById('labreferencenumber').innerHTML ="Only characters are allowed";
-			isValidate = false;
-		} */
-	
+	/* 	 else if(testType != "") {
+			 document.getElementById("testtype").style.display= 'none';		
+			}   */
 		
 		return isValidate;
 	}
 	
+	function isBlank(str) {
+	    return (!str || /^\s*$/.test(str));
+	}
 	function voidValidate(){
 		
 		var retireReason = document.getElementById('voidReason').value;
@@ -235,10 +329,22 @@ legend.scheduler-border {
 			document.getElementById('voidreason').innerHTML ="Only characters are allowed";
 			isValidate = false;
 		}
-	
+
 		return isValidate;
 		
 		
+	}
+	
+	function formatDate(date) {
+	    var d = new Date(date),
+	        month = '' + (d.getMonth() + 1),
+	        day = '' + d.getDate(),
+	        year = d.getFullYear();
+
+	    if (month.length < 2) month = '0' + month;
+	    if (day.length < 2) day = '0' + day;
+
+	    return [year, month, day].join('-');
 	}
 </script>
 

@@ -136,12 +136,11 @@ public class LabTestAttribute extends BaseAttribute<LabTestAttributeType, LabTes
 		this.valueReference = valueReference;
 		super.setValueReferenceInternal(getValueReference());
 	}
-
+	
 	public Integer getLabTestAttributeId() {
 		return labTestAttributeId;
 	}
-
-
+	
 	public void setLabTestAttributeId(Integer id) {
 		this.labTestAttributeId = id;
 	}
