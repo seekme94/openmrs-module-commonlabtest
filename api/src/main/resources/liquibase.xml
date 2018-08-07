@@ -32,7 +32,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column defaultValueBoolean="true" name="requires_specimen"
-				type="BOOLEAN">
+				type="boolean">
 				<constraints nullable="false" />
 			</column>
 			<column name="reference_concept_id" type="int">
@@ -46,16 +46,16 @@
 			<column defaultValueNumeric="0" name="creator" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="date_created" type="DATETIME">
+			<column name="date_created" type="datetime">
 				<constraints nullable="false" />
 			</column>
 			<column name="changed_by" type="int" />
-			<column name="date_changed" type="DATETIME" />
-			<column defaultValueBoolean="false" name="retired" type="BOOLEAN">
+			<column name="date_changed" type="datetime" />
+			<column defaultValueBoolean="false" name="retired" type="boolean">
 				<constraints nullable="false" />
 			</column>
 			<column name="retired_by" type="int" />
-			<column name="date_retired" type="DATETIME" />
+			<column name="date_retired" type="datetime" />
 			<column name="retire_reason" type="varchar(255)" />
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" unique="true"></constraints>
@@ -112,16 +112,16 @@
 			<column name="creator" defaultValueNumeric="0" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="date_created" type="DATETIME">
+			<column name="date_created" type="datetime">
 				<constraints nullable="false" />
 			</column>
 			<column name="changed_by" type="int" />
-			<column name="date_changed" type="DATETIME" />
-			<column name="retired" defaultValueBoolean="false" type="BOOLEAN">
+			<column name="date_changed" type="datetime" />
+			<column name="retired" defaultValueBoolean="false" type="boolean">
 				<constraints nullable="false" />
 			</column>
 			<column name="retired_by" type="int" />
-			<column name="date_retired" type="DATETIME" />
+			<column name="date_retired" type="datetime" />
 			<column name="retire_reason" type="varchar(255)" />
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" unique="true"></constraints>
@@ -162,16 +162,16 @@
 			<column name="creator" defaultValueNumeric="0" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="date_created" type="DATETIME">
+			<column name="date_created" type="datetime">
 				<constraints nullable="false" />
 			</column>
 			<column name="changed_by" type="int" />
-			<column name="date_changed" type="DATETIME" />
-			<column name="voided" defaultValueBoolean="false" type="BOOLEAN">
+			<column name="date_changed" type="datetime" />
+			<column name="voided" defaultValueBoolean="false" type="boolean">
 				<constraints nullable="false" />
 			</column>
 			<column name="voided_by" type="int" />
-			<column name="date_voided" type="DATETIME" />
+			<column name="date_voided" type="datetime" />
 			<column name="void_reason" type="varchar(255)" />
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" unique="true"></constraints>
@@ -217,16 +217,16 @@
 			<column name="creator" defaultValueNumeric="0" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="date_created" type="DATETIME">
+			<column name="date_created" type="datetime">
 				<constraints nullable="false" />
 			</column>
 			<column name="changed_by" type="int" />
-			<column name="date_changed" type="DATETIME" />
-			<column name="voided" defaultValueBoolean="false" type="BOOLEAN">
+			<column name="date_changed" type="datetime" />
+			<column name="voided" defaultValueBoolean="false" type="boolean">
 				<constraints nullable="false" />
 			</column>
 			<column name="voided_by" type="int" />
-			<column name="date_voided" type="DATETIME" />
+			<column name="date_voided" type="datetime" />
 			<column name="void_reason" type="varchar(255)" />
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" unique="true"></constraints>
@@ -260,6 +260,7 @@
 			Creating the commonlabtest_sample table
 		</comment>
 		<createTable tableName="commonlabtest_sample">
+			<!-- This column is renamed to test_sample_id in later changeset -->
 			<column name="test_attribute_id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -275,10 +276,10 @@
 				<!-- Concept representing the body part where the sample was collected 
 					from -->
 			</column>
-			<column name="is_expirable" defaultValueBoolean="true" type="BOOLEAN">
+			<column name="is_expirable" defaultValueBoolean="true" type="boolean">
 				<constraints nullable="false" />
 			</column>
-			<column name="expiry_datetime" type="DATETIME" />
+			<column name="expiry_datetime" type="datetime" />
 			<column name="lab_sample_identifier" type="varchar(50)" />
 			<column name="collector" defaultValueNumeric="0" type="int">
 				<constraints nullable="false" />
@@ -288,16 +289,16 @@
 			<column name="creator" defaultValueNumeric="0" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="date_created" type="DATETIME">
+			<column name="date_created" type="datetime">
 				<constraints nullable="false" />
 			</column>
 			<column name="changed_by" type="int" />
-			<column name="date_changed" type="DATETIME" />
-			<column name="voided" defaultValueBoolean="false" type="BOOLEAN">
+			<column name="date_changed" type="datetime" />
+			<column name="voided" defaultValueBoolean="false" type="boolean">
 				<constraints nullable="false" />
 			</column>
 			<column name="voided_by" type="int" />
-			<column name="date_voided" type="DATETIME" />
+			<column name="date_voided" type="datetime" />
 			<column name="void_reason" type="varchar(255)" />
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" unique="true"></constraints>
@@ -332,9 +333,7 @@
 				<columnExists tableName="commonlabtest_attribute_type"
 					columnName="preferred_handler" />
 			</not>
-
 		</preConditions>
-
 		<addColumn tableName="commonlabtest_attribute_type">
 			<column name="preferred_handler" type="varchar(255)">
 			</column>
@@ -342,19 +341,58 @@
 
 	</changeSet>
 	
-	
-	
 	<changeSet id="commonlabtest-2018-07-16-1" author="tahira.niazi">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="commonlabtest_sample"
 					columnName="test_sample_id" />
 			</not>
-
 		</preConditions>
-		
 		<renameColumn tableName="commonlabtest_sample" oldColumnName="test_attribute_id" newColumnName="test_sample_id" columnDataType="int"/>
-	
 	</changeSet>
 
+	<changeSet id="commonlabtest-2018-08-07-1"  author="owais.hussain">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="commonlabtest_sample" columnName="collection_date" />
+			</not>
+		</preConditions>
+		<addColumn tableName="commonlabtest_sample">
+			<column name="collection_date" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="commonlabtest-2018-08-07-2"  author="owais.hussain">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="commonlabtest_sample" columnName="processed_date" />
+			</not>
+		</preConditions>
+		<addColumn tableName="commonlabtest_sample">
+			<column name="processed_date" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="commonlabtest-2018-08-07-3"  author="owais.hussain">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="commonlabtest_sample" columnName="quantity" />
+			</not>
+		</preConditions>
+		<addColumn tableName="commonlabtest_sample">
+			<column name="quantity" type="double" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="commonlabtest-2018-08-07-4"  author="owais.hussain">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="commonlabtest_sample" columnName="quantity" />
+			</not>
+		</preConditions>
+		<addColumn tableName="commonlabtest_sample">
+			<column name="units" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

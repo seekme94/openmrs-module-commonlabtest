@@ -29,10 +29,10 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Concept;
+import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.APIException;
-import org.openmrs.api.OrderContext;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.hibernate.HibernateOrderDAO;
 import org.openmrs.module.commonlabtest.LabTest;
@@ -51,6 +51,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CommonLabTestDaoImpl implements CommonLabTestDao {
+	
+	private static final String ORDER_NUMBER_PREFIX = "ORD-";
 	
 	private static final int MAX_FETCH_LIMIT = 100;
 	
@@ -111,8 +113,8 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<LabTestType> getLabTestTypes(String name, String shortName, LabTestGroup testGroup, Concept referenceConcept,
-	        boolean includeRetired) {
+	public List<LabTestType> getLabTestTypes(String name, String shortName, LabTestGroup testGroup,
+	        Concept referenceConcept, boolean includeRetired) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestType.class);
 		if (name != null) {
 			criteria.add(Restrictions.ilike("name", name, MatchMode.START));
@@ -252,8 +254,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<LabTestAttributeType> getLabTestAttributeTypes(String name, String datatypeClassname,
-	        boolean includeRetired) {
+	public List<LabTestAttributeType> getLabTestAttributeTypes(String name, String datatypeClassname, boolean includeRetired) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestAttributeType.class);
 		if (name != null) {
 			criteria.add(Restrictions.ilike("name", name, MatchMode.START));
@@ -547,14 +548,21 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 * @return
 	 */
 	public org.openmrs.Order saveLabTestOrder(org.openmrs.Order order) {
-		if (order.getId() != null) {
-			org.openmrs.Order existing = Context.getOrderService().getOrder(order.getId());
-			if (existing == null) {
-				OrderContext orderContext = new OrderContext();
-				return Context.getOrderService().saveOrder(order, orderContext);
-			}
+		boolean createNew = false;
+		OrderType expectedOrderType = order.getOrderType();
+		expectedOrderType.setJavaClassName(order.getClass().getName());
+		order.setOrderType(expectedOrderType);
+		if (order.getId() == null) {
+			createNew = true;
+		} else {
+			createNew = Context.getOrderService().getOrder(order.getId()) == null;
 		}
-		setProperty(order, "orderNumber", "Unknown Order Number");
+		if (createNew) {
+			order.setId(null);
+			return Context.getOrderService().saveOrder(order, null);
+		}
+		// For now, we are setting order number to be ORD-<timestamp>
+		setProperty(order, "orderNumber", ORDER_NUMBER_PREFIX + String.valueOf(new Date().getTime()));
 		//DC orders should auto expire upon creating them
 		if (DISCONTINUE == order.getAction()) {
 			order.setAutoExpireDate(order.getDateActivated());

@@ -22,9 +22,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.Order.Action;
 import org.openmrs.Order.Urgency;
+import org.openmrs.TestOrder;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTestType.LabTestGroup;
 import org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl;
@@ -167,8 +169,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	public final void testGetLabTestAttributesByPatient() {
 		Context.clearSession();
 		List<LabTestAttribute> list = dao.getLabTestAttributes(null, null, harry, null, null, null, false);
-		assertThat(list,
-		    Matchers.containsInAnyOrder(harryCartridgeId, harryMtbResult, harryRifResult, harryCxrResult));
+		assertThat(list, Matchers.containsInAnyOrder(harryCartridgeId, harryMtbResult, harryRifResult, harryCxrResult));
 	}
 	
 	/**
@@ -387,19 +388,49 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testSaveLabTestOrder_Create() {
 		// Create CXR order for Hermione
-		Order order = new Order();
-		order.setOrderType(Context.getOrderService().getOrderType(3));
-		order.setConcept(Context.getConceptService().getConcept(600));
-		order.setOrderer(Context.getProviderService().getProvider(300));
-		order.setEncounter(Context.getEncounterService().getEncounter(1000));
-		order.setInstructions("PERFORM CXR");
-		order.setDateActivated(new Date());
-		order.setAction(Action.NEW);
-		order.setOrderReasonNonCoded("Testing");
-		order.setPatient(hermione);
-		order.setUrgency(Urgency.ROUTINE);
-		order.setCareSetting(Context.getOrderService().getCareSetting(1));
-		Order savedOrder = dao.saveLabTestOrder(order);
+		Order testOrder = new TestOrder();
+		testOrder.setOrderId(Integer.MAX_VALUE);
+		testOrder.setOrderType(Context.getOrderService().getOrderType(3));
+		testOrder.setConcept(Context.getConceptService().getConcept(600));
+		testOrder.setOrderer(Context.getProviderService().getProvider(300));
+		Encounter encounter = Context.getEncounterService().getEncounter(1000);
+		encounter.setPatient(hermione);
+		testOrder.setEncounter(encounter);
+		testOrder.setInstructions("PERFORM CXR");
+		testOrder.setDateActivated(new Date());
+		testOrder.setAction(Action.NEW);
+		testOrder.setOrderReasonNonCoded("Testing");
+		testOrder.setPatient(hermione);
+		testOrder.setUrgency(Urgency.ROUTINE);
+		testOrder.setCareSetting(Context.getOrderService().getCareSetting(1));
+		Order savedOrder = dao.saveLabTestOrder(testOrder);
+		assertThat(savedOrder, Matchers.hasProperty("orderId", org.hamcrest.Matchers.notNullValue()));
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestOrder(org.openmrs.Order)}
+	 * .
+	 */
+	@Test
+	public final void testSaveLabTestOrder_CreateWhenNotFound() {
+		// Create CXR order for Hermione
+		Order testOrder = new TestOrder();
+		testOrder.setOrderId(Integer.MAX_VALUE);
+		testOrder.setOrderType(Context.getOrderService().getOrderType(3));
+		testOrder.setConcept(Context.getConceptService().getConcept(600));
+		testOrder.setOrderer(Context.getProviderService().getProvider(300));
+		Encounter encounter = Context.getEncounterService().getEncounter(1000);
+		encounter.setPatient(hermione);
+		testOrder.setEncounter(encounter);
+		testOrder.setInstructions("PERFORM CXR");
+		testOrder.setDateActivated(new Date());
+		testOrder.setAction(Action.NEW);
+		testOrder.setOrderReasonNonCoded("Testing");
+		testOrder.setPatient(hermione);
+		testOrder.setUrgency(Urgency.ROUTINE);
+		testOrder.setCareSetting(Context.getOrderService().getCareSetting(1));
+		Order savedOrder = dao.saveLabTestOrder(testOrder);
 		assertThat(savedOrder, Matchers.hasProperty("orderId", org.hamcrest.Matchers.notNullValue()));
 	}
 	
@@ -410,12 +441,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testSaveLabTestOrder_Update() {
-		Order order = Context.getOrderService().getOrder(1);
-		Concept cxrTestConcept = Context.getConceptService().getConcept(800);
-		order.setConcept(cxrTestConcept);
+		Order order = Context.getOrderService().getOrder(100);
+		order.setUrgency(Urgency.STAT);
 		Order savedOrder = dao.saveLabTestOrder(order);
-		assertThat(savedOrder, Matchers.hasProperty("orderId", org.hamcrest.Matchers.is(1)));
-		assertThat(savedOrder, Matchers.hasProperty("concept", org.hamcrest.Matchers.is(cxrTestConcept)));
+		assertThat(savedOrder, Matchers.hasProperty("orderId", org.hamcrest.Matchers.is(100)));
+		assertThat(savedOrder, Matchers.hasProperty("urgency", org.hamcrest.Matchers.is(Urgency.STAT)));
 	}
 	
 	/**
