@@ -18,7 +18,6 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 
-
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
  */
@@ -27,8 +26,9 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 	private Log log = LogFactory.getLog(this.getClass());
 	
 	public static final String SPECIMEN_TYPE_CONCEPT_UUID = "commonlabtest.specimenTypeConceptUuid";
+	
 	public static final String SPECIMEN_SITE_CONCEPT_UUID = "commonlabtest.specimenSiteConceptUuid";
-
+	
 	ConceptService conceptService;
 	
 	/**
@@ -36,16 +36,12 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 	 */
 	public void started() {
 		log.info("Started Common Lab Test");
-
+		
 		conceptService = Context.getConceptService();
 		AdministrationService administrationService = Context.getAdministrationService();
-		setGlobalProperty(administrationService, 
-				 SPECIMEN_TYPE_CONCEPT_UUID, 
-				"160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		setGlobalProperty(administrationService, 
-				SPECIMEN_SITE_CONCEPT_UUID, 
-				"160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
+		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		
 	}
 	
 	private void setGlobalProperty(AdministrationService service, String prop, String val) {
@@ -66,15 +62,13 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 	}
 	
 	public void contextRefreshed() {
-			log.info("========================== Common Lab Test Lab contextRefreshed called ======");
+		log.info("========================== Common Lab Test Lab contextRefreshed called ======");
 		
 		conceptService = Context.getConceptService();
 		
 		AdministrationService administrationService = Context.getAdministrationService();
-		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, 
-				"160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, 
-				"160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	}
 	
 }

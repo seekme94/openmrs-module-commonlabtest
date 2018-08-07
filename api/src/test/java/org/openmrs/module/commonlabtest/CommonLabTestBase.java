@@ -54,6 +54,8 @@ public class CommonLabTestBase extends BaseModuleContextSensitiveTest {
 	
 	protected Patient hermione;
 	
+	protected LabTestType unknownTest;
+	
 	protected LabTestType geneXpert;
 	
 	protected LabTestType chestXRay;
@@ -132,7 +134,14 @@ public class CommonLabTestBase extends BaseModuleContextSensitiveTest {
 		harryCxrOrder = Context.getOrderService().getOrder(200);
 		hermioneGxpOrder = Context.getOrderService().getOrder(300);
 		
-		geneXpert = new LabTestType(1);
+		unknownTest = new LabTestType(1);
+		unknownTest.setName("Unknown Test Type");
+		unknownTest.setShortName("UNKNOWN");
+		unknownTest.setTestGroup(LabTestGroup.OTHER);
+		unknownTest.setRequiresSpecimen(Boolean.FALSE);
+		unknownTest.setUuid(LabTestType.UNKNOWN_TEST_UUID);
+		
+		geneXpert = new LabTestType(2);
 		geneXpert.setName("GeneXpert Test");
 		geneXpert.setShortName("GXP");
 		geneXpert.setTestGroup(LabTestGroup.BACTERIOLOGY);
@@ -140,7 +149,7 @@ public class CommonLabTestBase extends BaseModuleContextSensitiveTest {
 		geneXpert.setReferenceConcept(gxpConcept);
 		geneXpert.setUuid("4bf46c09-46e9-11e8-943c-40b034c3cfee");
 		
-		chestXRay = new LabTestType(2);
+		chestXRay = new LabTestType(3);
 		chestXRay.setName("Chest X-ray Test");
 		chestXRay.setShortName("CXR");
 		chestXRay.setTestGroup(LabTestGroup.RADIOLOGY);

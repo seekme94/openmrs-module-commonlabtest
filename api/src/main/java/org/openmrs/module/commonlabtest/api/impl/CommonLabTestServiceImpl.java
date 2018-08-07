@@ -826,4 +826,61 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 			throw new APIException("Cannot delete LabTestType because of Foreign Key Violation.");
 		}
 	}
+	
+	/**
+	 * @see org.openmrs.module.commonlabtest.api.CommonLabTestService#deleteLabTestType(org.openmrs.module.commonlabtest.LabTestType,
+	 *      org.openmrs.module.commonlabtest.LabTestType)
+	 */
+	@Override
+	@Authorized(CommonLabTestConfig.DELETE_LAB_TEST_METADATA_PRIVILEGE)
+	@Transactional
+	public void deleteLabTestType(LabTestType labTestType, LabTestType newObjectForCascade) throws APIException {
+		// Replace with Unknown Test Type object if null
+		if (newObjectForCascade == null) {
+			newObjectForCascade = getLabTestTypeByUuid(LabTestType.UNKNOWN_TEST_UUID);
+		}
+		StringBuilder message = new StringBuilder();
+		message.append("Associated LabTestType: ");
+		message.append(labTestType.getName());
+		message.append("(");
+		message.append(labTestType.getUuid());
+		message.append(") was deleted on ");
+		message.append(Context.getDateFormat().format(new Date()));
+		// Replace LabTestType in dependencies
+		handleLabTestTypeDependencies(labTestType, newObjectForCascade, message.toString());
+		dao.purgeLabTestType(labTestType);
+	}
+	
+	/**
+	 * This method changes the {@link LabTestType} object in respective {@link LabTest} and
+	 * {@link LabTestAttributeType} dependencies, and voides/retires them afterwards with given
+	 * message
+	 * 
+	 * @param labTestType
+	 * @param newObjectForCascade
+	 * @param voidMessage
+	 */
+	private void handleLabTestTypeDependencies(LabTestType labTestType, LabTestType newObjectForCascade, String voidMessage) {
+		List<LabTest> labTests = getLabTests(labTestType, true);
+		if (labTests != null) {
+			for (LabTest labTest : labTests) {
+				// Set new LabTestType
+				labTest.setLabTestType(newObjectForCascade);
+				saveLabTest(labTest);
+				// Void with reason
+				voidLabTest(labTest, voidMessage);
+			}
+		}
+		List<LabTestAttributeType> testAttributeTypes = getLabTestAttributeTypes(labTestType, true);
+		if (testAttributeTypes != null) {
+			for (LabTestAttributeType attributeType : testAttributeTypes) {
+				// Set new LabTestType
+				attributeType.setLabTestType(newObjectForCascade);
+				saveLabTestAttributeType(attributeType);
+				// Retired with reason
+				retireLabTestAttributeType(attributeType, voidMessage);
+			}
+		}
+	}
+	
 }

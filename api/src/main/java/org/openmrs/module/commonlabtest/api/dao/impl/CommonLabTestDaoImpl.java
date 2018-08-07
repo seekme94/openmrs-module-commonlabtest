@@ -13,8 +13,6 @@
  */
 package org.openmrs.module.commonlabtest.api.dao.impl;
 
-import static org.openmrs.Order.Action.DISCONTINUE;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
@@ -561,13 +559,18 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 			order.setId(null);
 			return Context.getOrderService().saveOrder(order, null);
 		}
-		// For now, we are setting order number to be ORD-<timestamp>
-		setProperty(order, "orderNumber", ORDER_NUMBER_PREFIX + String.valueOf(new Date().getTime()));
-		//DC orders should auto expire upon creating them
-		if (DISCONTINUE == order.getAction()) {
-			order.setAutoExpireDate(order.getDateActivated());
-		}
-		orderDao.saveOrder(order);
+		//		// For now, we are setting order number to be ORD-<timestamp>
+		//		setProperty(order, "orderNumber", ORDER_NUMBER_PREFIX + String.valueOf(new Date().getTime()));
+		//		//DC orders should auto expire upon creating them
+		//		if (DISCONTINUE == order.getAction()) {
+		//			order.setAutoExpireDate(order.getDateActivated());
+		//		}
+		// orderNumber, careSettings, encounter
+		org.openmrs.Order cloned = new org.openmrs.Order(order.getOrderId());
+		cloned = order.copy();
+		// Because for some reason the order object gets attached to multiple sessions
+		// Context.clearSession();
+		orderDao.saveOrder(cloned);
 		return order;
 	}
 	

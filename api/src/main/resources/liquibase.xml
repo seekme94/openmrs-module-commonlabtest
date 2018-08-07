@@ -387,12 +387,97 @@
 	<changeSet id="commonlabtest-2018-08-07-4"  author="owais.hussain">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<columnExists tableName="commonlabtest_sample" columnName="quantity" />
+				<columnExists tableName="commonlabtest_sample" columnName="units" />
 			</not>
 		</preConditions>
 		<addColumn tableName="commonlabtest_sample">
 			<column name="units" type="varchar(255)" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="commonlabtest-2018-08-07-5"  author="owais.hussain">
+		<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from commonlabtest_type where name='Unknown Test Type'</sqlCheck>
+		</preConditions>
+		<insert tableName="commonlabtest_type">
+			<column name="test_type_id">0</column>
+			<column name="name">Unknown Test Type</column>
+			<column name="short_name">UNKNOWN</column>
+			<column name="test_group">OTHER</column>
+			<column name="requires_specimen">false</column>
+			<!-- <column name="reference_concept_id">?</column> -->
+			<column name="description">Used when Test Type is not known. For example when actual test type is purged</column>
+			<column name="creator">1</column>
+			<column name="retired">0</column>
+			<column name="date_created">2018-08-07 12:00:00</column>
+			<column name="uuid">ee9b140e-9a29-11e8-a296-40b034c3cfee</column>
+	    </insert>
+	</changeSet>
+	
+	<changeSet id="commonlabtest-2018-08-07-6"  author="owais.hussain">
+		<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from privilege where privilege like '%CommonLabTest%'</sqlCheck>
+		</preConditions>
+		<insert tableName="privilege">
+			<column name="privilege">Add CommonLabTest Metadata</column>
+			<column name="description">Access to create new LabTest and LabTestAttributeType objects</column>
+			<column name="uuid">774f26c5-9a3e-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">Edit CommonLabTest Metadata</column>
+			<column name="description">Access to change existing LabTest and LabTestAttributeType objects</column>
+			<column name="uuid">f492181f-9a3e-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">Delete CommonLabTest Metadata</column>
+			<column name="description">Access to delete or retire LabTest and LabTestAttributeType objects</column>
+			<column name="uuid">fa0025da-9a3e-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">View CommonLabTest Metadata</column>
+			<column name="description">Access to view LabTest and LabTestAttributeType objects</column>
+			<column name="uuid">fec867c9-9a3e-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">Add CommonLabTest Samples</column>
+			<column name="description">Access to create new LabTestSample objects</column>
+			<column name="uuid">0ca672e1-9a3f-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">Edit CommonLabTest Samples</column>
+			<column name="description">Access to change new LabTestSample objects</column>
+			<column name="uuid">0ca6734e-9a3f-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">Delete CommonLabTest Samples</column>
+			<column name="description">Access to delete or void LabTestSample objects</column>
+			<column name="uuid">0ca67391-9a3f-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">View CommonLabTest Samples</column>
+			<column name="description">Access to view LabTestSample objects</column>
+			<column name="uuid">0ca673e9-9a3f-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">Add CommonLabTest Orders</column>
+			<column name="description">Access to create new LabTest objects</column>
+			<column name="uuid">448289f0-9a3f-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">Edit CommonLabTest Orders</column>
+			<column name="description">Access to change new LabTest objects</column>
+			<column name="uuid">44828a6b-9a3f-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">Delete CommonLabTest Orders</column>
+			<column name="description">Access to delete or void LabTest objects</column>
+			<column name="uuid">44828a80-9a3f-11e8-a296-40b034c3cfee</column>
+	    </insert>
+		<insert tableName="privilege">
+			<column name="privilege">View CommonLabTest Orders</column>
+			<column name="description">Access to view LabTest objects</column>
+			<column name="uuid">44828a9c-9a3f-11e8-a296-40b034c3cfee</column>
+	    </insert>
 	</changeSet>
 	
 </databaseChangeLog>

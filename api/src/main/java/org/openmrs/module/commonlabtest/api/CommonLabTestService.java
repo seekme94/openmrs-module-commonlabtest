@@ -593,7 +593,18 @@ public interface CommonLabTestService extends OpenmrsService {
 	 * @param labTestType
 	 * @param cascade
 	 * @throws APIException
+	 * @Deprecated because deleting dependent objects is risk-full. Use the alternate method
 	 */
+	@Deprecated
 	void deleteLabTestType(LabTestType labTestType, boolean cascade) throws APIException;
 	
+	/**
+	 * Deletes a LabTestType object and sets {@link LabTestType} of dependent objects to second
+	 * parameter
+	 * 
+	 * @param labTestType
+	 * @param newObjectForCascade is the {@link LabTestType} set to cascaded dependent objects
+	 * @throws APIException
+	 */
+	void deleteLabTestType(LabTestType labTestType, LabTestType newObjectForCascade) throws APIException;
 }

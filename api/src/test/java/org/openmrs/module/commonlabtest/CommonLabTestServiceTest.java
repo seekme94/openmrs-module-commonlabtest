@@ -181,15 +181,15 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestAttributeTypesByTestType() {
-		when(dao.getLabTestAttributeTypes(any(LabTestType.class), any(Boolean.class)))
-		        .thenReturn(Arrays.asList(cartridgeId, mtbResult, rifResult));
+		when(dao.getLabTestAttributeTypes(any(LabTestType.class), any(Boolean.class))).thenReturn(
+		    Arrays.asList(cartridgeId, mtbResult, rifResult));
 		List<LabTestAttributeType> list = service.getLabTestAttributeTypes(geneXpert, Boolean.FALSE);
 		assertThat(list, Matchers.hasItems(cartridgeId, mtbResult, rifResult));
 		verify(dao, times(1)).getLabTestAttributeTypes(any(LabTestType.class), any(Boolean.class));
 		// Check order of items
 		for (int i = 1; i < list.size(); i++) {
-			assertTrue("List of objects is not sorted by sort weight.",
-			    list.get(i - 1).getSortWeight() <= list.get(i).getSortWeight());
+			assertTrue("List of objects is not sorted by sort weight.", list.get(i - 1).getSortWeight() <= list.get(i)
+			        .getSortWeight());
 		}
 	}
 	

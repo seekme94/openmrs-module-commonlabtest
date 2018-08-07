@@ -475,7 +475,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testSaveLabTestSample() {
-		// TODO
+		LabTestSample testSample = new LabTestSample();
+		testSample.setLabTest(hermioneGxp);
+		testSample.setSampleIdentifier("TEST-ID-1234");
+		testSample.setCollectionDate(new Date());
+		testSample.setCollector(owais);
 	}
 	
 	/**
