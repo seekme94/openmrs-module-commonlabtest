@@ -18,12 +18,10 @@ import java.util.Set;
 
 import org.openmrs.Concept;
 import org.openmrs.Order;
-import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
-import org.openmrs.api.OrderContext;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.commonlabtest.CommonLabTestConfig;
@@ -511,14 +509,7 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 		if (labTest.getOrder().getOrderer() == null) {
 			throw new APIException("org.openmrs.Orderer", (Object[]) null);
 		}
-		Order order = labTest.getOrder();
-		
-		//OrderContext orderContext= 
-		//order.setOrderType(Context.getOrderService().getOrderTypeByUuid(OrderType.TEST_ORDER_TYPE_UUID));
-		Order saveOrder = Context.getOrderService().saveOrder(order, new OrderContext());
-		labTest.setOrder(saveOrder);
-		
-		labTest.setTestOrderId(saveOrder.getOrderId());
+		// Order object is saved via DAO object
 		// Save Order
 		LabTest savedLabTest = dao.saveLabTest(labTest);
 		// Save sample if present

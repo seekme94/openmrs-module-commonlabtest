@@ -36,6 +36,20 @@ public class CommonLabTestBase extends BaseModuleContextSensitiveTest {
 	
 	protected static final String DATA_XML = "CommonLabTestService-initialData.xml";
 	
+	protected Provider owais;
+	
+	protected Provider tahira;
+	
+	private Concept gxpConcept;
+	
+	private Concept cxrConcept;
+	
+	private Order harryGxpOrder;
+	
+	private Order harryCxrOrder;
+	
+	private Order hermioneGxpOrder;
+	
 	protected Patient harry;
 	
 	protected Patient hermione;
@@ -96,10 +110,6 @@ public class CommonLabTestBase extends BaseModuleContextSensitiveTest {
 	
 	protected Set<LabTestAttribute> hermioneGxpResults;
 	
-	protected Provider owais;
-	
-	protected Provider tahira;
-	
 	/**
 	 * Initialize all data objects before each test
 	 * 
@@ -115,8 +125,12 @@ public class CommonLabTestBase extends BaseModuleContextSensitiveTest {
 		harry = Context.getPatientService().getPatient(1000);
 		hermione = Context.getPatientService().getPatient(2000);
 		
-		Concept gxpConcept = Context.getConceptService().getConcept(500);
-		Concept cxrConcept = Context.getConceptService().getConcept(600);
+		gxpConcept = Context.getConceptService().getConcept(500);
+		cxrConcept = Context.getConceptService().getConcept(600);
+		
+		harryGxpOrder = Context.getOrderService().getOrder(100);
+		harryCxrOrder = Context.getOrderService().getOrder(200);
+		hermioneGxpOrder = Context.getOrderService().getOrder(300);
 		
 		geneXpert = new LabTestType(1);
 		geneXpert.setName("GeneXpert Test");
@@ -281,10 +295,6 @@ public class CommonLabTestBase extends BaseModuleContextSensitiveTest {
 		hermioneMtbResult.setAttributeType(mtbResult);
 		hermioneMtbResult.setValueReferenceInternal("NOT DETECTED");
 		hermioneMtbResult.setUuid("acbf3ff5-51f0-11e8-b60d-080027ea421d");
-		
-		Order harryGxpOrder = Context.getOrderService().getOrder(100);
-		Order harryCxrOrder = Context.getOrderService().getOrder(200);
-		Order hermioneGxpOrder = Context.getOrderService().getOrder(300);
 		
 		harryGxp = new LabTest(harryGxpOrder);
 		harryGxp.setLabTestType(geneXpert);

@@ -206,7 +206,7 @@
 	<commonlabtest_attribute test_attribute_id="7" test_order_id="300" attribute_type_id="3"
 		value_reference="2018220454" creator="400" date_created="2018-05-04 18:19:22" voided="false"
 		uuid="acbf3ff5-51f0-11e8-b60d-080027ea421d" />
-	<commonlabtest_attribute test_attribute_id="1" test_order_id="100" attribute_type_id="6"
+	<commonlabtest_attribute test_attribute_id="8" test_order_id="100" attribute_type_id="6"
 		value_reference="140" creator="300" date_created="2018-04-25 08:00:19" voided="false"
 		uuid="ca7393b3-538f-11e8-9c7c-40b034c3cfee" />
 

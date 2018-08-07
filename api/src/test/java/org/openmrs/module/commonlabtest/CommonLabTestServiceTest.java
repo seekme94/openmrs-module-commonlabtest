@@ -38,6 +38,7 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.hibernate.HibernateOrderDAO;
 import org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl;
@@ -54,6 +55,9 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	
 	@Mock
 	CommonLabTestDaoImpl dao;
+	
+	@Mock
+	HibernateOrderDAO orderDao;
 	
 	@Before
 	public void initMockito() throws Exception {
@@ -409,7 +413,6 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	public final void testSaveLabTest() {
 		when(dao.saveLabTest(any(LabTest.class))).thenReturn(harryGxp);
 		when(dao.saveLabTestSample(any(LabTestSample.class))).thenReturn(harrySample);
-		//when(orderDao.saveOrder(any(Order.class), any(OrderContext.class))).thenReturn(harryGxp.getOrder());
 		for (LabTestAttribute labTestAttribute : harryGxpResults) {
 			when(dao.saveLabTestAttribute(labTestAttribute)).thenReturn(labTestAttribute);
 		}
