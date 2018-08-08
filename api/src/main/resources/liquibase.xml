@@ -404,8 +404,8 @@
 			<column name="name">Unknown Test Type</column>
 			<column name="short_name">UNKNOWN</column>
 			<column name="test_group">OTHER</column>
-			<column name="requires_specimen">false</column>
-			<!-- <column name="reference_concept_id">?</column> -->
+			<column name="requires_specimen">1</column>
+			<column name="reference_concept_id">1067</column>
 			<column name="description">Used when Test Type is not known. For example when actual test type is purged</column>
 			<column name="creator">1</column>
 			<column name="retired">0</column>

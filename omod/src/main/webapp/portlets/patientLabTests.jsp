@@ -227,12 +227,18 @@ $(document).ready(function () {
 			  var requiresSpecimen = $(this).closest("tr")  
 							          .find(".rspecimen")   
 							          .text(); 
+			  
+			  var testOrderId = $(this).closest("tr")
+						          .find(".orderId") 
+						          .text(); 
+			  
+
 			 	if(requiresSpecimen == 'false'){
 			 		$('#specimenalert').removeAttr('hidden');
 			 		autoHide();
 			 	}
 			 	else{
-					 window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId=${model.patient.patientId}";  
+					 window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId;;  
 			 	}
 		 
 		});

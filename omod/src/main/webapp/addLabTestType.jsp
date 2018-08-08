@@ -26,6 +26,15 @@ input[type=submit] {
 	cursor: pointer;
 	
 }
+input[type=button] {
+	background-color: #1aac9b;
+	color: white;
+	padding: 12px 20px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	
+}
 #saveUpdateButton {
     text-align: center;
 }
@@ -70,7 +79,7 @@ legend.scheduler-border {
 		<c:if test="${not empty testType.referenceConcept.conceptId}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.labtesttype.edit" /></legend>
 		</c:if>
-		<form:form commandName="labTestType" id="testTypeForm" onsubmit="return validate()">
+		<form:form commandName="labTestType" id="testTypeForm" onsubmit='return validate(this);'>
 			<!-- Concept Reference -->
 			 <div class="row" >
 			   <div class="col-md-2">
@@ -162,6 +171,9 @@ legend.scheduler-border {
 			   <div class="col-md-2">
 					<input type="submit" value="Save Test Type"  ></input>
 			   </div>
+			      <div class="col-md-2" >
+				<input type="button" onclick="location.href = '${pageContext.request.contextPath}/module/commonlabtest/manageLabTestAttributeTypes.form';"  value="Cancel"></input>
+				 </div>
 			 </div>		 
 			
 <%-- 			<table>
@@ -435,15 +447,17 @@ legend.scheduler-border {
   
 	/*Form Validation  */
    
-	function validate(){
+	function validate(form){
+		
 		var testName = document.getElementById('name').value;
 		var testShortName =document.getElementById('short_name').value;
 		var referenceConcept = document.getElementById('conceptSuggestBox').value;
 		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%]*$");
-        console.log(testName);
-		console.log(!reText.test(testName));
 		var isValidate =true; 
+	    var regErrorMesssage ="Text Contain Invalid characters.Input field only accept alphabets with _().% special charaters";
+		var numericErrorMessage ="Numeric input are allowed";
 		var emptyErorMessage= 'This field can not be empty';
+		
 		if(referenceConcept == ""){
 			document.getElementById("referenceconcept").style.display= 'block';	
 			document.getElementById('referenceconcept').innerHTML =emptyErorMessage;
@@ -466,12 +480,12 @@ legend.scheduler-border {
 			}
 		else if(!isNaN(testName)){
 				document.getElementById("testname").style.display= 'block';		
-			 	document.getElementById('testname').innerHTML ="Only characters are allowed";
+			 	document.getElementById('testname').innerHTML =numericErrorMessage;
 				isValidate = false;
 			}
 		 else if(!reText.test(testName)){
 			    document.getElementById("testname").style.display= 'block';
-				document.getElementById('testname').innerHTML ="Text Contain Invalid characters";
+				document.getElementById('testname').innerHTML =regErrorMesssage;
 				isValidate = false;
 		  }
 		else {

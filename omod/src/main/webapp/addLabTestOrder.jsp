@@ -25,6 +25,15 @@ input[type=submit] {
 	cursor: pointer;
 	
 }
+input[type=button] {
+	background-color: #1aac9b;
+	color: white;
+	padding: 12px 20px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	
+}
 #saveUpdateButton {
     text-align: center;
 }
@@ -72,17 +81,18 @@ legend.scheduler-border {
 			<form:input  path="order.concept.conceptId" hidden="true"  id="conceptId"></form:input>	
 			<form:input  path="order.orderer.providerId" hidden="true" value="${provider.providerId}"></form:input>	
 			<form:input  path="order.orderType.orderTypeId" hidden="true" value="3"></form:input>	
+			<form:input  path="order.orderId" hidden="true" ></form:input>	
 		
 		    <div class="row" >
 				   <div class="col-md-3">
 				        <form:label  class="control-label" path="order.encounter"><spring:message code="general.encounter" /><span class=" text-danger required">*</span></form:label>
 				   </div>
 				   <div class="col-md-6">
-				   <c:if test="${not empty labTest.labReferenceNumber}">
+			 		<c:if test="${not empty labTest.labReferenceNumber}">
 			   			 <form:input class="form-control" path="order.encounter" id="encounter" hidden ="true" name="encounter"></form:input>
 			   		     <form:label class="form-control" path="order.encounter" id="encounter"  name="encounter">${labTest.order.encounter.getEncounterType().getName()}</form:label>
 					 </c:if>
-					  <c:if test="${empty labTest.labReferenceNumber}">
+					  <c:if test="${empty labTest.labReferenceNumber}"> 
 					  	<form:select class="form-control" path="order.encounter" id="encounter" >
 								<form:options  />
 								 <c:if test="${not empty encounters}">
@@ -91,7 +101,7 @@ legend.scheduler-border {
 										</c:forEach>
 					 			</c:if>
 						</form:select>
-					  </c:if>
+						</c:if>
 						<span id="encounters" class="text-danger "> </span>
 				   </div>
 				    <div class="col-md-3">  
@@ -138,16 +148,15 @@ legend.scheduler-border {
 			   		<form:label  class="control-label" path="order.CareSetting.careSettingId"><spring:message code="general.careSetting" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		 <c:if test="${not empty labTest.labReferenceNumber}">
-				   		 <form:radiobutton disabled ="true"  path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
+			   <%-- 	 <c:if test="${not empty labTest.labReferenceNumber}">
+						 <form:radiobutton disabled ="true"  path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
 				   		<span style="margin-right: 25px"></span>
 						<form:radiobutton  disabled ="true"  path="order.CareSetting.careSettingId" value="2"/>InPatient 	
 			   		 </c:if>
-			   		 <c:if test="${empty labTest.labReferenceNumber}">
+			   		 <c:if test="${empty labTest.labReferenceNumber}">  --%>
 			   		 	<form:radiobutton  path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
 				   		<span style="margin-right: 25px"></span>
 						<form:radiobutton path="order.CareSetting.careSettingId" value="2"/>InPatient 	
-			   		 </c:if>
 			  </div>
 			 </div>
 			   <!-- Date Scheduled-->
@@ -161,8 +170,11 @@ legend.scheduler-border {
 			 </div> -->
 		    <!-- Save -->
 			 <div class="row">
-			   <div class="col-md-4">
+			   <div class="col-md-2">
 					<input type="submit" value="Save Test Order"></input>
+			   </div>
+			    <div class="col-md-2" >
+					<input type="button" onclick="location.href = '${pageContext.request.contextPath}/patientDashboard.form?patientId=${patientId}';"  value="Cancel"></input>
 			   </div>
 			 </div>		 
 		</form:form>
@@ -191,6 +203,7 @@ legend.scheduler-border {
 						   <div class="col-md-2" >
 						 		 <input type="submit" value="Void Test Order"></input>
 						   </div>
+						   
 						 </div>
 				</form>
         </fieldset>
@@ -222,8 +235,9 @@ legend.scheduler-border {
 		    	return JSON.parse(JSON.stringify('${encounters}'));
 		    }
 	$(document).ready(function () {
-		 
-		local_source = new Array();
+		 $('#conceptId').val(document.getElementById("testType").value);
+		
+		 local_source = new Array();
 	        <c:if test="${not empty encounters}">
 		        <c:forEach var="encounter" items="${encounters}" varStatus="status">
 		        	local_source.push({date:"${encounter.encounterDatetime}",id:"${encounter.encounterId}"});
@@ -231,6 +245,7 @@ legend.scheduler-border {
 	        </c:if>   
 	
 		 $('#testType').change(function(){
+			  alert(""+document.getElementById("testType").value);
 			  $('#conceptId').val(document.getElementById("testType").value);
 		 });
 		
@@ -307,10 +322,10 @@ legend.scheduler-border {
 			document.getElementById('testtype').innerHTML =errorMessage;
 			isValidate = false;
 		}
-	/* 	 else if(testType != "") {
+	  /*  if(testType != "") {
 			 document.getElementById("testtype").style.display= 'none';		
-			}   */
-		
+			}   
+		 */
 		return isValidate;
 	}
 	

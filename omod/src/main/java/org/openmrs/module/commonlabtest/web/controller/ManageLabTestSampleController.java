@@ -35,9 +35,10 @@ public class ManageLabTestSampleController {
 	        @RequestParam(required = false) Integer testOrderId, ModelMap model) {
 		
 		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
-		List<LabTestSample> testSample = null;
+		List<LabTestSample> testSample;
 		if (testOrderId == null) {
 			testSample = new ArrayList<LabTestSample>();
+		} else {
 			LabTest labTest = commonLabTestService.getLabTest(testOrderId);
 			testSample = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);//need to check this get sample method...
 		}

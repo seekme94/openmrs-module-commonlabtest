@@ -566,6 +566,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		//			order.setAutoExpireDate(order.getDateActivated());
 		//		}
 		// orderNumber, careSettings, encounter
+		setProperty(order, "orderNumber", ORDER_NUMBER_PREFIX + String.valueOf(new Date().getTime()));
 		org.openmrs.Order cloned = new org.openmrs.Order(order.getOrderId());
 		cloned = order.copy();
 		// Because for some reason the order object gets attached to multiple sessions

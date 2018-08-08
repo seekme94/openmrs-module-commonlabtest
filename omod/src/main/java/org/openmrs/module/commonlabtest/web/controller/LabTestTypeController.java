@@ -78,6 +78,7 @@ public class LabTestTypeController {
 		}
 		
 		model.addAttribute("conceptsJson", jsonArray);
+		model.addAttribute("error", error);
 		return SUCCESS_ADD_FORM_VIEW;
 	}
 	
