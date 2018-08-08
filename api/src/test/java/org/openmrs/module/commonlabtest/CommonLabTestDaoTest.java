@@ -359,7 +359,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testPurgeLabTestType() {
-		LabTestType testType = dao.getLabTestType(3);
+		LabTestType testType = dao.getLabTestType(4);
 		// Purge object
 		dao.purgeLabTestType(testType);
 		// Clear cache
