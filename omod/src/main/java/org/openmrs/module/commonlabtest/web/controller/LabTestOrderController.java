@@ -96,17 +96,32 @@ public class LabTestOrderController {
 				Concept referConcept = lbTestType.getReferenceConcept();
 				System.out.println("Checking referece concept :::: " + referConcept.getDisplayString() + "   "
 				        + referConcept.getId());
+				/*	TestOrder testOrder;
+					if (labTest.getOrder().getId() != null) {
+						testOrder = (TestOrder) labTest.getOrder();
+					}
+					else {
+						
+						testOrder = new TestOrder();
+					}
+					
+					// execute this when order and lab test are null
+					testOrder.setCareSetting(labTest.getOrder().getCareSetting());
+					testOrder.setConcept(referConcept);
+					testOrder.setEncounter(labTest.getOrder().getEncounter());
+					testOrder.setPatient(labTest.getOrder().getPatient());
+					testOrder.setOrderer(labTest.getOrder().getOrderer());
+					testOrder.setOrderType(labTest.getOrder().getOrderType());
+					testOrder.setDateActivated(new java.util.Date());
+					testOrder.setOrderId(labTest.getOrder().getOrderId());
+					//testOrder.setScheduledDate(labTest.getOrder().getScheduledDate());
+					//testOrder.setScheduledDate(scheduledDate);
+					Order testParentOrder = testOrder;
+					
+					labTest.setOrder(testParentOrder);*/
 				
-				TestOrder testOrder = new TestOrder();
-				testOrder.setCareSetting(labTest.getOrder().getCareSetting());
-				testOrder.setConcept(referConcept);
-				testOrder.setEncounter(labTest.getOrder().getEncounter());
-				testOrder.setPatient(labTest.getOrder().getPatient());
-				testOrder.setOrderer(labTest.getOrder().getOrderer());
-				//testOrder.setScheduledDate(labTest.getOrder().getScheduledDate());
-				//testOrder.setScheduledDate(scheduledDate);
-				Order testParentOrder = testOrder;
-				
+				Order testParentOrder = labTest.getOrder();
+				testParentOrder.setDateActivated(new java.util.Date());
 				labTest.setOrder(testParentOrder);
 				
 				commonLabTestService.saveLabTest(labTest);
@@ -122,9 +137,9 @@ public class LabTestOrderController {
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTest.getTestOrderId() == null) {
-				return "redirect:addLabTestSample.form?patientId=" + labTest.getOrder().getPatient().getPatientId();
+				return "redirect:addLabTestOrder.form?patientId=" + labTest.getOrder().getPatient().getPatientId();
 			} else {
-				return "redirect:addLabTestSample.form?patientId=" + labTest.getOrder().getPatient().getPatientId()
+				return "redirect:addLabTestOrder.form?patientId=" + labTest.getOrder().getPatient().getPatientId()
 				        + "&testOrderId=" + labTest.getTestOrderId();
 			}
 		}

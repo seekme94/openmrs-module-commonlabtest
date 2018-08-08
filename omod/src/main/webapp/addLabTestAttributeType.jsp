@@ -24,6 +24,15 @@ input[type=submit] {
 	cursor: pointer;
 	
 }
+input[type=button] {
+	background-color: #1aac9b;
+	color: white;
+	padding: 12px 20px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	
+}
 #saveUpdateButton {
     text-align: center;
 }
@@ -77,7 +86,7 @@ legend.scheduler-border {
 	   <c:if test="${not empty testAttributeType.name}">
 		 <legend  class="scheduler-border">	<spring:message code="commonlabtest.labtestattributetype.edit" /></legend>
 	   </c:if>
- 	   <form:form commandName="attributeType" onsubmit="return validate()">
+ 	   <form:form commandName="attributeType" onsubmit='return validate(this);'>
  	        		 <div class="row">
 						   <div class="col-md-2">
 						   		<form:input path="labTestAttributeTypeId"  hidden="true" id="labTestAttributeTypeId"></form:input>
@@ -149,8 +158,10 @@ legend.scheduler-border {
 							   </div> 
 							   <div class="col-md-6">
 									<form:select class="form-control" path="datatypeClassname" id="data_type_name">
+										 <form:options  />
 										<c:forEach items="${datatypes}"  var="datatype">
-											<option value="${datatype}" <c:if test="${datatype == status.value}">selected</c:if>><spring:message code="${datatype}.name"/></option>
+<%-- 											<form:option item = "${datatype}" value="${datatype}" <c:if test="${datatype == status.value}">selected</c:if>><spring:message code="${datatype}.name"/></form:option>
+ --%>										    <form:option item ="${datatype}" value="${datatype}" ><c:out value="${datatype}.name" /></form:option>
 										</c:forEach>
 									</form:select>
 							   	</div>
@@ -175,8 +186,10 @@ legend.scheduler-border {
 									<form:select class="form-control" path="preferredHandlerClassname" id="preferred_handler_name">
 										<option value=""><openmrs:message code="general.default"/></option>
 										<c:forEach items="${handlers}"  var="handler">
-											<option value="${handler}" <c:if test="${handler == status.value}">selected</c:if>><spring:message code="${handler}.name"/></option>
-										</c:forEach>
+<%-- 											<option value="${handler}" <c:if test="${handler == status.value}">selected</c:if>><spring:message code="${handler}.name"/></option>
+ --%>									 
+ 											  <form:option item ="${handler}" value="${handler}" ><c:out value="${handler}.name" /></form:option>	
+ 										</c:forEach>
 									</form:select>
 							   	</div>
 							   	<div class ="col-md-4">
@@ -212,9 +225,12 @@ legend.scheduler-border {
 							</c:if>
 							  <!-- Save -->
 							 <div class="row">
-							   <div class="col-md-2">
+							   <div class="col-md-3">
 									<input type="submit" value="<spring:message code="commonlabtest.labtestattributetype.save" />"  ></input>
 							   </div>
+							    <div class="col-md-2" >
+									<input type="button" onclick="location.href = '${pageContext.request.contextPath}/module/commonlabtest/manageLabTestAttributeTypes.form';"  value="Cancel"></input>
+								</div>
 							 </div>	
  	   
 			<%-- <table>
@@ -532,7 +548,7 @@ legend.scheduler-border {
 	});
    
 	/* Validation */
-	function validate(){
+	function validate(form){
 		var testAttributeName = document.getElementById('name').value;
 		var labTestType = document.getElementById('testTypeSuggestBox').value;
 		var description = document.getElementById('description').value;
@@ -540,10 +556,10 @@ legend.scheduler-border {
 		var maxOccurs = document.getElementById('max_occurs').value;
 		var sortWeight = document.getElementById('sortWeight').value;
 		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%]*$");
-          console.log(""+testAttributeName);
-		 console.log(reText.test(testAttributeName));
-		 console.log("Sort weight : " + isInt(sortWeight));
-		var isValidate =true; 
+        var regErrorMesssage ="Text Contain Invalid characters.Input field only accept alphabets with _().% special charaters";
+		var numericErrorMessage ="Numeric input are allowed";
+		var emptyErrorMessage ="";
+        var isValidate =true; 
 		
 		if(labTestType == ""){
 			document.getElementById("labtesttypeid").style.display= 'block';	
@@ -566,13 +582,13 @@ legend.scheduler-border {
 			}
 		else if(!isNaN(testAttributeName)){
 			    document.getElementById("testatrname").style.display= 'block';
-				document.getElementById('testatrname').innerHTML ="Only characters are allowed";
+				document.getElementById('testatrname').innerHTML ="Only Alphanumeric characters are allowed";
 				isValidate = false;
 			}
 	
 	   else if(!reText.test(testAttributeName)){
 			   document.getElementById("testatrname").style.display= 'block';
-				document.getElementById('testatrname').innerHTML ="Text Contain Invalid characters";
+				document.getElementById('testatrname').innerHTML =regErrorMesssage;
 				isValidate = false;
 		  }
 		else {
@@ -586,7 +602,7 @@ legend.scheduler-border {
 			}
 		else if(!isNaN(description)){
 			    document.getElementById("atrdescription").style.display= 'block';	
-				document.getElementById('atrdescription').innerHTML ="Only characters are allowed";
+				document.getElementById('atrdescription').innerHTML =numericErrorMessage;
 				isValidate = false;
 			}
 		else {
@@ -602,7 +618,7 @@ legend.scheduler-border {
 		 
 		 else if(isNaN(minOccurs)){
 			  document.getElementById("minoccurs").style.display= 'block';	
-				document.getElementById('minoccurs').innerHTML ="Min Occurs should be numeric";
+				document.getElementById('minoccurs').innerHTML =numericErrorMessage;
 				isValidate = false;
 
 			}
@@ -623,7 +639,7 @@ legend.scheduler-border {
 		 
 		 else if(isNaN(maxOccurs)){
 			  document.getElementById("maxoccurs").style.display= 'block';	
-				document.getElementById('maxoccurs').innerHTML ="Max Occurs should be numeric";
+				document.getElementById('maxoccurs').innerHTML = numericErrorMessage;
 				isValidate = false;
 
 			}
@@ -644,14 +660,13 @@ legend.scheduler-border {
 		 
 		 else if(isNaN(sortWeight)){
 			  document.getElementById("sortweight").style.display= 'block';	
-				document.getElementById('sortweight').innerHTML ="Sort weight should be numeric";
+				document.getElementById('sortweight').innerHTML = numericErrorMessage;
 				isValidate = false;
 
 			}
 		 else {
 				document.getElementById("sortweight").style.display= 'none';	
-			} 
-				
+			} 	
 		return isValidate;
 	}
 	
@@ -665,7 +680,7 @@ legend.scheduler-border {
 			isValidate = false;
 		}
 		else if(!isNaN(retireReason)){
-			document.getElementById('retirereason').innerHTML ="Only characters are allowed";
+			document.getElementById('retirereason').innerHTML = numericErrorMessage;
 			isValidate = false;
 		}
 	
