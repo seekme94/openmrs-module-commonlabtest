@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.commonlabtest.api.dao.impl;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.openmrs.Concept;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
-import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.hibernate.HibernateOrderDAO;
 import org.openmrs.module.commonlabtest.LabTest;
@@ -49,8 +47,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CommonLabTestDaoImpl implements CommonLabTestDao {
-	
-	private static final String ORDER_NUMBER_PREFIX = "ORD-";
 	
 	private static final int MAX_FETCH_LIMIT = 100;
 	
@@ -559,38 +555,10 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 			order.setId(null);
 			return Context.getOrderService().saveOrder(order, null);
 		}
-		//		// For now, we are setting order number to be ORD-<timestamp>
-		//		setProperty(order, "orderNumber", ORDER_NUMBER_PREFIX + String.valueOf(new Date().getTime()));
-		//		//DC orders should auto expire upon creating them
-		//		if (DISCONTINUE == order.getAction()) {
-		//			order.setAutoExpireDate(order.getDateActivated());
-		//		}
-		// orderNumber, careSettings, encounter
-		setProperty(order, "orderNumber", ORDER_NUMBER_PREFIX + String.valueOf(new Date().getTime()));
-		org.openmrs.Order cloned = new org.openmrs.Order(order.getOrderId());
-		cloned = order.copy();
 		// Because for some reason the order object gets attached to multiple sessions
-		// Context.clearSession();
-		orderDao.saveOrder(cloned);
+		Context.clearSession();
+		orderDao.saveOrder(order);
 		return order;
-	}
-	
-	private void setProperty(org.openmrs.Order order, String propertyName, Object value) {
-		Boolean isAccessible = null;
-		Field field = null;
-		try {
-			field = org.openmrs.Order.class.getDeclaredField(propertyName);
-			field.setAccessible(true);
-			field.set(order, value);
-		}
-		catch (Exception e) {
-			throw new APIException("Order.failed.set.property", new Object[] { propertyName, order }, e);
-		}
-		finally {
-			if (field != null && isAccessible != null) {
-				field.setAccessible(isAccessible);
-			}
-		}
 	}
 	
 	/**
