@@ -88,7 +88,13 @@ public class LabTestTypeController {
 	        @ModelAttribute("labTestType") LabTestType labTestType, BindingResult result) {
 		String status = "";
 		if (result.hasErrors()) {
-			
+			status = "Invalid Reference concept Id entered";
+			model.addAttribute("error", status);
+			if (labTestType.getLabTestTypeId() == null) {
+				return "redirect:addLabTestType.form";
+			} else {
+				return "redirect:addLabTestType.form?uuid=" + labTestType.getUuid();
+			}
 		} else {
 			try {
 				commonLabTestService.saveLabTestType(labTestType);
@@ -99,7 +105,7 @@ public class LabTestTypeController {
 				status = sb.toString();
 			}
 			catch (Exception e) {
-				status = e.getLocalizedMessage();
+				status = "Lab Test type could not be saved due to exceptions";
 				e.printStackTrace();
 				model.addAttribute("error", status);
 				if (labTestType.getLabTestTypeId() == null) {
@@ -128,7 +134,7 @@ public class LabTestTypeController {
 			status = sb.toString();
 		}
 		catch (Exception exception) {
-			status = exception.getLocalizedMessage();
+			status = "Lab Test type could not be retired due to exceptions";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestType.getLabTestTypeId() == null) {
@@ -157,7 +163,7 @@ public class LabTestTypeController {
 			status = sb.toString();
 		}
 		catch (Exception exception) {
-			status = exception.getLocalizedMessage();
+			status = "Lab Test type could not be delete due to exceptions";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestType.getLabTestTypeId() == null) {

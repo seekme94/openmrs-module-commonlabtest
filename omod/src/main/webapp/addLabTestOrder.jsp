@@ -148,15 +148,16 @@ legend.scheduler-border {
 			   		<form:label  class="control-label" path="order.CareSetting.careSettingId"><spring:message code="general.careSetting" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   <%-- 	 <c:if test="${not empty labTest.labReferenceNumber}">
-						 <form:radiobutton disabled ="true"  path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
+			   	 <c:if test="${not empty labTest.labReferenceNumber}">
+						 <form:radiobutton  path="order.CareSetting.careSettingId" value="1"  checked="checked" onclick="return false;"/>OutPatient 
 				   		<span style="margin-right: 25px"></span>
-						<form:radiobutton  disabled ="true"  path="order.CareSetting.careSettingId" value="2"/>InPatient 	
+						<form:radiobutton  path="order.CareSetting.careSettingId" value="2" onclick="return false;"/>InPatient 	
 			   		 </c:if>
-			   		 <c:if test="${empty labTest.labReferenceNumber}">  --%>
+			   		 <c:if test="${empty labTest.labReferenceNumber}"> 
 			   		 	<form:radiobutton  path="order.CareSetting.careSettingId" value="1"  checked="checked"/>OutPatient 
 				   		<span style="margin-right: 25px"></span>
-						<form:radiobutton path="order.CareSetting.careSettingId" value="2"/>InPatient 	
+						<form:radiobutton path="order.CareSetting.careSettingId" value="2"/>InPatient 
+					</c:if>		
 			  </div>
 			 </div>
 			   <!-- Date Scheduled-->
@@ -245,7 +246,6 @@ legend.scheduler-border {
 	        </c:if>   
 	
 		 $('#testType').change(function(){
-			  alert(""+document.getElementById("testType").value);
 			  $('#conceptId').val(document.getElementById("testType").value);
 		 });
 		
@@ -284,8 +284,9 @@ legend.scheduler-border {
 		var referenceNumber = document.getElementById('labReferenceNumber').value;
 		var testType = document.getElementById('testType').value;
 		var encounter = document.getElementById('encounter').value
-		var  reText = new RegExp("^[ A-Za-z0-9_-]*$");
-
+		var  reText = new RegExp("^[A-Za-z0-9_:#\\-\\/]*$");
+        var regErrorMesssage ="Text contains Invalid characters.LabReference name only accepts alphanumeric characters with _-/:# special characters";
+        var alphabetsCharacter ="Numeric values and special characters are not allowed";
 		var isValidate =true; 
 		var errorMessage= 'This field can not be empty';
 		  //need to review this code...
@@ -300,9 +301,9 @@ legend.scheduler-border {
 				document.getElementById('labreferencenumber').innerHTML = errorMessage;
 				isValidate = false;
 		 }
-		 else if(!reText.test(testName)){
-			    document.getElementById("testname").style.display= 'block';
-				document.getElementById('testname').innerHTML ="Text Contain Invalid characters";
+		 else if(!reText.test(referenceNumber)){
+			    document.getElementById("labreferencenumber").style.display= 'block';
+				document.getElementById('labreferencenumber').innerHTML =regErrorMesssage;
 				isValidate = false;
 		  }
 		 else {
@@ -337,11 +338,11 @@ legend.scheduler-border {
 		var retireReason = document.getElementById('voidReason').value;
 		var isValidate= true;
 		if(retireReason == ""){
-			document.getElementById('voidreason').innerHTML ="Please fill the retire reason field";
+			document.getElementById('voidreason').innerHTML =" Void reason cannot be empty";
 			isValidate = false;
 		}
 		else if(!isNaN(retireReason)){
-			document.getElementById('voidreason').innerHTML ="Only characters are allowed";
+			document.getElementById('voidreason').innerHTML =alphabetsCharacter;
 			isValidate = false;
 		}
 
@@ -361,5 +362,36 @@ legend.scheduler-border {
 
 	    return [year, month, day].join('-');
 	}
+	
+	//Refresh context if required
+	/* 
+	jQuery(function() {
+		  var uuid ='${testOrder.uuid}';
+          var labReference = '${testOrder.labReferenceNumber}'
+		 if (performance.navigation.type == 1) {
+			 if(labReference ==null || labReference == ""){
+				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+			 	}
+				 else{
+					 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid; 
+				 }
+			}
+
+		 jQuery("body").keydown(function(e){
+
+		 if(e.which==116){
+			 if(labReference ==null || labReference == ""){
+				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+			 	}
+				 else{
+					 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid; 
+				 }		
+		   }
+
+		 });
+	 });	 
+	
+	 */
+	
 </script>
 

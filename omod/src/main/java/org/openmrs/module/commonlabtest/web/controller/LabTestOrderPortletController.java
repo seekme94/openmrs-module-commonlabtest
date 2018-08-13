@@ -85,25 +85,25 @@ public class LabTestOrderPortletController extends PortletController {
 	
 	@Override
 	protected void populateModel(HttpServletRequest request, Map<String, Object> model) {
-
-        String patientId = request.getParameter("patientId");
+		
+		String patientId = request.getParameter("patientId");
 		System.out.println("Patient ID :: " + patientId);
 		if (patientId != null) {
 			int id = Integer.parseInt(patientId);
 			Patient patient = Context.getPatientService().getPatient(id);
 			if (patient != null) {
 				System.out.println("Patient  :: " + patient);
-                System.out.println("in test order portlet");
-                System.out.println("===========================================================");
-                List<LabTest> testList = Context.getService(CommonLabTestService.class).getLabTests(patient, false);
+				System.out.println("in test order portlet");
+				System.out.println("===========================================================");
+				List<LabTest> testList = Context.getService(CommonLabTestService.class).getLabTests(patient, false);
 				//List<LabTest> testList = commonLabTestService.getLabTests(patient, false);
-
-                System.out.println("TestOrder Size ::: " + testList.size());
-                System.out.println("Order ::: " + (testList.size() > 0 ? testList.get(0).getOrder() : "zero"));
-                System.out.println("=========================================================");
+				
+				System.out.println("TestOrder Size ::: " + testList.size());
+				System.out.println("Order ::: " + (testList.size() > 0 ? testList.get(0).getOrder() : "zero"));
+				System.out.println("=========================================================");
 				model.put("testOrder", testList);
 			}
 		}
-
-    }
+		
+	}
 }

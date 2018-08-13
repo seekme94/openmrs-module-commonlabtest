@@ -1,7 +1,9 @@
-<%@ include file="/WEB-INF/template/include.jsp"%>
-<%@ include file="/WEB-INF/template/header.jsp"%>
-<%@ include file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
 
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<%@ include file="/WEB-INF/template/header.jsp"%> 
+<%@ include file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
+<openmrs:require privilege="View labTestAttributeType" otherwise="/login.htm" redirect="/module/commonlabtest/manageLabTestAttributeTypes.form" />
+ 
 <link type="text/css" rel="stylesheet" href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link   href="/openmrs/moduleResources/commonlabtest/font-awesome/css/font-awesome.min.css" rel="stylesheet" /> 
 <link   href="/openmrs/moduleResources/commonlabtest/css/bootstrap.min.css" rel="stylesheet" />

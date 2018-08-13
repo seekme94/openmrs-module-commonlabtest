@@ -238,7 +238,7 @@ $(document).ready(function () {
 			 		autoHide();
 			 	}
 			 	else{
-					 window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId;;  
+					 window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId; 
 			 	}
 		 
 		});

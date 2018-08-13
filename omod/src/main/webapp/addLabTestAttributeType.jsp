@@ -1,7 +1,17 @@
+<%-- <%@ page import="org.openmrs.web.WebConstants" %>
+<%
+pageContext.setAttribute("redirect", session.getAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR));
+session.removeAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR); 
+%> --%>
+
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 <%@ include
 	file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
+
+<openmrs:require privilege="View labTestAttributeType" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestAttributeType.form" />
+
+
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link
@@ -127,7 +137,7 @@ legend.scheduler-border {
 								<form:label path="minOccurs" class="control-label"><spring:message code="general.minOccurs" /><span class="text-danger required">*</span></form:label>
 							</div>
 						   <div class="col-md-6">
-								<form:input class="form-control" maxlength="2"   path="minOccurs" id="min_occurs"></form:input></td>
+								<form:input class="form-control" maxlength="2"   path="minOccurs" id="min_occurs" onkeypress="return isNumber(event)"></form:input></td>
 							    <span id="minoccurs" class="text-danger "> </span>
 						   	</div>
 					 	 </div>
@@ -147,7 +157,7 @@ legend.scheduler-border {
 					 	 			<form:label path="sortWeight" class="control-label"><spring:message code="general.sortWeight" /><span class="text-danger required">*</span></form:label>
 								</div>
 							   <div class="col-md-6">
-									<form:input class="form-control" maxlength="2"  path="sortWeight" id="sortWeight" onkeypress="return isNumber(event)"></form:input>
+									<form:input class="form-control" maxlength="2"  path="sortWeight" id="sortWeight"  onkeypress="return isNumber(event)"></form:input>
 								    <span id="sortweight" class="text-danger "> </span>
 							   	</div>
 					 	   </div>
@@ -555,15 +565,19 @@ legend.scheduler-border {
 		var minOccurs = document.getElementById('min_occurs').value;
 		var maxOccurs = document.getElementById('max_occurs').value;
 		var sortWeight = document.getElementById('sortWeight').value;
-		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%]*$");
-        var regErrorMesssage ="Text Contain Invalid characters.Input field only accept alphabets with _().% special charaters";
-		var numericErrorMessage ="Numeric input are allowed";
-		var emptyErrorMessage ="";
+		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%\\-]*$");
+		var regInt =new RegExp("^[0-9]+$");
+        var regErrorMesssage ="Text contains Invalid characters.Test Attribute name only accepts alphabets with _ -().% special characters";
+		var numericErrorMessage ="Only interger values are allowed";
+        var alphabetsCharacter ="Numeric values and special characters are not allowed";
+		var numericNotErrorMessage ="Numeric input are not allowed";
+		var integerErrorMessage ="Only interger values are allowed";
+		var emptyErrorMessage ="This field cannot be empty";
         var isValidate =true; 
 		
 		if(labTestType == ""){
 			document.getElementById("labtesttypeid").style.display= 'block';	
-			document.getElementById('labtesttypeid').innerHTML ="Please fill the Lab Test Type field";
+			document.getElementById('labtesttypeid').innerHTML =emptyErrorMessage;
 			isValidate = false;
 		}
 		else if(isNaN(labTestType)){
@@ -577,7 +591,7 @@ legend.scheduler-border {
 		
 		 if(testAttributeName == ""){
 			    document.getElementById("testatrname").style.display= 'block';
-				document.getElementById('testatrname').innerHTML ="Please fill the Test Attribute Name field";
+				document.getElementById('testatrname').innerHTML =emptyErrorMessage;
 				isValidate = false;
 			}
 		else if(!isNaN(testAttributeName)){
@@ -597,12 +611,7 @@ legend.scheduler-border {
 		 /*Description  */
 		 if(description == ""){
 			    document.getElementById("atrdescription").style.display= 'block';		
-			    document.getElementById('atrdescription').innerHTML ="Please fill the Test Attribute Description field";
-				isValidate = false;
-			}
-		else if(!isNaN(description)){
-			    document.getElementById("atrdescription").style.display= 'block';	
-				document.getElementById('atrdescription').innerHTML =numericErrorMessage;
+			    document.getElementById('atrdescription').innerHTML =emptyErrorMessage;
 				isValidate = false;
 			}
 		else {
@@ -612,7 +621,7 @@ legend.scheduler-border {
 		 /*Min Occurs  */
 		 if(minOccurs == ""){
 			  document.getElementById("minoccurs").style.display= 'block';	
-				document.getElementById('minoccurs').innerHTML ="Please fill the Min Occurs field";
+				document.getElementById('minoccurs').innerHTML =emptyErrorMessage;
 				isValidate = false;
 			}
 		 
@@ -622,18 +631,20 @@ legend.scheduler-border {
 				isValidate = false;
 
 			}
+		 else if (!regInt.test(minOccurs)){
+			 	document.getElementById("minoccurs").style.display= 'block';	
+				document.getElementById('minoccurs').innerHTML = integerErrorMessage;
+				isValidate = false;
+		 }
+			
 			else {
 				document.getElementById("minoccurs").style.display= 'none';	
-			} 
-			/* if(mobileNumber.length =<2){
-				document.getElementById('minoccurs').innerHTML =" ** Mobile Number must be 10 digits only";
-				return false;
-			} */
-			
+			}
+		 
 		 /*Min Occurs  */
 		 if(maxOccurs == ""){
 			  document.getElementById("maxoccurs").style.display= 'block';	
-				document.getElementById('maxoccurs').innerHTML ="Please fill the Max Occurs field";
+				document.getElementById('maxoccurs').innerHTML =emptyErrorMessage;
 				isValidate = false;
 			}
 		 
@@ -643,18 +654,25 @@ legend.scheduler-border {
 				isValidate = false;
 
 			}
+		 else if (!regInt.test(maxOccurs)){
+			 	document.getElementById("maxoccurs").style.display= 'block';	
+				document.getElementById('maxoccurs').innerHTML = integerErrorMessage;
+				isValidate = false;
+		 }
 		 else if(minOccurs > maxOccurs){
-			 document.getElementById("maxoccurs").style.display= 'block';	
-			document.getElementById('maxoccurs').innerHTML ="Max Occurs should be greater then min Occurs";
-			isValidate = false;
-		} else {
+				 document.getElementById("maxoccurs").style.display= 'block';	
+				document.getElementById('maxoccurs').innerHTML ="Max Occurs should be greater then min Occurs";
+				isValidate = false;
+		 } 
+		 
+		 else {
 			document.getElementById("maxoccurs").style.display= 'none';	
 		} 
-			
+	
 		/* sortWeight */
 		 if(sortWeight == ""){
 			   document.getElementById("sortweight").style.display= 'block';	
-				document.getElementById('sortweight').innerHTML ="Please fill the sort weight field";
+				document.getElementById('sortweight').innerHTML =emptyErrorMessage;
 				isValidate = false;
 			}
 		 
@@ -664,9 +682,16 @@ legend.scheduler-border {
 				isValidate = false;
 
 			}
-		 else {
-				document.getElementById("sortweight").style.display= 'none';	
-			} 	
+			 else if (!regInt.test(sortWeight)){
+				 	document.getElementById("sortweight").style.display= 'block';	
+					document.getElementById('sortweight').innerHTML = integerErrorMessage;
+					isValidate = false;
+			 }
+			 else {
+					document.getElementById("sortweight").style.display= 'none';	
+				} 
+			
+	
 		return isValidate;
 	}
 	
@@ -676,13 +701,14 @@ legend.scheduler-border {
 		var retireReason = document.getElementById('retireReason').value;
 		var isValidate= true;
 		if(retireReason == ""){
-			document.getElementById('retirereason').innerHTML ="Please fill the retire reason field";
+			document.getElementById('retirereason').innerHTML ="Retire reason cannot be empty";
 			isValidate = false;
 		}
 		else if(!isNaN(retireReason)){
 			document.getElementById('retirereason').innerHTML = numericErrorMessage;
 			isValidate = false;
 		}
+
 	
 		return isValidate;
 	}
@@ -692,16 +718,27 @@ legend.scheduler-border {
 		}
 
 	jQuery(function() {
-
+		  var uuid ='${testAttributeType.uuid}';
+          var testAttributeTypeName = '${testAttributeType.name}'
 		 if (performance.navigation.type == 1) {
-			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
-		 }
+			 if(testAttributeTypeName ==null || testAttributeTypeName == ""){
+				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+			 	}
+				 else{
+					 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid; 
+				 }
+			}
 
 		 jQuery("body").keydown(function(e){
 
 		 if(e.which==116){
-			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
-		 }
+			 if(testAttributeTypeName ==null || testAttributeTypeName == ""){
+				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+			 	}
+				 else{
+					 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid; 
+				 }		
+		   }
 
 		 });
 	 });	 

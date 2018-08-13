@@ -33,7 +33,7 @@
 		<a href="${pageContext.request.contextPath}/module/commonlabtest/manageLabTestAttributeTypes.form">
 		<spring:message code="commonlabtest.labtestattributetype.manage" /></a>
 	</li>
-	<li
+	<%-- <li
 		<c:if test='<%=request.getRequestURI().contains("/manageLabTestSamples")%>'>class="active"</c:if>>
 		<a
 		href="${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form"><spring:message
@@ -44,6 +44,6 @@
 		<a
 		href="${pageContext.request.contextPath}/module/commonlabtest/manageLabTests.form"><spring:message
 				code="commonlabtest.labtest.manage" /></a>
-	</li>
+	</li> --%>
 
 </ul>
