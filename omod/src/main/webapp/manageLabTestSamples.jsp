@@ -20,6 +20,7 @@
 body {
 	font-size: 12px;
 }
+
 input[type=submit] {
 	background-color: #1aac9b;
 	color: white;
@@ -67,7 +68,7 @@ legend.scheduler-border {
 		<a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
 	</div> -->
 	<div>
-	 <a onclick="navigatedToLabTestSample();"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
+	 <a onclick="navigatedToLabTestSample();" id="addTestSamples"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
 	</div>
 	<br>
 	<c:if test="${not empty status}">
@@ -99,7 +100,7 @@ legend.scheduler-border {
 		       <c:forEach var="testSample" items="${labSampleTest}">
 		          <c:if test="${! empty labSampleTest}">
 						<tr>
-						   <td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}">${testSample.labTestSampleId}</a></td>
+						   <td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}">${testSample.labTestSampleId}</a></td>
 						    <td>${testSample.getSpecimenType().getName()}</td>
 						    <td>${testSample.getSpecimenSite().getName()}</td>
 						    <td> <fmt:formatDate value="${testSample.collectionDate}" pattern="yyyy-mm-dd" /></td>
