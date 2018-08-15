@@ -1,5 +1,6 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +52,15 @@ public class ManageLabTestSampleController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/statuslabtestsample.form")
-	public String onStatus(ModelMap model, HttpSession httpSession, HttpServletRequest request,
+	public String onStatuChange(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid, @RequestParam("patientId") String patientId,
-	        @RequestParam(value = "rejectedReason", required = false) String rejectedReason) {
+	        @RequestParam(value = "rejectedReason", required = false) String rejectedReason,
+	        @RequestParam(value = "isAccepted", required = false) String isAccepted) {
 		LabTestSample labTestSample = commonLabTestService.getLabTestSampleByUuid(uuid);
 		String status;
 		try {
-			if (rejectedReason == "") {
+			if (isAccepted.equals("1")) {
+				
 				labTestSample.setStatus(LabTestSampleStatus.ACCEPTED);
 				
 			} else {
@@ -66,18 +69,18 @@ public class ManageLabTestSampleController {
 			}
 			commonLabTestService.saveLabTestSample(labTestSample);
 			StringBuilder sb = new StringBuilder();
-			/*	sb.append("Lab Sample Test is update with Uuid :");
-				sb.append(labTestSample.getUuid());*/
-			sb.append("Lab Sample Test status is updated");
+			sb.append("Lab Test Sample is updated");
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = e.getLocalizedMessage();
 			e.printStackTrace();
+			status = "Lab Test sample could not be saved";
+			model.addAttribute("error", status);
+			return "redirect:manageLabTestSamples.form?patientId=" + patientId + "&testOrderId="
+			        + labTestSample.getLabTest().getTestOrderId();
 			
 		}
 		model.addAttribute("save", status);
-		
 		return "redirect:manageLabTestSamples.form?patientId=" + patientId + "&testOrderId="
 		        + labTestSample.getLabTest().getTestOrderId();
 	}

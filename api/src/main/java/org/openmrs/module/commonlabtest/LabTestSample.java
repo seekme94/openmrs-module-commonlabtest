@@ -74,7 +74,7 @@ public class LabTestSample extends BaseOpenmrsData {
 	@JoinColumn(name = "specimen_site")
 	private Concept specimenSite;
 	
-	@Temporal(TemporalType.DATE)
+	//@Temporal(TemporalType.DATE)
 	@Column(name = "collection_date")
 	private Date collectionDate;
 	

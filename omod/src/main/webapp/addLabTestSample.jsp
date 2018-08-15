@@ -82,7 +82,9 @@ legend.scheduler-border {
 			<form:input  path="labTest.order.patient" hidden="true" value="${patientId}"></form:input>
 			<form:input  path="collector.providerId" hidden="true" value="${provider.providerId}"></form:input>	
 		   	<form:input  path="labTest.testOrderId" hidden="true" value="${orderId}"></form:input>
-		   
+		    <form:input  path="labTestSampleId" hidden="true" value=""></form:input>
+		    <form:input  path="status" hidden="true" value=""></form:input>
+		    
 		    <div class="row" >
 				   <div class="col-md-2">
 				        <form:label  class="control-label" path="specimenType"><spring:message code="general.specimenType" /><span class="text-danger required">*</span></form:label>
@@ -132,10 +134,15 @@ legend.scheduler-border {
 		     	   <form:label  class="control-label" path="units"><spring:message code="commonlabtest.labtestsample.unit" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input path="units" class="form-control"  maxlength="50"  id ="units" ></form:input>
-			   		<span id="unitsError" class="text-danger "> </span>
-			   		<form:errors path="units" cssClass="error" />
-			   		
+			   			<form:select class="form-control" path="units" id="units" >
+								<c:if test="${not empty specimenType}">
+									<c:forEach var="unit" items="${specimenType}">
+										<form:option item="${unit}" value="${unit}">${unit.name}</form:option>
+									</c:forEach>
+								</c:if>	
+						</form:select>
+				  		<span id="unitsError" class="text-danger "> </span>
+				  		<form:errors path="units" cssClass="error" />
 			   </div>
 			 </div>
 			 <!--collectionDate  -->
@@ -156,7 +163,7 @@ legend.scheduler-border {
 					<input type="submit" value="Save Test Sample"></input>
 			   </div>
 			     <div class="col-md-2" >
-				   <input type="button" onclick="location.href = '${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form';"  value="Cancel"></input>
+				   <input type="button" onclick="goTo()"  value="Cancel"></input>
 				 </div>
 			 </div>		 
 		</form:form>
@@ -166,15 +173,15 @@ legend.scheduler-border {
 	
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="commonlabtest.labtestsample.void" /></legend>
-					<form id="form" >
+					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/voidlabtestsample.form" >
 						 <!-- UUID -->
 						 <div class="row">
 						   <div class="col-md-2">
-								<input value="" hidden="true"  id="uuid" name="uuid"></input>
+								<input value="${testSample.uuid}" hidden="true"  id="uuid" name="uuid"></input>
 								<label  class="control-label" path="voidReason"><spring:message code="general.reason" /><span class="required">*</span></label>
 						   </div>
 						   <div class="col-md-6">
-						   		<input class="form-control" value="" id="voidReason" name="retireReason" required="required">
+						   		<input class="form-control" value="" id="voidReason" name="voidReason" required="required">
 						   </div>
 						 </div>
 						 <!-- Retire -->
@@ -216,6 +223,11 @@ function isNumber(evt) {
         return false;
     }
     return true;
+}
+
+function goTo(){
+	window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${patientId}+"&testOrderId=${orderId}";
+	
 }
 
 
@@ -301,14 +313,14 @@ function validate(form){
 				document.getElementById('unitsError').innerHTML =emptyErorMessage;
 				isValidate = false;
 			} */
-		 if(!reText.test(units) && units != "" ){
+		/*  if(!reText.test(units) && units != "" ){
 				document.getElementById("unitsError").style.display= 'block';		
 			 	document.getElementById('unitsError').innerHTML =regErrorMesssage;
 				isValidate = false;
 			}
 		else {
 			document.getElementById("unitsError").style.display= 'none';		
-		}
+		} */
 		/* Collection Date */
 		/* if(datepicker == ""){
 			document.getElementById("collectiondate").style.display= 'block';		

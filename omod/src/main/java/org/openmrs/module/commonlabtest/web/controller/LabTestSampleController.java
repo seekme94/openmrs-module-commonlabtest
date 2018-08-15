@@ -72,8 +72,6 @@ public class LabTestSampleController {
 		Concept specimenSiteSet = Context.getConceptService().getConceptByUuid(specimenSiteUuid);
 		if (specimenSiteSet != null && specimenSiteSet.getSetMembers().size() > 0) {
 			List<Concept> specimenSiteConcepts = specimenSiteSet.getSetMembers();
-			System.out.println("=========Specimen Site ===================");
-			System.out.println("Specimen Site : " + specimenSiteConcepts.size());
 			model.put("specimenSite", specimenSiteConcepts);
 		}
 		
@@ -105,17 +103,18 @@ public class LabTestSampleController {
 				}
 			} else {
 				//   labTest.set
-				labTestSample.setStatus(LabTestSampleStatus.COLLECTED);
+				if (labTestSample.getId() == null)
+					labTestSample.setStatus(LabTestSampleStatus.COLLECTED);
 				commonLabTestService.saveLabTestSample(labTestSample);
 				StringBuilder sb = new StringBuilder();
-				sb.append("Lab Test Order with Uuid :");
+				sb.append("Lab Test Sample with Uuid :");
 				sb.append(labTestSample.getUuid());
 				sb.append(" is  saved!");
 				status = sb.toString();
 			}
 		}
 		catch (Exception e) {
-			status = "Lab Test sample could not be saved due to exceptions";
+			status = "Lab Test sample could not be saved";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestSample.getLabTestSampleId() == null) {
@@ -133,26 +132,37 @@ public class LabTestSampleController {
 		        + labTestSample.getLabTest().getTestOrderId();
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtestsample.form")
-	public String onRetire(ModelMap model, HttpSession httpSession, HttpServletRequest request,
-	        @RequestParam("uuid") String uuid, @RequestParam("retireReason") String retireReason) {
-		LabTest labTest = commonLabTestService.getLabTestByUuid(uuid);
+	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/voidlabtestsample.form")
+	public String onVoid(ModelMap model, HttpSession httpSession, HttpServletRequest request,
+	        @RequestParam("uuid") String uuid, @RequestParam("voidReason") String voidReason) {
+		LabTestSample labTestSample = commonLabTestService.getLabTestSampleByUuid(uuid);
 		String status;
 		try {
-			commonLabTestService.voidLabTest(labTest, retireReason);
+			commonLabTestService.voidLabTestSample(labTestSample, voidReason);
 			StringBuilder sb = new StringBuilder();
-			sb.append("Lab Test order with Uuid :");
-			sb.append(labTest.getUuid());
-			sb.append(" is  retired!");
+			sb.append("Lab Test Sample with Uuid :");
+			sb.append(labTestSample.getUuid());
+			sb.append(" is  voided!");
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = "Lab Test sample could not be saved due to exceptions";
+			status = "Lab Test sample could not be voided";
 			e.printStackTrace();
+			model.addAttribute("error", status);
+			if (labTestSample.getLabTestSampleId() == null) {
+				return "redirect:addLabTestSample.form?patientId="
+				        + labTestSample.getLabTest().getOrder().getPatient().getPatientId();
+			} else {
+				return "redirect:addLabTestSample.form?patientId="
+				        + labTestSample.getLabTest().getOrder().getPatient().getPatientId() + "&testSampleId="
+				        + labTestSample.getLabTest().getTestOrderId();
+			}
 			
 		}
 		model.addAttribute("save", status);
-		return "redirect:labTestOrder.form";
+		return "redirect:manageLabTestSamples.form?patientId="
+		        + labTestSample.getLabTest().getOrder().getPatient().getPatientId() + "&testOrderId="
+		        + labTestSample.getLabTest().getTestOrderId();
 		
 	}
 	
