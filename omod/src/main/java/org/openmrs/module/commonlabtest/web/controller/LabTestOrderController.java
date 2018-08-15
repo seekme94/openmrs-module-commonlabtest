@@ -133,7 +133,7 @@ public class LabTestOrderController {
 			}
 		}
 		catch (Exception e) {
-			status = e.getLocalizedMessage();
+			status = "Lab Test Order could not be saved due to exceptions";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTest.getTestOrderId() == null) {
@@ -143,7 +143,7 @@ public class LabTestOrderController {
 				        + "&testOrderId=" + labTest.getTestOrderId();
 			}
 		}
-		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Added test order");
+		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Test order saved successfully");
 		//model.addAttribute("status", status);
 		return "redirect:../../patientDashboard.form?patientId=" + labTest.getOrder().getPatient().getPatientId();
 	}
@@ -162,15 +162,20 @@ public class LabTestOrderController {
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = e.getLocalizedMessage();
+			status = "Lab Test Order could not be retire due to exceptions";
 			e.printStackTrace();
-			
+			if (labTest.getTestOrderId() == null) {
+				return "redirect:addLabTestOrder.form?patientId=" + labTest.getOrder().getPatient().getPatientId();
+			} else {
+				return "redirect:addLabTestOrder.form?patientId=" + labTest.getOrder().getPatient().getPatientId()
+				        + "&testOrderId=" + labTest.getTestOrderId();
+			}
 		}
 		model.addAttribute("status", status);
 		//  model.addAttribute("patientId", labTest.get);
 		//model.addAttribute("status", status);
 		int patientId = labTest.getOrder().getPatient().getPatientId();
-		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Success!Retired test order");
+		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Test order retire successfully");
 		return "redirect:../../patientDashboard.form?patientId=" + patientId;
 		
 	}

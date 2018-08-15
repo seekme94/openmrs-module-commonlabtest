@@ -39,8 +39,8 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 		
 		conceptService = Context.getConceptService();
 		AdministrationService administrationService = Context.getAdministrationService();
-		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "159959AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		
 	}
 	
@@ -67,8 +67,8 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 		conceptService = Context.getConceptService();
 		
 		AdministrationService administrationService = Context.getAdministrationService();
-		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "160855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "159959AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	}
 	
 }

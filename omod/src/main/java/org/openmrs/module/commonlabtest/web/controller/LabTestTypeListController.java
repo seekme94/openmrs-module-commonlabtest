@@ -36,13 +36,13 @@ public class LabTestTypeListController {
 	CommonLabTestService commonLabTestService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String showLabTestTypes(@RequestParam(required = false) String status, ModelMap model) {
+	public String showLabTestTypes(@RequestParam(required = false) String save, ModelMap model) {
 		
 		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
 		List<LabTestType> list = commonLabTestService.getAllLabTestTypes(Boolean.FALSE);
 		
 		model.put("labTestTypes", list);
-		model.addAttribute("status", status);
+		model.addAttribute("status", save);
 		return SUCCESS_FORM_VIEW;
 	}
 	

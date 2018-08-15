@@ -1,6 +1,9 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
+<openmrs:require privilege="View labTestType" otherwise="/login.htm" redirect="/module/commonlabtest/manageLabTestSamples.form" />
+
+
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link
@@ -64,17 +67,24 @@ legend.scheduler-border {
 		<a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
 	</div> -->
 	<div>
-	 <a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?patientId=${patientId}"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
+	 <a onclick="navigatedToLabTestSample();"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
 	</div>
 	<br>
+	<c:if test="${not empty status}">
+		<div class="alert alert-success" id="success-alert">
+			 <a href="#" class="close" data-dismiss="alert">&times;</a>
+	 		<strong>Success!</strong> <c:out value="${status}" />
+		</div>
+	</c:if>
 	<!--List of Test Order  -->
 	<div class=" boxHeader" style="background-color: #1aac9b">
 			<span></span> <b><spring:message code="commonlabtest.labtestsample.list" /></b>
 	 </div>
 	 <div class="box">
-		 <table id="testOrderTable" class="table table-striped table-bordered" style="width:100%">
+		 <table id="testSampleTable" class="table table-striped table-bordered" style="width:100%">
 	        <thead>
 	            <tr>
+	            	<th hidden="true"></th>
 					<th>Sample ID</th>
 					<th>Specimen Type</th>
 					<th>Specimen Site</th>
@@ -88,7 +98,8 @@ legend.scheduler-border {
 		       <c:forEach var="testSample" items="${labSampleTest}">
 		          <c:if test="${! empty labSampleTest}">
 						<tr>
-						    <td>${testSample.labTestSampleId}</td>
+							<td hidden ="true" class ="uuid">${testSample.uuid}</td>
+						    <td >${testSample.labTestSampleId}</td>
 						    <td>${testSample.getSpecimenType().getName()}</td>
 						    <td>${testSample.getSpecimenSite().getName()}</td>
 						    <td>${testSample.collectionDate}</td>
@@ -113,13 +124,15 @@ legend.scheduler-border {
                 </button>
             </div>
             <div class="modal-body">
-                 <!-- UUID -->
+              <form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form" >            
 						 <div class="row">
 						   <div class="col-md-4">
+						   	   <input value="${patientId}" hidden="true"  id="patientId" name="patientId"></input>
+						   	   <input value="" hidden="true"  id="uuidReject" name="uuid"></input>
 								<label  class="control-label">Reason<span class="required">*</span></label>
 						   </div>
 						   <div class="col-md-6">
-						   		<input class="form-control" value="" id="retireReason" required="required">
+						   		<input class="form-control" value="" name="rejectedReason" id="rejectedReason" required="required">
 						   </div>
 						 </div>
 						 <!-- Retire -->
@@ -127,9 +140,10 @@ legend.scheduler-border {
 						    <div class="col-md-4">
 						    </div>
 						   <div class="col-md-4">
-						 		 <input type="submit" data-dismiss="modal"  value="Submit"></input>
+						 		 <input type="submit"  ></input>
 						   </div>
 						 </div>
+			   </form>			 
             </div>
         </div>
     </div>
@@ -155,21 +169,54 @@ legend.scheduler-border {
 
 
 <script type="text/javascript">
-$(document).ready(function () {
-	
-	$('#testOrderTable').dataTable({
-		 "bPaginate": true
-	  });
-	  $('.dataTables_length').addClass('bs-select');
-	  
-	  $('.accept').click(function () {
-		   
-		});
-	  $('.reject').click(function () {
-		  $('#rejectModal').modal('show'); 
-		});
-	  
-});
+	$(document).ready(function () {
+		
+		  $("#success-alert").fadeTo(2000, 1000).slideUp(1000, function(){
+              $("#success-alert").slideUp(1000);
+               }); 
+		
+		
+		$('#testSampleTable').dataTable({
+			 "bPaginate": true
+		  });
+		  $('.dataTables_length').addClass('bs-select');
+		  
+		  $('.accept').click(function () {
+			   
+			});
+		  $('.reject').click(function () {
+			  var uuid = $(this).closest("tr")  
+							          .find(".uuid")   
+							          .text(); 
+			  if(uuid != "" || uuid != null){
+				  document.getElementById('uuidReject').value = uuid;
+				  $('#rejectModal').modal('show'); 
+			  }		  
+			
+			});
+		  
+	});
+  function navigatedToLabTestSample(){
+	  window.location.href ="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?patientId="+${patientId}+"&orderId="+${orderId};
+  }	
+  
+  //On Refereshing the parameter value ...
+ 	jQuery(function() {
+
+		 if (performance.navigation.type == 1) {
+			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${patientId}+"&testOrderId="+orderId;
+		 }
+
+		 jQuery("body").keydown(function(e){
+
+		 if(e.which==116){
+			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${patientId}+"&testOrderId="+orderId;
+		 }
+
+		 });
+	 });	
+
+  
 </script>
 
 

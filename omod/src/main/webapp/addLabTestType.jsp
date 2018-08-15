@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
-<%@ include
-	file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
+<%@ include file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
+<openmrs:require privilege="View labTestType" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestType.form" />
+	
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link
@@ -109,6 +110,8 @@ legend.scheduler-border {
 			   </div>
 			   <div class="col-md-6">
 			   		<form:input  class="form-control" maxlength="20"  path="shortName" id="short_name" ></form:input>
+			        <span id="shortname" class="text-danger"> </span>
+			  
 			   </div>
 			 </div>
 			  <!-- Description -->
@@ -172,7 +175,7 @@ legend.scheduler-border {
 					<input type="submit" value="Save Test Type"  ></input>
 			   </div>
 			      <div class="col-md-2" >
-				<input type="button" onclick="location.href = '${pageContext.request.contextPath}/module/commonlabtest/manageLabTestAttributeTypes.form';"  value="Cancel"></input>
+				<input type="button" onclick="location.href = '${pageContext.request.contextPath}/module/commonlabtest/manageLabTestTypes.form';"  value="Cancel"></input>
 				 </div>
 			 </div>		 
 			
@@ -261,7 +264,7 @@ legend.scheduler-border {
 	
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.test.retire" /></legend>
-					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtesttype.form" onsubmit="return retireValidate()">
+						<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtesttype.form" onsubmit="return retireValidate()">
 						 <!-- UUID -->
 						 <div class="row">
 						   <div class="col-md-2">
@@ -452,11 +455,12 @@ legend.scheduler-border {
 		var testName = document.getElementById('name').value;
 		var testShortName =document.getElementById('short_name').value;
 		var referenceConcept = document.getElementById('conceptSuggestBox').value;
-		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%]*$");
+		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%\\-]*$");
 		var isValidate =true; 
-	    var regErrorMesssage ="Text Contain Invalid characters.Input field only accept alphabets with _().% special charaters";
-		var numericErrorMessage ="Numeric input are allowed";
-		var emptyErorMessage= 'This field can not be empty';
+        var regErrorMesssage ="Text contains Invalid characters.Test name only accepts alphabets with _().% - special charaters";
+        var regShortNameErrorMesssage ="Text contains Invalid characters.Short name only accepts alphabets with _().% - special characters";
+        var numericErrorMessage ="Only interger values are allowed";
+		var emptyErorMessage= 'This field cannot be empty';
 		
 		if(referenceConcept == ""){
 			document.getElementById("referenceconcept").style.display= 'block';	
@@ -492,6 +496,14 @@ legend.scheduler-border {
 			document.getElementById("testname").style.display= 'none';		
 		}
 		
+		if(!reText.test(testShortName) && testShortName !=""){
+			   document.getElementById("shortname").style.display= 'block';
+				document.getElementById('shortname').innerHTML =regShortNameErrorMesssage;
+				isValidate = false;
+		}
+		else{
+			document.getElementById("shortname").style.display= 'none';		
+		}
 		
 		//console.log(form_data); 
 	
@@ -503,7 +515,7 @@ legend.scheduler-border {
 	function retireValidate(){
 		var retireReason = document.getElementById('retireReason').value;
 		var isValidate= true;
-		var emptyErorMessage= 'This field can not be empty';
+		var emptyErorMessage= 'This field cannot be empty';
 		if(retireReason == ""){
 			document.getElementById('retirereason').innerHTML =emptyErorMessage;
 			isValidate = false;
@@ -516,6 +528,31 @@ legend.scheduler-border {
 		return isValidate;
 	}
 	
+
+	jQuery(function() {
+             var uuid ='${testType.uuid}';
+             var labReferenceId = '${testType.referenceConcept.conceptId}'
+		 if (performance.navigation.type == 1) {
+			 if(labReferenceId ==null || labReferenceId == ""){
+			 	   window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form";
+			 }else{
+				 	window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid="+uuid;
+			 }
+			}
+
+		 jQuery("body").keydown(function(e){
+
+		 if(e.which==116){
+			 if(labReferenceId ==null || labReferenceId == ""){
+				 	   window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form";
+				 }else{
+					 	window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid="+uuid;
+				 }
+		 }
+
+		 });
+	 });	 
+ 
 	
 	
 </script>

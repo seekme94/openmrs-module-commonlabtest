@@ -63,7 +63,13 @@ public class LabTestAttributeTypeController {
 		String status = "";
 		try {
 			if (result.hasErrors()) {
-				
+				status = "Invalid Lab Test Type concept Id entered";
+				model.addAttribute("error", status);
+				if (attributeType.getLabTestAttributeTypeId() == null) {
+					return "redirect:addLabTestAttributeType.form";
+				} else {
+					return "redirect:addLabTestAttributeType.form?uuid=" + attributeType.getUuid();
+				}
 			} else {
 				
 				commonLabTestService.saveLabTestAttributeType(attributeType);
@@ -75,7 +81,8 @@ public class LabTestAttributeTypeController {
 			}
 		}
 		catch (Exception e) {
-			status = e.getLocalizedMessage();
+			status = "Lab Test Attribute type could not be saved due to exceptions";
+			//status = e.getLocalizedMessage();
 			e.printStackTrace();
 			
 			model.addAttribute("error", status);
@@ -104,7 +111,7 @@ public class LabTestAttributeTypeController {
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = e.getLocalizedMessage();
+			status = "Lab Test Attribute type could not be retire due to exceptions";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (attributeType.getLabTestAttributeTypeId() == null) {
@@ -132,7 +139,8 @@ public class LabTestAttributeTypeController {
 			status = sb.toString();
 		}
 		catch (Exception exception) {
-			status = exception.getLocalizedMessage();
+			//status = exception.getLocalizedMessage();
+			status = "Lab Test Attribute type could not be Delete due to exceptions";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			return "redirect:addLabTestAttributeType.form?uuid=" + attributeType.getUuid();
