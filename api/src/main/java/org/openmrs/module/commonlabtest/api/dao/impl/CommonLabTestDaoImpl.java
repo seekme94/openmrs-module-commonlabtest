@@ -166,6 +166,17 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	}
 	
 	/**
+	 * @see org.openmrs.module.commonlabtest.api.dao.CommonLabTestDao#getLabTestAttributes(java.lang.Integer)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<LabTestAttribute> getLabTestAttributes(Integer testOrderId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestAttribute.class);
+		criteria.add(Restrictions.eq("testOrderId", testOrderId));
+		return criteria.list();
+	}
+	
+	/**
 	 * @see org.openmrs.module.commonlabtest.api.dao.CommonLabTestDao#getLabTestAttributes(org.openmrs.module.commonlabtest.LabTestAttributeType,
 	 *      org.openmrs.module.commonlabtest.LabTest, org.openmrs.Patient, java.lang.String,
 	 *      java.util.Date, java.util.Date, boolean)

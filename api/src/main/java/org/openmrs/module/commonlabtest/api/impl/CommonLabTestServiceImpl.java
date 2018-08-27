@@ -156,6 +156,17 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 	}
 	
 	/**
+	 * @see org.openmrs.module.commonlabtest.api.CommonLabTestService#getLabTestAttributes(org.openmrs.module.commonlabtest.LabTestAttributeType,
+	 *      boolean)
+	 */
+	@Override
+	@Authorized(CommonLabTestConfig.VIEW_LAB_TEST_PRIVILEGE)
+	@Transactional(readOnly = true)
+	public List<LabTestAttribute> getLabTestAttributes(Integer testOrderId) throws APIException {
+		return dao.getLabTestAttributes(testOrderId);
+	}
+	
+	/**
 	 * @see org.openmrs.module.commonlabtest.api.CommonLabTestService#getLabTestAttributes(org.openmrs.Patient,
 	 *      boolean)
 	 */

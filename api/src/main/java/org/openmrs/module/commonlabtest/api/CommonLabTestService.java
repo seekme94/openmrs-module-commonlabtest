@@ -88,6 +88,11 @@ public interface CommonLabTestService extends OpenmrsService {
 	LabTestAttribute getLabTestAttributeByUuid(String uuid) throws APIException;
 	
 	/**
+	 * @see List<LabTestAttribute> getLabTestAttributes(java.lang.Integer)
+	 */
+	List<LabTestAttribute> getLabTestAttributes(Integer testOrderId) throws APIException;
+	
+	/**
 	 * Get a list of LabTestAttribute objects using various parameters available. This is similar to
 	 * getByExample(...) methods, except that instead of passing similar object, properties are
 	 * passed as parameters

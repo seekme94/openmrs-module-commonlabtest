@@ -152,6 +152,18 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 * .
 	 */
 	@Test
+	public final void testGetLabTestAttributesByTestOrderId() {
+		Context.clearSession();
+		List<LabTestAttribute> list = dao.getLabTestAttributes(harryGxp.getTestOrderId());
+		assertThat(list, Matchers.hasItems(harryCartridgeId, harryMtbResult, harryRifResult));
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributes(org.openmrs.module.commonlabtest.LabTestAttributeType, org.openmrs.module.commonlabtest.LabTest, org.openmrs.Patient, java.lang.String, java.util.Date, java.util.Date, boolean)}
+	 * .
+	 */
+	@Test
 	@Ignore
 	public final void testGetLabTestAttributesByLabTest() {
 		Context.clearSession();

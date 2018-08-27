@@ -209,6 +209,20 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	
 	/**
 	 * Test method for
+	 * {@link org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl#getLabTestAttributes(java.lang.Integer)}
+	 * .
+	 */
+	@Test
+	public final void testGetLabTestAttributesByTestOrder() {
+		when(dao.getLabTestAttributes(any(Integer.class))).thenReturn(
+		    Arrays.asList(harryCartridgeId, harryMtbResult, harryRifResult));
+		List<LabTestAttribute> list = service.getLabTestAttributes(harryGxp.getTestOrderId());
+		assertThat(list, Matchers.hasItems(harryCartridgeId, harryMtbResult, harryRifResult));
+		verify(dao, times(1)).getLabTestAttributes(any(Integer.class));
+	}
+	
+	/**
+	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl#getLabTestAttributes(org.openmrs.Patient, boolean)}
 	 * .
 	 */
