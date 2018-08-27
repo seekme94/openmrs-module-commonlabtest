@@ -546,29 +546,27 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	}
 	
 	/**
-	 * Detects whether it's a new order or existing one. In case the order already exits, it is
-	 * overridden instead of creating new new order in hierarchical form
+	 * Detects whether it's a new order or existing one. In case the order already exits, it is NOT
+	 * overridden because Order objects are immutable
 	 * 
 	 * @param order
 	 * @return
 	 */
 	public org.openmrs.Order saveLabTestOrder(org.openmrs.Order order) {
-		boolean createNew = false;
 		OrderType expectedOrderType = order.getOrderType();
+		// Set the right order type
 		expectedOrderType.setJavaClassName(order.getClass().getName());
 		order.setOrderType(expectedOrderType);
-		if (order.getId() == null) {
-			createNew = true;
-		} else {
+		boolean createNew = order.getId() == null;
+		if (!createNew) {
+			// See if the given ID actually exists or not
 			createNew = Context.getOrderService().getOrder(order.getId()) == null;
 		}
 		if (createNew) {
 			order.setId(null);
 			return Context.getOrderService().saveOrder(order, null);
 		}
-		// Because for some reason the order object gets attached to multiple sessions
-		Context.clearSession();
-		orderDao.saveOrder(order);
+		// Do nothing
 		return order;
 	}
 	
