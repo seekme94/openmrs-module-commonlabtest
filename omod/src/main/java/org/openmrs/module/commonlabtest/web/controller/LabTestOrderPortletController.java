@@ -6,9 +6,13 @@ import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.web.controller.PortletController;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +101,6 @@ public class LabTestOrderPortletController extends PortletController {
 				System.out.println("===========================================================");
 				List<LabTest> testList = Context.getService(CommonLabTestService.class).getLabTests(patient, false);
 				//List<LabTest> testList = commonLabTestService.getLabTests(patient, false);
-				
 				System.out.println("TestOrder Size ::: " + testList.size());
 				System.out.println("Order ::: " + (testList.size() > 0 ? testList.get(0).getOrder() : "zero"));
 				System.out.println("=========================================================");
@@ -106,4 +109,12 @@ public class LabTestOrderPortletController extends PortletController {
 		}
 		
 	}
+	
+	@RequestMapping(value = "/testSampleList/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getAuthentication(@PathVariable("id") int id) {
+		
+		return "abc";
+	}
+	
 }

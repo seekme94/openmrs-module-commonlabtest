@@ -9,7 +9,10 @@
 <link
 	href="/openmrs/moduleResources/commonlabtest/css/dataTables.bootstrap4.min.css"
 	rel="stylesheet" />
-
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover-min.css" />
 
 <style>
 body {
@@ -65,7 +68,7 @@ legend.scheduler-border {
 		</div>
 	</c:if>
 	<div>
-	 <a href="addLabTestType.form" ><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtesttype.add" /> </a>
+	 <a style="text-decoration:none" href="addLabTestType.form" class="hvr-icon-grow" ><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.labtesttype.add" /> </a>
 	</div>
 	<br>
 	<div class="boxHeader" style="background-color: #1aac9b">
@@ -86,7 +89,7 @@ legend.scheduler-border {
 		       <c:forEach var="tt" items="${labTestTypes}">
 						<tr>
 							<td hidden="true" id="uuid">${tt.uuid}</td>
-							<td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid=${tt.uuid}">${tt.name}</a></td>
+							<td><a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid=${tt.uuid}" class="hvr-icon-grow"><span><i class="fa fa-edit hvr-icon"></i></span> ${tt.name}</a></td>
 							<td>${tt.shortName}</td>
 							<td>${tt.testGroup}</td>
 							<td>${tt.referenceConcept.name}</td>

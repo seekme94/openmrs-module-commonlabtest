@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/template/header.jsp"%>
 <openmrs:require privilege="View labTestType" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestSample.form" />
 
-
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link
@@ -123,7 +122,7 @@ legend.scheduler-border {
 			     	   <form:label  class="control-label"   path="quantity"><spring:message code="commonlabtest.labtestsample.quantity" /></form:label>
 				   </div>
 				   <div class="col-md-6">
-				   		<form:input path="quantity" maxlength="2"  class="form-control" id="quantity"></form:input>
+				   		<form:input path="quantity" maxlength="4"  class="form-control" id="quantity"></form:input>
 				   		<span id="quantityError" class="text-danger "> </span>
 				   		<form:errors path="quantity" cssClass="error" />
 				   </div>
@@ -148,10 +147,10 @@ legend.scheduler-border {
 			 <!--collectionDate  -->
 			  <div class="row">
 			   <div class="col-md-2">
-			   		<form:label  class="control-label" path="collectionDate"><spring:message code="commonlabtest.labtestsample.collectionDate" /></form:label>
+			   		<form:label  class="control-label" path="collectionDate"><spring:message code="commonlabtest.labtestsample.collectionDate" /><span class="text-danger required">*</span></form:label>
 			   </div>
 			   <div class="controls col-md-6">
-			        <form:input class="form-control"  path="collectionDate"  id="collectionDatePciker" autocomplete="off"></form:input>
+			        <form:input class="form-control"  path="collectionDate"  id="collectionDatePciker" autocomplete="off" readonly="true"></form:input>
 					<span id="collectiondate" class="text-danger "> </span>
 					<form:errors path="collectionDate" cssClass="error" />
 				</div>
@@ -234,6 +233,8 @@ function goTo(){
 $(document).ready(function () {
 	$("#collectionDatePciker").datepicker({
     dateFormat: 'yy-mm-dd',
+    minDate:'${orderEncDate}',
+    maxDate: new Date(),
     onSelect: function(datetext){
         var d = new Date(); // for now
         var h = d.getHours();
@@ -262,8 +263,8 @@ function validate(form){
 		var datepicker = document.getElementById('collectionDatePciker').value;
 	
 		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%]*$");
-		var doubleErrorMessage ="Please enter double number";
-		var doubleReg = new RegExp("^\\d{0,2}(\\.\\d{0,3}){0,1}$");
+		var doubleErrorMessage ="The only value you can enter here is a double number and pattern should be like this (x,xx,xx.x)";
+		var doubleReg = new RegExp("^\\d{0,2}(\\.\\d{0,2}){0,1}$");
         var regErrorMesssage ="Text contains Invalid characters.Units only accepts alphabets with _().% special characters";
 		var emptyErorMessage= 'This field can not be empty';
 		
@@ -291,14 +292,8 @@ function validate(form){
 		}
 		
 		/*Quantity  */
-		/* if(quantity == ""){
-				document.getElementById("quantityError").style.display= 'block';		
-				document.getElementById('quantityError').innerHTML =emptyErorMessage;
-				isValidate = false;
-			}
 
-		else */  
-		if(!doubleReg.test(quantity) && quantity != "" ){
+        if(!doubleReg.test(quantity) && quantity != "" ){
 			    document.getElementById("quantityError").style.display= 'block';
 				document.getElementById('quantityError').innerHTML =doubleErrorMessage;
 				isValidate = false;
@@ -322,7 +317,7 @@ function validate(form){
 			document.getElementById("unitsError").style.display= 'none';		
 		} */
 		/* Collection Date */
-		/* if(datepicker == ""){
+		 if(datepicker == ""){
 			document.getElementById("collectiondate").style.display= 'block';		
 			document.getElementById('collectiondate').innerHTML =emptyErorMessage;
 			isValidate = false;
@@ -330,7 +325,7 @@ function validate(form){
 		else {
 			document.getElementById("collectiondate").style.display= 'none';		
 		}
-		 */
+		
 		 
 		//console.log(form_data); 
 	

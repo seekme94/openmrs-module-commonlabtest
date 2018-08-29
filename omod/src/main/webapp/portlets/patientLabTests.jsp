@@ -11,7 +11,10 @@
 <link
 	href="/openmrs/moduleResources/commonlabtest/css/dataTables.bootstrap4.min.css"
 	rel="stylesheet" />
-
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover-min.css" />
 <style>
 body {
 	font-size: 12px;
@@ -53,7 +56,7 @@ legend.scheduler-border {
 	<br>
 	<c:set var="testOrder" scope="session" value="${model.testOrder}" />
 	<div>
-	 <a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
+	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.order.add" /> </a>
 	</div>
 	<%-- <c:if test="${not empty status}">
 		<div class="alert alert-success">
@@ -93,10 +96,10 @@ legend.scheduler-border {
 							     <td hidden ="true" class ="rspecimen">${order.labTestType.requiresSpecimen}</td>
 								 <td>${order.labTestType.name}</td>
 								 <td>${order.labReferenceNumber}</td>
-								 <td> <span class="table-edit" ><i class="fa fa-edit fa-2x"></i></span></td>
-					             <td> <span class="table-view"><i class="fa fa-eye fa-2x" aria-hidden="true"></i></span></td>
-					             <td> <span class="table-sample"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
-					             <td> <span class="table-result"><img class="manImg" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
+								 <td> <span class="table-edit hvr-icon-grow" onclick="editTestOrder(this)"><i class="fa fa-edit fa-2x hvr-icon"></i></span></td>
+					             <td> <span class="table-view hvr-icon-grow" onclick="viewTestOrder(this)"><i class="fa fa-eye fa-2x hvr-icon" aria-hidden="true"></i></span></td>
+					             <td> <span class="table-sample hvr-icon-grow" onclick="samplesTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
+					             <td> <span class="table-result hvr-icon-grow" onclick="resultsTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
 					             
 							</tr>
 					</c:if>		
@@ -119,76 +122,23 @@ legend.scheduler-border {
             
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.order.detail" /></legend>
-		<%-- 	
-	     			 <form:form commandName="testOrder" id="form">
-		     			 <div class="form-group">
-	                        <label ><font color="#D0D0D0"><sub><spring:message code="commonlabtest.order.id" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.testOrderId}" /></sub></font>
-	                    </div>
-	                    <div class="form-group">
-	                        <label><font color="#000000"><sub><spring:message code="general.testGroup" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.testGroup}" /></sub></font>
-	                    </div>
-	                     <div class="form-group">
-	                        <label><font color="#000000"><sub><spring:message code="general.testType" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.name}" /></sub></font>
-	                    </div>
-	                     <div class="form-group">
-	                        <label><font color="#000000"><sub><spring:message code="commonlabtest.order.labReferenceNo" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labReferenceNumber}" /></sub></font>
-	                    </div>
-	                    <div class="form-group">
-	                        <label><font color="#000000"><sub><spring:message code="general.requiresSpecimen" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.requiresSpecimen}" /></sub></font>
-	                    </div>
-	                     <div class="form-group">
-	                        <label><font color="#000000"><sub><spring:message code="general.createdBy" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.dateCreated}" /></sub></font>
-	                    </div>
-	                     <div class="form-group">
-	                        <label><font color="#000000"><sub><spring:message code="general.changedBy" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.labTestType.changedBy}" /></sub></font>
-	                    </div>
-	                     <div class="form-group">
-	                        <label>	<font color="#D0D0D0"><sub><spring:message code="general.uuid" /></sub></font></label>
-				   			<font color="#D0D0D0"><sub><c:out value="${testOrder.uuid}" /></sub></font>
-	                    </div>
-	    
-	                </form:form> --%>
+	     			 <div id="orderContainer">
+	     			 
+	     			 </div>
 	            </fieldset>    
 
                <!--Test Sample Details -->
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.labtestsample.detail" /></legend>
-						<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">
-									<thead>
-										<tr>
-											 <th><a>Test Order</a></th>
-											 <th><a>Spacimen Type</a></th>
-											 <th><a>Spacimen Site</a></th>
-											 <th><a>Status</a></th>
-										</tr>
-									</thead>
-									<tbody>
-										 <tr>
-									            <td>1</td>
-									            <td>dummy data</td>
-									            <td>dummy data</td>
-									            <td>Collected</td>
-								        </tr>
-								         <tr>
-									            <td>1</td>
-									            <td>dummy data</td>
-									            <td>dummy data</td>
-									            <td>Collected</td>
-								        </tr>
-									</tbody>
-							</table>
+			       <div id="sampleDetailContainer">
+			       
+			       </div>
        			 </fieldset>
        			  <!--Test Sample Details -->
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.result.detail" /></legend>
-       			</fieldset>
+       			  	 <div id ="resultDetailContainer"></div>	
+       			 </fieldset>
                 
             </div>
         </div>
@@ -213,6 +163,7 @@ legend.scheduler-border {
 
 
 <script type="text/javascript">	
+ var testOrderArray ;
 $(document).ready(function () {
 		
 	
@@ -221,52 +172,25 @@ $(document).ready(function () {
 	  });
 	  $('.dataTables_length').addClass('bs-select');
 	  
-	/*View Test Order */
-	  $('.table-sample').click(function () {
-		  
-			  var requiresSpecimen = $(this).closest("tr")  
-							          .find(".rspecimen")   
-							          .text(); 
-			  
-			  var testOrderId = $(this).closest("tr")
-						          .find(".orderId") 
-						          .text(); 
-			  
-
-			 	if(requiresSpecimen == 'false'){
-			 		$('#specimenalert').removeAttr('hidden');
-			 		autoHide();
-			 	}
-			 	else{
-					 window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId; 
-			 	}
-		 
-		});
-	  $('.table-view').click(function () {
-			 
-		   		 $('#viewModal').modal('show'); 
-		  
-		});
-	  
-	  $('.table-edit').click(function () {
-			  var testOrderId = $(this).closest("tr")
-						          .find(".orderId") 
-						          .text(); 
-			  if(testOrderId == ""){
-				  				  
-			    }
-			  else{
-				  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId; //+"&testOrderId="+2;  
-			  }
-		});
-	  
-	  $('.table-result').click(function () {
-			 
-			  window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId=${model.patient.patientId}";  
-		  
-		});
+	 // testOrderArray = '${model.testOrder}'; //getTestOrderList();
+	  fillTestOrder();
+	  console.log("Array: "+ testOrderArray);
 	  
 });
+
+ function fillTestOrder(){
+	 testOrderArray = new Array();
+     <c:if test="${not empty model.testOrder}">
+	        <c:forEach var="testOrder" items="${model.testOrder}" varStatus="status">
+	       			 testOrderArray.push({requiresSpecimen:"${testOrder.labTestType.requiresSpecimen}",id:"${testOrder.testOrderId}", name :"${testOrder.labTestType.name}" ,testGroup:"${testOrder.labTestType.testGroup}",labReferenceNumber:"${testOrder.labReferenceNumber}",dateCreated:"${testOrder.labTestType.dateCreated}",createdBy:"${testOrder.labTestType.creator.username}",changedBy:"${testOrder.labTestType.changedBy}",uuid:"${testOrder.uuid}"});
+	        </c:forEach>
+     </c:if>   
+	 
+	 return testOrderArray;
+ }
+function getTestOrderList(){
+   	return JSON.parse(JSON.stringify('${model.testOrder}'));
+   }
 
 function autoHide(){
 	
@@ -275,5 +199,184 @@ function autoHide(){
             }); 
 	
 }
+
+	/*Edit Test Order  */
+	function editTestOrder(editEle){
+		var testOrderId = $(editEle).closest("tr")
+							          .find(".orderId") 
+						          .text(); 
+		if(testOrderId == ""){		  
+		}
+		else{
+			window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId; //+"&testOrderId="+2;  
+		}
+	}
+	
+	/* View Test Order  */
+	function viewTestOrder(viewEl){
+
+		 var testOrderId = $(viewEl).closest("tr")
+							        .find(".orderId") 
+						            .text(); 
+		 var newArray = testOrderArray.find(o => o.id == testOrderId);
+		  populateTestOrder(newArray);
+		  populateTest(testOrderId);
+		// populateTestResult(testOrderId);
+		 
+	}
+	/* samples Test Order */
+	function samplesTestOrder(sampleEl){
+		  var requiresSpecimen = $(sampleEl).closest("tr")  
+									          .find(".rspecimen")   
+									          .text(); 
+
+		var testOrderId = $(sampleEl).closest("tr")
+							      .find(".orderId") 
+							      .text(); 
+		if(requiresSpecimen == 'false'){
+			$('#specimenalert').removeAttr('hidden');
+			autoHide();
+		}
+		else{
+			window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId; 
+		}
+	}
+	/* results Test Order */
+	function resultsTestOrder(resultEl){
+		var testOrderId = $(resultEl).closest("tr")
+						        .find(".orderId") 
+						        .text(); 
+		console.log("Test order Id : " + testOrderId);
+		if(testOrderId == "" || testOrderId == null ){}
+		else{
+			window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?testOrderId="+testOrderId;  
+		}
+	}
+	
+	function populateTestOrder(testOrderArr){
+	
+	     var resultsItems = "";
+	     console.log("resultsItems : "+resultsItems);
+	     resultsItems = resultsItems.concat(' <form id="form">');
+		     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="commonlabtest.order.id" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.id+'</sub></font></label>');			 
+			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.testGroup" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.testGroup+'</sub></font></label>');
+			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.testType" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.name+'</sub></font></label>');
+			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="commonlabtest.order.labReferenceNo" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.labReferenceNumber+'</sub></font></label>');
+			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.requiresSpecimen" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.requiresSpecimen+'</sub></font></label>');
+			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.createdBy" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.createdBy+'</sub></font></label>');
+			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.changedBy" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.changedBy+'</sub></font></label>');
+			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.uuid" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-8">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.uuid+'</sub></font></label>');
+			 resultsItems =resultsItems.concat('</div></div>');
+		
+	     resultsItems = resultsItems.concat('</form>');
+	     
+		 document.getElementById("orderContainer").innerHTML = resultsItems;
+	   }
+	
+	function populateTest(testOrderId){
+		
+		 $.ajax({
+					type : "GET",
+					contentType : "application/json",
+					url : '${pageContext.request.contextPath}/module/commonlabtest/getTestResults.form?testOrderId='+testOrderId,
+					dataType : "json",
+					success : function(data) {
+					   console.log("success  : " + data);
+					    parsData(data);
+					},
+					error : function(data) {
+						  console.log("fail  : " + data);
+					},
+					done : function(e) {
+						console.log("DONE");
+					}
+			});
+	 } 
+	
+	function parsData(data){
+		  console.log(JSON.stringify(data));
+		 // resultArray =data.result;
+		  renderTestSample(data.sample);
+		  renderTestResult(data.result)
+		  $('#viewModal').modal('show'); 
+	}
+	
+	
+	function renderTestSample(sampleArray){
+	       var resultsItems = "";
+				resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">');
+				resultsItems = resultsItems.concat('<thead><tr>');
+					resultsItems = resultsItems.concat('<th><a>Test Order</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Spacimen Type</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Spacimen Site</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Status</a></th>');
+					jQuery(sampleArray).each(function() {
+						console.log("testOrderId : "+this.testOrderId);
+						resultsItems = resultsItems.concat('<tbody><tr>'); 
+						resultsItems = resultsItems.concat('<td>'+this.testOrderId+'</td>');
+						resultsItems = resultsItems.concat('<td>'+this.specimenType+'</td>');
+						resultsItems = resultsItems.concat('<td>'+this.specimenSite+'</td>');
+						resultsItems = resultsItems.concat('<td>'+this.status+'</td>');
+						resultsItems = resultsItems.concat('</tr></tbody>'); 
+						 
+					 });
+				resultsItems = resultsItems.concat('</tr></thead>');
+				resultsItems = resultsItems.concat('</table>');
+		   
+		   console.log("Sample Container : "+ resultsItems);
+		   document.getElementById("sampleDetailContainer").innerHTML = resultsItems;
+	}
+	
+	function renderTestResult(resultArray){
+	      var resultsItems = "";
+			resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">');
+			resultsItems = resultsItems.concat('<thead><tr>');
+				resultsItems = resultsItems.concat('<th><a>Question</a></th>');
+				resultsItems = resultsItems.concat('<th><a>Value</a></th>');
+				jQuery(resultArray).each(function() {
+					console.log("testOrderId : "+this.testOrderId);
+					resultsItems = resultsItems.concat('<tbody><tr>'); 
+					resultsItems = resultsItems.concat('<td>'+this.question+'</td>');
+					resultsItems = resultsItems.concat('<td>'+this.valuesReference+'</td>');
+					resultsItems = resultsItems.concat('</tr></tbody>'); 
+				 });
+			resultsItems = resultsItems.concat('</tr></thead>');
+			resultsItems = resultsItems.concat('</table>');
+	   
+	   console.log("result Container : "+ resultsItems);
+	   document.getElementById("resultDetailContainer").innerHTML = resultsItems;
+	}
+	  
 
 </script>

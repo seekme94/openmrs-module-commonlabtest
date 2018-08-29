@@ -44,7 +44,7 @@ fieldset.scheduler-border {
     padding: 0 1.4em 1.4em 1.4em !important;
     margin: 0 0 1.5em 0 !important;
     -webkit-box-shadow:  0px 0px 0px 0px #1aac9b;
-            box-shadow:  0px 0px 0px 0px #1aac9b;
+             box-shadow: 0px 0px 14px 0px #1aac9b61;
 }
 
 legend.scheduler-border {

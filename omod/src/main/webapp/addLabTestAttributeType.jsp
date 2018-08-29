@@ -22,6 +22,7 @@ session.removeAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR);
 	rel="stylesheet" />
 
 <style>
+
 body {
 	font-size: 12px;
 }
@@ -51,7 +52,7 @@ fieldset.scheduler-border {
     padding: 0 1.4em 1.4em 1.4em !important;
     margin: 0 0 1.5em 0 !important;
     -webkit-box-shadow:  0px 0px 0px 0px #1aac9b;
-            box-shadow:  0px 0px 0px 0px #1aac9b;
+             box-shadow: 0px 0px 14px 0px #1aac9b61;
 }
 
 legend.scheduler-border {
@@ -243,112 +244,6 @@ legend.scheduler-border {
 								</div>
 							 </div>	
  	   
-			<%-- <table>
-				 <div class="form-group">
-				     <tr> <form:input path="labTestAttributeTypeId"  hidden="true" id="labTestAttributeTypeId"></form:input>				
-					   <td><form:label path="labTestType" class="control-label"><spring:message code="general.labTestType" /><span class="required">*</span></form:label></td>
-					   <div class="col-md-6">
-					    <td><form:input class="form-control"  id="testTypeSuggestBox" path="labTestType.labTestTypeId" list="testTypeOptions" placeholder="Search Test Type..." required="required" ></form:input>
-						<datalist class="lowercase" id="testTypeOptions"></datalist>
-				   		 </td>		  
-							<td><input class="form-control"  value="${testAttributeType.labTestType.labTestTypeId}" required="required" placeholder="Search test type..." id="lab_test_type"  /></td>
-							<td><form:input path="labTestType.labTestTypeId"  hidden="true" id="labTestType"  /></td>
-					      
-						</div>
-					 </tr>
-				 </div>
-				 <div class="form-group">
-					<tr>
-						<td><form:label path="name" class="control-label"><spring:message code="general.name" /><span class="required">*</span></form:label></td>
-						  <div class="col-md-6">
-							<td><form:input class="form-control" path="name" id="name" required="required" ></form:input></td>
-						  </div>
-					</tr>
-				</div> 
-				<div class="form-group">	
-					<tr>
-						<td><form:label path="description" class="control-label"><spring:message code="general.description" /><span class="required">*</span></form:label></td>
-						<td><form:textarea class="form-control" path="description" id="description" required="required"></form:textarea></td>
-					</tr>
-				</div>
-				<div class="form-group">	
-					<tr>
-						<td><form:label path="minOccurs" class="control-label"><spring:message code="general.minOccurs" /><span class="required">*</span></form:label></td>
-						<td><form:input class="form-control" pattern="\d*" maxlength="2" path="minOccurs" id="min_occurs" required="required"></form:input></td>
-					</tr>
-				</div>
-				<div class="form-group">	
-					<tr>
-						<td><form:label path="maxOccurs" class="control-label"><spring:message code="general.maxOccurs" /></form:label></td>
-						<td><form:input  class="form-control" pattern="\d*" maxlength="2"  path="maxOccurs" id="max_occurs" ></form:input></td>
-					</tr>
-				</div>
-				<div class="form-group">	
-					<tr>
-						<td><form:label path="sortWeight" class="control-label"><spring:message code="general.sortWeight" /><span class="required">*</span></form:label></td>
-						<td><form:input class="form-control" pattern="\d*" path="sortWeight" id="sortWeight" required="required" ></form:input></td>
-					</tr>
-				</div>
-				<div class="form-group">	
-					<tr>
-						<td><form:label path="datatypeClassname" class="control-label"><spring:message code="general.dataType" /></form:label></td>
-						<td><form:select class="form-control" path="datatypeClassname" id="data_type_name">
-								<form:options items="${datatypes}" />
-								<c:forEach items="${datatypes}"  var="datatype">
-									<option value="${datatype}" <c:if test="${datatype == status.value}">selected</c:if>><spring:message code="${datatype}.name"/></option>
-								</c:forEach>
-							</form:select></td>		
-					</tr>
-					<tr><td></td><td><font color="#1aac9b"><span id="datatypeDescription"></span></font></td></tr>
-				</div>
-				<div class="form-group">	
-					<tr>
-						<td><form:label path="datatypeConfig" class="control-label"><spring:message code="general.datatypeConfiguration" /></form:label></td>
-						<td><form:textarea class="form-control" path="datatypeConfig" id="datatypeConfig" ></form:textarea></td>
-					</tr>
-				</div>
-				<div class="form-group">	
-					<tr>
-						<td><form:label path="preferredHandlerClassname" class="control-label"><spring:message code="general.preferredHandler" /></form:label></td>
-						<td><form:select class="form-control" path="preferredHandlerClassname" id="preferred_handler_name">
-								<form:options items="${handlers}" />
-								<c:forEach items="${handlers}"  var="handler">
-									<option value="${handler}" <c:if test="${handler == status.value}">selected</c:if>><spring:message code="${handler}.name"/></option>
-								</c:forEach>
-							</form:select></td>
-					</tr>
-					<tr><td></td><td><font color="#1aac9b"><span id="handlerDescription"></span></font></td></tr>
-				</div>
-				<div class="form-group">	
-					<tr>
-						<td><form:label class="control-label" path="handlerConfig"><spring:message code="general.handlerConfiguration" /></form:label></td>
-						<td><form:textarea class="form-control" path="handlerConfig" id="handlerConfig" ></form:textarea></td>
-					</tr>
-				</div>
-				
-				<c:if test="${not empty testAttributeType.name}">
-					<tr>
-						<td><form:label path="creator"><spring:message code="general.createdBy" /></form:label></td>
-						<td><c:out value="${testAttributeType.creator.personName}" /> - <c:out
-								value="${testAttributeType.dateCreated}" /></td>
-					</tr>
-					<tr>
-						<td><font color="#D0D0D0"><sub><spring:message
-										code="general.uuid" /></sub></font></td>
-						<td><font color="#D0D0D0"><sub><c:out
-										value="${testAttributeType.uuid}" /></sub></font></td>
-					</tr>
-				</c:if>
-				<tr>
-					<td>
-						<div id="saveUpdateButton"  style="margin-top: 15px;text-align: center;">
-							<input type="submit" value="<spring:message code="commonlabtest.labtestattributetype.save" />"></input>
-						</div>
-					</td>
-				</tr>
-
-			</table>
---%>
 		 </form:form>
     </fieldset>
 	<br>

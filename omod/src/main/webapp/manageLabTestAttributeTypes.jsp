@@ -20,6 +20,10 @@
 	href="/openmrs/moduleResources/commonlabtest/css/dataTables.bootstrap4.min.css"
 	rel="stylesheet" />
 
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover-min.css" />
 
 
 <style>
@@ -66,7 +70,7 @@
 		</div>
 	</c:if>
 	<div>
-	 <a href="addLabTestAttributeType.form" ><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestattributetype.add" /> </a>
+	 <a style="text-decoration:none" href="addLabTestAttributeType.form" class="hvr-icon-grow"><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.labtestattributetype.add" /> </a>
 	</div>
 	<br>
 		<div class="boxHeader" style="background-color: #1aac9b">
@@ -86,7 +90,7 @@
 					<c:forEach var="tt" items="${labTestAttributeTypes}">
 						<tr>
 						    <td hidden="true" id="uuid">${tt.uuid}</td>
-							<td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${tt.uuid}">${tt.name}</a></td>
+							<td><a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid=${tt.uuid}" class="hvr-icon-grow" ><span><i class="fa fa-edit hvr-icon"></i></span> ${tt.name}</a></td>
 							<td>${tt.description}</td>
 							<td>${tt.labTestType.name}</td>
 						</tr>

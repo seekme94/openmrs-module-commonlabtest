@@ -9,6 +9,12 @@
  */
 package org.openmrs.module.commonlabtest;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +23,8 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.util.OpenmrsConstants;
+import org.openmrs.util.OpenmrsUtil;
 
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
@@ -29,7 +37,14 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 	
 	public static final String SPECIMEN_SITE_CONCEPT_UUID = "commonlabtest.specimenSiteConceptUuid";
 	
+	public static final String UPLOAD_FILE_DIRECTORY = "commonlabtest.fileDirectory";
+	
 	ConceptService conceptService;
+	
+	File dir = OpenmrsUtil.getDirectoryInApplicationDataDirectory(Context.getAdministrationService().getGlobalProperty(
+	    OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR));
+	
+	Path path = Paths.get(dir.getPath() + "/commonLabTestFiles");
 	
 	/**
 	 * @see #started()
@@ -38,7 +53,16 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 		log.info("Started Common Lab Test");
 		
 		conceptService = Context.getConceptService();
+		if (!Files.exists(path)) {
+			try {
+				Files.createDirectories(path);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		AdministrationService administrationService = Context.getAdministrationService();
+		setGlobalProperty(administrationService, UPLOAD_FILE_DIRECTORY, path.toString());
 		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "159959AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		
@@ -66,7 +90,16 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 		
 		conceptService = Context.getConceptService();
 		
+		if (!Files.exists(path)) {
+			try {
+				Files.createDirectories(path);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		AdministrationService administrationService = Context.getAdministrationService();
+		setGlobalProperty(administrationService, UPLOAD_FILE_DIRECTORY, path.toString());
 		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "159959AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	}

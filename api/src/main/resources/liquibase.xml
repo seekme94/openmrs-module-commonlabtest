@@ -279,7 +279,7 @@
 			<column name="is_expirable" defaultValueBoolean="true" type="boolean">
 				<constraints nullable="false"/>
 			</column>
-			<column name="expiry_datetime" type="datetime"/>
+			<column name="expiry_date" type="datetime"/>
 			<column name="lab_sample_identifier" type="varchar(50)"/>
 			<column name="collector" defaultValueNumeric="0" type="int">
 				<constraints nullable="false"/>
@@ -532,11 +532,11 @@
 	<changeSet id="commonlabtest-2018-08-16-4" author="mahmed14">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<columnExists tableName="commonlabtest_test" columnName="filepath"/>
+				<columnExists tableName="commonlabtest_test" columnName="report_file_path"/>
 			</not>
 		</preConditions>
 		<addColumn tableName="commonlabtest_test">
-			<column name="filepath" type="varchar(1024)"/>
+			<column name="report_file_path" type="varchar(1024)"/>
 		</addColumn>
 	</changeSet>
 

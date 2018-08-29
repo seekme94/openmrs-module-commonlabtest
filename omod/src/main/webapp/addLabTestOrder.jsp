@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
-
+<openmrs:portlet url="patientHeader" id="patientDashboardHeader" patientId="${patientId}"/>
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link
@@ -60,7 +60,6 @@ legend.scheduler-border {
 </style>
 <body>
 
-<div class="container">
 
  	<c:if test="${not empty error}">
 		<div class="alert alert-danger">
@@ -69,7 +68,7 @@ legend.scheduler-border {
 		</div>
 	</c:if>	 
 	<c:set var="testOrder" scope="session" value="${labTest}" />
-    <fieldset  class="scheduler-border">
+    <fieldset  class="scheduler-border"  style="margin-top:320px;" >
 		<c:if test="${empty labTest.labReferenceNumber}">
 			<legend  class="scheduler-border"><spring:message code="commonlabtest.order.add" /></legend>
 		</c:if>
@@ -81,8 +80,7 @@ legend.scheduler-border {
 			<form:input  path="order.concept.conceptId" hidden="true"  id="conceptId"></form:input>	
 			<form:input  path="order.orderer.providerId" hidden="true" value="${provider.providerId}"></form:input>	
 			<form:input  path="order.orderType.orderTypeId" hidden="true" value="3"></form:input>	
-			<form:input  path="order.orderId" hidden="true" ></form:input>	
-		
+			<form:input  path="order.orderId" hidden="true" id="orderId" ></form:input>
 		    <div class="row" >
 				   <div class="col-md-3">
 				        <form:label  class="control-label" path="order.encounter"><spring:message code="general.encounter" /><span class=" text-danger required">*</span></form:label>
@@ -160,15 +158,15 @@ legend.scheduler-border {
 					</c:if>		
 			  </div>
 			 </div>
-			   <!-- Date Scheduled-->
-		<!-- 	 <div class="row">
-			   <div class="col-md-4">
-			   		<form:label  class="control-label" path="order.scheduledDate"><spring:message code="general.scheduledDate" /></form:label>
+			 <!-- Instruction -->
+			  <div class="row">
+			   <div class="col-md-3">
+			   		<form:label  class="control-label" path="labInstructions"><spring:message code="general.instructions" /></form:label>
 			   </div>
 			   <div class="col-md-6">
-					 <form:input class="form-control" path="order.scheduledDate" type="text" id="datepicker"></form:input>
+					 <form:textarea class="form-control"  maxlength="512" path="labInstructions" type="text" id="labInstructions"></form:textarea>
 				</div>
-			 </div> -->
+			 </div>
 		    <!-- Save -->
 			 <div class="row">
 			   <div class="col-md-2">
@@ -209,7 +207,6 @@ legend.scheduler-border {
 				</form>
         </fieldset>
 	</c:if>
- </div>
 
 </body>
 
@@ -232,9 +229,9 @@ legend.scheduler-border {
 
 		var local_source;
 		
-		 function getConcepts(){
-		    	return JSON.parse(JSON.stringify('${encounters}'));
-		    }
+	 function getConcepts(){
+	    	return JSON.parse(JSON.stringify('${encounters}'));
+	    }
 	$(document).ready(function () {
 		 $('#conceptId').val(document.getElementById("testType").value);
 		
@@ -364,34 +361,32 @@ legend.scheduler-border {
 	}
 	
 	//Refresh context if required
-	/* 
-	jQuery(function() {
-		  var uuid ='${testOrder.uuid}';
-          var labReference = '${testOrder.labReferenceNumber}'
+ 	jQuery(function() {
+		  var patientId =${patientId};
+		  var OrderId = document.getElementById('orderId').value;
+		  
 		 if (performance.navigation.type == 1) {
-			 if(labReference ==null || labReference == ""){
-				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+			 if(OrderId ==null || OrderId == ""){
+				     window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+patientId;
 			 	}
 				 else{
-					 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid; 
+					 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+patientId+"&testOrderId="+OrderId; 
 				 }
 			}
 
 		 jQuery("body").keydown(function(e){
 
 		 if(e.which==116){
-			 if(labReference ==null || labReference == ""){
-				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+			 if(OrderId ==null || OrderId == ""){
+				    window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+patientId;
 			 	}
-				 else{
-					 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid; 
-				 }		
+			 else{
+					window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId="+patientId+"&testOrderId="+OrderId; 
+			 }	
 		   }
 
 		 });
 	 });	 
-	
-	 */
 	
 </script>
 

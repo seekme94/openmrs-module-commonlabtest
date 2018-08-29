@@ -92,38 +92,34 @@ public class LabTestOrderController {
 			if (result.hasErrors()) {
 				
 			} else {
-				LabTestType lbTestType = commonLabTestService.getLabTestType(labTest.getLabTestType().getLabTestTypeId());
+				/*	LabTestType lbTestType = commonLabTestService.getLabTestType(labTest.getLabTestType().getLabTestTypeId());
 				Concept referConcept = lbTestType.getReferenceConcept();
-				System.out.println("Checking referece concept :::: " + referConcept.getDisplayString() + "   "
-				        + referConcept.getId());
-				/*	TestOrder testOrder;
-					if (labTest.getOrder().getId() != null) {
-						testOrder = (TestOrder) labTest.getOrder();
-					}
-					else {
-						
-						testOrder = new TestOrder();
-					}
-					
-					// execute this when order and lab test are null
-					testOrder.setCareSetting(labTest.getOrder().getCareSetting());
-					testOrder.setConcept(referConcept);
-					testOrder.setEncounter(labTest.getOrder().getEncounter());
-					testOrder.setPatient(labTest.getOrder().getPatient());
-					testOrder.setOrderer(labTest.getOrder().getOrderer());
-					testOrder.setOrderType(labTest.getOrder().getOrderType());
-					testOrder.setDateActivated(new java.util.Date());
-					testOrder.setOrderId(labTest.getOrder().getOrderId());
-					//testOrder.setScheduledDate(labTest.getOrder().getScheduledDate());
-					//testOrder.setScheduledDate(scheduledDate);
-					Order testParentOrder = testOrder;
-					
-					labTest.setOrder(testParentOrder);*/
 				
-				Order testParentOrder = labTest.getOrder();
-				testParentOrder.setDateActivated(new java.util.Date());
-				labTest.setOrder(testParentOrder);
+				TestOrder testOrder;
+				if (labTest.getOrder().getId() != null) {
+					testOrder = (TestOrder) labTest.getOrder();
+				} else {
+					
+					testOrder = new TestOrder();
+				}
 				
+				// execute this when order and lab test are null
+				testOrder.setCareSetting(labTest.getOrder().getCareSetting());
+				testOrder.setConcept(referConcept);
+				testOrder.setEncounter(labTest.getOrder().getEncounter());
+				testOrder.setPatient(labTest.getOrder().getPatient());
+				testOrder.setOrderer(labTest.getOrder().getOrderer());
+				testOrder.setOrderType(labTest.getOrder().getOrderType());
+				testOrder.setDateActivated(new java.util.Date());
+				testOrder.setOrderId(labTest.getOrder().getOrderId());
+				
+				Order testParentOrder = testOrder;
+				labTest.setOrder(testParentOrder);*/
+				if (labTest.getTestOrderId() == null) {
+					Order testParentOrder = labTest.getOrder();
+					testParentOrder.setDateActivated(new java.util.Date());
+					labTest.setOrder(testParentOrder);
+				}
 				commonLabTestService.saveLabTest(labTest);
 				StringBuilder sb = new StringBuilder();
 				sb.append("Lab Test Order with Uuid :");
@@ -133,7 +129,7 @@ public class LabTestOrderController {
 			}
 		}
 		catch (Exception e) {
-			status = "Lab Test Order could not be saved due to exceptions";
+			status = "Lab Test Order could not be saved";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTest.getTestOrderId() == null) {

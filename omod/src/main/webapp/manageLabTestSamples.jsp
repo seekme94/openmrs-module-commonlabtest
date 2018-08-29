@@ -2,10 +2,14 @@
 <%@ include file="/WEB-INF/template/header.jsp"%>
  <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <openmrs:require privilege="View labTestType" otherwise="/login.htm" redirect="/module/commonlabtest/manageLabTestSamples.form" />
-
+<openmrs:portlet url="patientHeader" id="patientDashboardHeader" patientId="${patientId}"/>
 
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover-min.css" />
 <link
 	href="/openmrs/moduleResources/commonlabtest/font-awesome/css/font-awesome.min.css"
 	rel="stylesheet" />
@@ -64,11 +68,13 @@ legend.scheduler-border {
 
 <body>
 	<br>
-	<!-- <div>
-		<a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.order.add" /> </a>
-	</div> -->
-	<div>
-	 <a onclick="navigatedToLabTestSample();" id="addTestSamples"><i class="fa fa-plus"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
+	   <div class="row" >
+		    <div class="col-md-3">
+		    	 <a style="text-decoration:none" onclick="navigatedToPatientDashboard();" id="addTestSamples" class="hvr-icon-back"><i class="fa fa-chevron-circle-left hvr-icon"></i> <spring:message code="general.backToDashboard" /> </a>
+		   </div>
+		   <div class="col-md-2">
+		    	<a style="text-decoration:none" onclick="navigatedToLabTestSample();" id="addTestSamples" class="hvr-icon-grow"  ><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
+		   </div>
 	</div>
 	<br>
 	<c:if test="${not empty status}">
@@ -100,14 +106,14 @@ legend.scheduler-border {
 		       <c:forEach var="testSample" items="${labSampleTest}">
 		          <c:if test="${! empty labSampleTest}">
 						<tr>
-						   <td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}">${testSample.labTestSampleId}</a></td>
+						   <td><a style="text-decoration:none"  href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}" class="hvr-icon-grow"  ><span><i class="fa fa-edit hvr-icon"></i></span>  ${testSample.labTestSampleId}</a></td>
 						    <td>${testSample.getSpecimenType().getName()}</td>
 						    <td>${testSample.getSpecimenSite().getName()}</td>
 						    <td> <fmt:formatDate value="${testSample.collectionDate}" pattern="yyyy-mm-dd" /></td>
 						    <td>${testSample.getStatus()}</td>
 						    <td hidden ="true" class ="uuid">${testSample.uuid}</td>
 							<td>
-							<button type="button" class="btn  reject" >Reject</button> 
+							<button type="button" onclick="rejection(this)" class="btn  reject" >Reject</button> 
 							<%-- <c:choose>
 									 <c:when test="${testSample.getStatus()}== 'REJECTED'">
 									    <button type="button" class="btn  reject" >Reject</button> 
@@ -119,7 +125,7 @@ legend.scheduler-border {
 								    </c:otherwise>
 							 </c:choose>    --%>
 							</td> 
-							<td><button type="button" class="btn  accept" >Accept</button></td> 	
+							<td><button type="button" onclick="accept(this)" class="btn  accept" >Accept</button></td> 	
 						</tr>
 					</c:if>	
 				 </c:forEach>
@@ -208,54 +214,101 @@ legend.scheduler-border {
 		  });
 		  $('.dataTables_length').addClass('bs-select');
 		  
-		  $('.accept').click(function () {
-			  var uuid = $(this).closest("tr")  
-				          .find(".uuid")   
-				          .text(); 
-			  console.log("UUID : "+uuid);
-			  if(uuid != "" || uuid != null){  
-					
-					  var url = "${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId="+${patientId}+"&uuid="+uuid; 
-					/*   jQuery.getJSON(url, function(result) {
-					  console.log(result.length);
-					 
-					  if(result.length > 0) {
-						  jQuery(result).each(function() {
-						  });
-					  	}
-				  }); */
-				  
-				  
-				  $.ajax({
-		                url: '${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId='+${patientId}+"&isAccepted=1"+"&uuid="+uuid,
-		                dataType: 'text',
-		                type: 'post',
-		                contentType: 'application/json',
-		                success: function( data, textStatus, jQxhr ){
-		                	 console.log("Success : "+ data ); 
-		                	window.location.reload();
-		                },
-		                error: function( jqXhr, textStatus, errorThrown ){
-		                    console.log( errorThrown );
-		                }
-		            }); 
-			  }
-			});
-		  $('.reject').click(function () {
-			  var uuid = $(this).closest("tr")  
-							          .find(".uuid")   
-							          .text(); 
-			  if(uuid != "" || uuid != null){
-				  document.getElementById('uuidReject').value = uuid;
-				  $('#rejectModal').modal('show'); 
-			  }		  
-			
-			});
+		  
+		  /*  
+			  $('.accept').click(function () {
+				  var uuid = $(this).closest("tr")  
+					          .find(".uuid")   
+					          .text(); 
+				  console.log("UUID : "+uuid);
+				  if(uuid != "" || uuid != null){  
+						
+						  var url = "${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId="+${patientId}+"&uuid="+uuid; 
+						/*   jQuery.getJSON(url, function(result) {
+						  console.log(result.length);
+						 
+						  if(result.length > 0) {
+							  jQuery(result).each(function() {
+							  });
+						  	}
+					  });
+					  
+					  
+					  $.ajax({
+			                url: '${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId='+${patientId}+"&isAccepted=1"+"&uuid="+uuid,
+			                dataType: 'text',
+			                type: 'post',
+			                contentType: 'application/json',
+			                success: function( data, textStatus, jQxhr ){
+			                	 console.log("Success : "+ data ); 
+			                	window.location.reload();
+			                },
+			                error: function( jqXhr, textStatus, errorThrown ){
+			                    console.log( errorThrown );
+			                }
+			            }); 
+				  }
+				});
+			   $('.reject').click(function () {
+				 /*  var uuid = $(this).closest("tr")  
+								          .find(".uuid")   
+								          .text(); 
+				  if(uuid != "" || uuid != null){
+					  document.getElementById('uuidReject').value = uuid;
+					  $('#rejectModal').modal('show'); 
+				  }		 
+				
+				});
+		   */
+		 
 		  
 	});
+	//Reject the Test S
+	function  rejection(rowEl){
+		
+		 var uuid = $(rowEl).closest("tr")  
+					         .find(".uuid")   
+					         .text(); 
+			if(uuid != "" || uuid != null){
+				document.getElementById('uuidReject').value = uuid;
+				$('#rejectModal').modal('show'); 
+			}		
+	}
+	
+	//Request for accept Test Sample 
+	function accept(rowEl){
+			var uuid = $(rowEl).closest("tr")  
+			          .find(".uuid")   
+			          .text(); 
+			console.log("UUID : "+uuid);
+			if(uuid != "" || uuid != null){  
+				
+				  var url = "${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId="+${patientId}+"&uuid="+uuid; 
+			  
+			  
+			  $.ajax({
+			        url: '${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId='+${patientId}+"&isAccepted=1"+"&uuid="+uuid,
+			        dataType: 'text',
+			        type: 'post',
+			        contentType: 'application/json',
+			        success: function( data, textStatus, jQxhr ){
+			        	 console.log("Success : "+ data ); 
+			        	window.location.reload();
+			        },
+			        error: function( jqXhr, textStatus, errorThrown ){
+			            console.log( errorThrown );
+			        }
+			    }); 
+			}
+					
+	}
+	
   function navigatedToLabTestSample(){
 	  window.location.href ="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?patientId="+${patientId}+"&orderId=${orderId}";
   }	
+  function navigatedToPatientDashboard(){
+	  window.location.href ="${pageContext.request.contextPath}/patientDashboard.form?patientId=${patientId}";  
+  }
   
   //On Refereshing the parameter value ...
  	jQuery(function() {

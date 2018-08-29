@@ -172,7 +172,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	@Override
 	public List<LabTestAttribute> getLabTestAttributes(Integer testOrderId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestAttribute.class);
-		criteria.add(Restrictions.eq("testOrderId", testOrderId));
+		criteria.add(Restrictions.eq("testOrderId.testOrderId", testOrderId));
 		return criteria.list();
 	}
 	

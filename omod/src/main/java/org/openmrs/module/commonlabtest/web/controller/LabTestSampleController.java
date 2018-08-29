@@ -15,6 +15,7 @@ import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestSample;
 import org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
+import org.openmrs.web.WebConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -39,17 +40,29 @@ public class LabTestSampleController {
 	@Autowired
 	CommonLabTestService commonLabTestService;
 	
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-mm-dd");
+	
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yy-mm-dd"), true));
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(simpleDateFormat, true));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestSample.form")
-	public String showLabTestTypes(ModelMap model, @RequestParam(required = true) Integer patientId,
-	        @RequestParam(required = false) Integer testSampleId, @RequestParam(required = false) Integer orderId,
-	        @RequestParam(value = "error", required = false) String error) {
+	public String showLabTestTypes(HttpServletRequest request, ModelMap model,
+	        @RequestParam(required = true) Integer patientId, @RequestParam(required = false) Integer testSampleId,
+	        @RequestParam(required = false) Integer orderId, @RequestParam(value = "error", required = false) String error) {
 		
 		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
+		String orderDate = "";
+		if (orderId != null) {
+			LabTest labTest = commonLabTestService.getLabTest(orderId);
+			if (labTest.getVoided()) {
+				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order is voided");
+				return "redirect:../../patientDashboard.form?patientId=" + patientId;
+			}
+			orderDate = simpleDateFormat.format(labTest.getOrder().getEncounter().getDateCreated());
+		}
+		
 		LabTestSample test;
 		if (testSampleId == null) {
 			test = new LabTestSample();
@@ -77,6 +90,7 @@ public class LabTestSampleController {
 		
 		model.addAttribute("testSample", test);
 		model.addAttribute("patientId", patientId);
+		model.addAttribute("orderEncDate", orderDate);
 		model.addAttribute("orderId", orderId);
 		model.addAttribute("error", error);
 		model.addAttribute("provider",
@@ -89,6 +103,7 @@ public class LabTestSampleController {
 	public String onSubmit(ModelMap model, HttpSession httpSession,
 	        @ModelAttribute("anyRequestObject") Object anyRequestObject, HttpServletRequest request,
 	        @ModelAttribute("testSample") LabTestSample labTestSample, BindingResult result) {
+		
 		String status = "";
 		try {
 			if (result.hasErrors()) {

@@ -68,6 +68,12 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 	@Column(name = "lab_reference_number", length = 255)
 	private String labReferenceNumber;
 	
+	@Column(name = "instructions", length = 255)
+	private String labInstructions;
+	
+	@Column(name = "report_file_path")
+	private String filepath;
+	
 	@ContainedIn
 	private transient Set<LabTestSample> labTestSamples = new HashSet<LabTestSample>(0);
 	
@@ -102,6 +108,14 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 	public void setId(Integer id) {
 		setTestOrderId(id);
 		order.setId(getTestOrderId());
+	}
+	
+	public String getFilepath() {
+		return filepath;
+	}
+	
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
 	}
 	
 	/**
@@ -280,6 +294,14 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 		if (labTestSamples != null && labTestSample != null) {
 			labTestSamples.remove(labTestSample);
 		}
+	}
+	
+	public String getLabInstructions() {
+		return labInstructions;
+	}
+	
+	public void setLabInstructions(String labInstructions) {
+		this.labInstructions = labInstructions;
 	}
 	
 	/**
