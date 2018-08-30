@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -60,6 +62,14 @@ public class LabTestResultController {
 		List<LabTestAttribute> testAttributes = commonLabTestService.getLabTestAttributes(testOrderId);
 		
 		//commonLabTestService.getLabTestAttributes(patient, labTestAttributeType, includeVoided);
+		Collections.sort(attributeTypeList,new Comparator<LabTestAttributeType>() {
+
+			@Override
+			public int compare(LabTestAttributeType o1, LabTestAttributeType o2) {
+				// TODO Auto-generated method stub
+				return o1.getSortWeight().compareTo(o2.getSortWeight());
+			}
+		} );
 		for (LabTestAttributeType lta : attributeTypeList) {
 			JsonObject objAttrType = new JsonObject();
 			objAttrType.addProperty("name", lta.getName());
