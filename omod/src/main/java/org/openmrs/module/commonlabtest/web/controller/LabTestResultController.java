@@ -62,14 +62,18 @@ public class LabTestResultController {
 		attributeTypeList = commonLabTestService.getLabTestAttributeTypes(labTest.getLabTestType(), false);
 		JsonArray attributeTypeArray = new JsonArray();
 		List<LabTestAttribute> testAttributes = commonLabTestService.getLabTestAttributes(testOrderId);
-		//sort the list with sortWeight
-		Collections.sort(attributeTypeList, new Comparator<LabTestAttributeType>() {
-			
+
+		
+		//commonLabTestService.getLabTestAttributes(patient, labTestAttributeType, includeVoided);
+		Collections.sort(attributeTypeList,new Comparator<LabTestAttributeType>() {
+
 			@Override
 			public int compare(LabTestAttributeType o1, LabTestAttributeType o2) {
+				// TODO Auto-generated method stub
 				return o1.getSortWeight().compareTo(o2.getSortWeight());
 			}
-		});
+		} );
+
 		for (LabTestAttributeType lta : attributeTypeList) {
 			JsonObject objAttrType = new JsonObject();
 			objAttrType.addProperty("name", lta.getName());
