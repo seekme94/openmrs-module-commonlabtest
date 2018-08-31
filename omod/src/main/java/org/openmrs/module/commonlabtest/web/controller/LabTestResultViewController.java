@@ -58,11 +58,13 @@ public class LabTestResultViewController {
 		}
 		JsonArray testResultArray = new JsonArray();
 		for (LabTestAttribute labTestResult : testAttributes) {
-			
 			JsonObject objTestResult = new JsonObject();
-			objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
-			objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
-			testResultArray.add(objTestResult);
+			if (labTestResult.getAttributeType() != null) {
+				objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
+				objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
+				testResultArray.add(objTestResult);
+			}
+			
 		}
 		
 		testResultList.add("sample", testSampleArray);
