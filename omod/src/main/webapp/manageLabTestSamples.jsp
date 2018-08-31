@@ -83,6 +83,7 @@ legend.scheduler-border {
 	 		<strong>Success!</strong> <c:out value="${status}" />
 		</div>
 	</c:if>
+	 <div id="alert_placeholder"></div>
 	<!--List of Test Order  -->
 	<div class=" boxHeader" style="background-color: #1aac9b">
 			<span></span> <b><spring:message code="commonlabtest.labtestsample.list" /></b>
@@ -190,79 +191,38 @@ legend.scheduler-border {
 
 
 <script type="text/javascript">
+  var orderId;
+
 	$(document).ready(function () {
 		
 		  $("#success-alert").fadeTo(2000, 1000).slideUp(1000, function(){
               $("#success-alert").slideUp(1000);
                }); 
-		
-			
-	/* 	 $('#testSampleTable td').click(function() {
-	    	 //$(this).parents('tr').detach();
-		 	
-	    	 var $row = $(this).closest("tr");    // Find the row
-		     var $tds = $row.find("td:first");
-		 	 var id =$tds.text();
-			 window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId="+id +"&pa";
-		     
-		     
-	    }); */
-		  
 		  
 		$('#testSampleTable').dataTable({
 			 "bPaginate": true
 		  });
 		  $('.dataTables_length').addClass('bs-select');
-		  
-		  
-		  /*  
-			  $('.accept').click(function () {
-				  var uuid = $(this).closest("tr")  
-					          .find(".uuid")   
-					          .text(); 
-				  console.log("UUID : "+uuid);
-				  if(uuid != "" || uuid != null){  
-						
-						  var url = "${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId="+${patientId}+"&uuid="+uuid; 
-						/*   jQuery.getJSON(url, function(result) {
-						  console.log(result.length);
-						 
-						  if(result.length > 0) {
-							  jQuery(result).each(function() {
-							  });
-						  	}
-					  });
-					  
-					  
-					  $.ajax({
-			                url: '${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId='+${patientId}+"&isAccepted=1"+"&uuid="+uuid,
-			                dataType: 'text',
-			                type: 'post',
-			                contentType: 'application/json',
-			                success: function( data, textStatus, jQxhr ){
-			                	 console.log("Success : "+ data ); 
-			                	window.location.reload();
-			                },
-			                error: function( jqXhr, textStatus, errorThrown ){
-			                    console.log( errorThrown );
-			                }
-			            }); 
-				  }
-				});
-			   $('.reject').click(function () {
-				 /*  var uuid = $(this).closest("tr")  
-								          .find(".uuid")   
-								          .text(); 
-				  if(uuid != "" || uuid != null){
-					  document.getElementById('uuidReject').value = uuid;
-					  $('#rejectModal').modal('show'); 
-				  }		 
-				
-				});
-		   */
-		 
-		  
+
+		  orderId ='${orderId}';
+		  console.log("Order Id : "+orderId);
 	});
+	
+	function showalert(message,alerttype) {
+		//alertType : .alert-success, .alert-info, .alert-warning & .alert-danger
+	    $('#alert_placeholder').append('<div id="alertdiv" class="alert ' +  alerttype + '"><a class="close" data-dismiss="alert">×</a><span>'+message+'</span></div>')
+	     autoHide();
+	  } 
+	
+	function autoHide(){
+		   $("#alertdiv").fadeTo(5000, 500).slideUp(500, function(){
+		           $("#alertdiv").slideUp(500);
+		           $("#alertdiv").remove();
+	            }); 	
+	}
+	
+	
+	
 	//Reject the Test S
 	function  rejection(rowEl){
 		
@@ -278,27 +238,32 @@ legend.scheduler-border {
 	//Request for accept Test Sample 
 	function accept(rowEl){
 			var uuid = $(rowEl).closest("tr")  
-			          .find(".uuid")   
-			          .text(); 
-			console.log("UUID : "+uuid);
-			if(uuid != "" || uuid != null){  
-				
-				  var url = "${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId="+${patientId}+"&uuid="+uuid; 
-			  
-			  
-			  $.ajax({
-			        url: '${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId='+${patientId}+"&isAccepted=1"+"&uuid="+uuid,
-			        dataType: 'text',
-			        type: 'post',
-			        contentType: 'application/json',
-			        success: function( data, textStatus, jQxhr ){
-			        	 console.log("Success : "+ data ); 
-			        	window.location.reload();
-			        },
-			        error: function( jqXhr, textStatus, errorThrown ){
-			            console.log( errorThrown );
-			        }
-			    }); 
+						          .find(".uuid")   
+						          .text(); 
+			if(uuid != "" && uuid != null ){  
+				 // var url = "${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId="+${patientId}+"&uuid="+uuid; 
+			  	
+				 
+				 var isAccepted = checkNumberOfAcceptedSample(orderId)
+			  	 console.log("accepted : "+isAccepted);
+				 if(isAccepted){
+					  $.ajax({
+					        url: '${pageContext.request.contextPath}/module/commonlabtest/statuslabtestsample.form?patientId='+${patientId}+"&isAccepted=1"+"&uuid="+uuid,
+					        dataType: 'text',
+					        type: 'post',
+					        contentType: 'application/json',
+					        success: function( data, textStatus, jQxhr ){
+					        	 console.log("Success : "+ data ); 
+					        	 window.location.reload();
+					        },
+					        error: function( jqXhr, textStatus, errorThrown ){
+					            console.log( errorThrown );
+					        }
+					    }); 
+			  }else{
+				  showalert("System not allowed to accept two sample at a time.","alert-info");
+			  }
+		
 			}
 					
 	}
@@ -324,7 +289,30 @@ legend.scheduler-border {
 		 }
 
 		 });
-	 });	
+	 });
+  
+  function checkNumberOfAcceptedSample(testOrderId){
+	  var isTure =true;
+		 $.ajax({
+					type : "GET",
+					contentType : "application/json",
+					url : '${pageContext.request.contextPath}/module/commonlabtest/getTestSampleAcceptedStatus.form?testOrderId='+testOrderId,
+					async:false,
+					dataType : "json",
+					success : function(data) {
+					   console.log("success  : " + data);
+					   isTure = false;
+					},
+					error : function(data) {
+						  isTure = true;
+					},
+					done : function(e) {
+						console.log("DONE");
+					}
+			});
+		 
+		return   isTure;		 
+  }
 
   
 </script>

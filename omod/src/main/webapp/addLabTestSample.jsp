@@ -106,9 +106,9 @@ legend.scheduler-border {
 			   </div>
 			   <div class="col-md-6">
 			   		<form:select class="form-control" path="specimenSite" id="specimen_site" >
-								<c:if test="${not empty specimenType}">
-									<c:forEach var="spSite" items="${specimenType}">
-										<form:option item="${spSite}" value="${spSite}">${spSite.name}</form:option>
+								<c:if test="${not empty specimenSite}">
+									<c:forEach var="spSite" items="${specimenSite}">
+										<form:option item="${spSite.getAnswerConcept()}" value="${spSite.getAnswerConcept()}">${spSite.getAnswerConcept().getName()}</form:option>
 									</c:forEach>
 								</c:if>	
 						</form:select>
@@ -134,9 +134,9 @@ legend.scheduler-border {
 			   </div>
 			   <div class="col-md-6">
 			   			<form:select class="form-control" path="units" id="units" >
-								<c:if test="${not empty specimenType}">
-									<c:forEach var="unit" items="${specimenType}">
-										<form:option item="${unit}" value="${unit}">${unit.name}</form:option>
+								<c:if test="${not empty testUnits}">
+									<c:forEach var="unit" items="${testUnits}">
+										<form:option item="${unit.getAnswerConcept()}" value="${unit.getAnswerConcept()}">${unit.getAnswerConcept().getName()}</form:option>
 									</c:forEach>
 								</c:if>	
 						</form:select>

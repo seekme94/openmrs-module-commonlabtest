@@ -136,7 +136,7 @@ $(document).ready(function() {
 	  
 	
 	
-	
+	/* 
 	 $('#manageTestAttributeTypeTable td').click(function() {
     	 //$(this).parents('tr').detach();
 	 	
@@ -146,7 +146,7 @@ $(document).ready(function() {
 		 window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid;
 	     
 	     
-    });
+    }); */
 	 
 	 jQuery(function() {
 

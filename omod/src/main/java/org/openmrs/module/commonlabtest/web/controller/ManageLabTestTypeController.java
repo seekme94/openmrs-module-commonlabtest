@@ -10,7 +10,9 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestAttributeType;
+import org.openmrs.module.commonlabtest.LabTestSample;
 import org.openmrs.module.commonlabtest.LabTestType;
+import org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/module/commonlabtest/manageLabTestTypes.form")
-public class LabTestTypeListController {
+public class ManageLabTestTypeController {
 	
 	/** Success form view name */
 	private final String SUCCESS_FORM_VIEW = "/module/commonlabtest/manageLabTestTypes";

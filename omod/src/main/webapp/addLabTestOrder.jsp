@@ -100,10 +100,10 @@ legend.scheduler-border {
 					 			</c:if>
 						</form:select>
 						</c:if>
-						<span id="encounters" class="text-danger "> </span>
+						<span id="encounters" class="text-danger "></span>
 				   </div>
 				    <div class="col-md-3">  
-					    <font color="#D0D0D0"><span id="encounterDate"></span></font>
+					    <font color="#D0D0D0"><span id="encounterDate">${labTest.order.encounter.encounterDatetime}</span></font>
 					</div>
 			 </div>
 			<!-- Test Type -->

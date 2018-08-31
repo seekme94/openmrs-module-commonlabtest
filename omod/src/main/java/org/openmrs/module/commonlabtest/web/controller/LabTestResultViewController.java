@@ -8,6 +8,8 @@ import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.LabTestAttributeType;
 import org.openmrs.module.commonlabtest.LabTestSample;
+import org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus;
+import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,6 +69,61 @@ public class LabTestResultViewController {
 		testResultList.add("result", testResultArray);
 		
 		return testResultList.toString();
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/getTestSampleStatus.form")
+	@ResponseBody
+	public Boolean getLabTestSampleStatus(@RequestParam Integer testOrderId) {
+		
+		LabTest labTest = commonLabTestService.getLabTest(testOrderId);
+		List<LabTestSample> testSample;
+		testSample = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);
+		for (LabTestSample labTestSample : testSample) {
+			if (labTestSample.getStatus().equals(LabTestSampleStatus.ACCEPTED)) {
+				return Boolean.TRUE;
+			}
+			
+		}
+		return Boolean.FALSE;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/getTestSampleAcceptedStatus.form")
+	@ResponseBody
+	public Boolean getLabTestSampleAcceptedStatus(@RequestParam Integer testOrderId) {
+		
+		LabTest labTest = commonLabTestService.getLabTest(testOrderId);
+		List<LabTestSample> testSample;
+		int count = 1;
+		testSample = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);
+		for (LabTestSample labTestSample : testSample) {
+			if (labTestSample.getStatus().equals(LabTestSampleStatus.ACCEPTED)) {
+				count++;
+			}
+		}
+		if (count > 1)
+			return Boolean.FALSE;
+		else
+			return Boolean.TRUE;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/getTestAttributeTypeSortWeight.form")
+	@ResponseBody
+	public String getLabTestAttributeType(@RequestParam Integer testTypeId) {
+		LabTestType labTestType = commonLabTestService.getLabTestType(testTypeId);
+		List<LabTestAttributeType> labTestAttributeType = commonLabTestService.getLabTestAttributeTypes(labTestType,
+		    Boolean.FALSE);
+		
+		JsonObject testAttributeList = new JsonObject();
+		JsonArray testAttributeArray = new JsonArray();
+		for (LabTestAttributeType labTestAttributeTypeObj : labTestAttributeType) {
+			JsonObject objTestSample = new JsonObject();
+			objTestSample.addProperty("testOrderId", testTypeId);
+			objTestSample.addProperty("attributeTypeName", labTestAttributeTypeObj.getName());
+			objTestSample.addProperty("sortWeight", labTestAttributeTypeObj.getSortWeight());
+			testAttributeArray.add(objTestSample);
+		}
+		testAttributeList.add("sortweightlist", testAttributeArray);
+		return testAttributeList.toString();
 	}
 	
 }

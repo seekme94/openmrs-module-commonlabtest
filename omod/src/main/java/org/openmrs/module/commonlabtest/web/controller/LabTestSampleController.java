@@ -1,6 +1,8 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.ConceptAnswer;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestSample;
@@ -83,9 +86,29 @@ public class LabTestSampleController {
 		String specimenSiteUuid = Context.getAdministrationService().getGlobalProperty(
 		    "commonlabtest.specimenSiteConceptUuid");
 		Concept specimenSiteSet = Context.getConceptService().getConceptByUuid(specimenSiteUuid);
-		if (specimenSiteSet != null && specimenSiteSet.getSetMembers().size() > 0) {
-			List<Concept> specimenSiteConcepts = specimenSiteSet.getSetMembers();
-			model.put("specimenSite", specimenSiteConcepts);
+		if (specimenSiteSet != null && specimenSiteSet.getAnswers().size() > 0) {
+			Collection<ConceptAnswer> specimenSiteConcepts = specimenSiteSet.getAnswers();
+			List<ConceptAnswer> specimenSiteConceptlist;
+			if (specimenSiteConcepts instanceof List)
+				specimenSiteConceptlist = (List) specimenSiteConcepts;
+			else
+				specimenSiteConceptlist = new ArrayList<ConceptAnswer>(specimenSiteConcepts);
+			
+			model.put("specimenSite", specimenSiteConceptlist);
+		}
+		
+		//get test units
+		String testUnitsProperty = Context.getAdministrationService()
+		        .getGlobalProperty("commonlabtest.testunitsConceptUuid");
+		Concept testUnitsUuid = Context.getConceptService().getConceptByUuid(testUnitsProperty);
+		if (testUnitsUuid != null && testUnitsUuid.getAnswers().size() > 0) {
+			Collection<ConceptAnswer> testUnitsConcepts = testUnitsUuid.getAnswers();
+			List<ConceptAnswer> testUnitsConceptlist;
+			if (testUnitsConcepts instanceof List)
+				testUnitsConceptlist = (List) testUnitsConcepts;
+			else
+				testUnitsConceptlist = new ArrayList<ConceptAnswer>(testUnitsConcepts);
+			model.put("testUnits", testUnitsConceptlist);
 		}
 		
 		model.addAttribute("testSample", test);

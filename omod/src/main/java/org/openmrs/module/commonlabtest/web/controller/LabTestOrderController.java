@@ -66,9 +66,16 @@ public class LabTestOrderController {
 			}*/
 		}
 		List<LabTestType> testType = commonLabTestService.getAllLabTestTypes(Boolean.FALSE);
+		List<LabTestType> labTestTypeHaveAttributes = new ArrayList<LabTestType>();
+		for (LabTestType labTestTypeIt : testType) {
+			if (commonLabTestService.getLabTestAttributeTypes(labTestTypeIt, Boolean.FALSE).size() > 0) {
+				labTestTypeHaveAttributes.add(labTestTypeIt);
+			}
+		}
+		
 		model.addAttribute("labTest", test);
 		model.addAttribute("patientId", patientId);
-		model.addAttribute("testTypes", testType);
+		model.addAttribute("testTypes", labTestTypeHaveAttributes);
 		model.addAttribute("error", error);
 		model.addAttribute("provider",
 		    Context.getProviderService().getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator()

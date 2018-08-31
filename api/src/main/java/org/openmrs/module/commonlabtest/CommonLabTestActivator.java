@@ -37,6 +37,8 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 	
 	public static final String SPECIMEN_SITE_CONCEPT_UUID = "commonlabtest.specimenSiteConceptUuid";
 	
+	public static final String TEST_UNITS_CONCEPT_UUID = "commonlabtest.testunitsConceptUuid";
+	
 	public static final String UPLOAD_FILE_DIRECTORY = "commonlabtest.fileDirectory";
 	
 	ConceptService conceptService;
@@ -65,6 +67,7 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 		setGlobalProperty(administrationService, UPLOAD_FILE_DIRECTORY, path.toString());
 		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "159959AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, TEST_UNITS_CONCEPT_UUID, "5db4f53e-6218-4ae0-ae4e-5e0343b5d301");
 		
 	}
 	
@@ -102,6 +105,7 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 		setGlobalProperty(administrationService, UPLOAD_FILE_DIRECTORY, path.toString());
 		setGlobalProperty(administrationService, SPECIMEN_TYPE_CONCEPT_UUID, "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		setGlobalProperty(administrationService, SPECIMEN_SITE_CONCEPT_UUID, "159959AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		setGlobalProperty(administrationService, TEST_UNITS_CONCEPT_UUID, "5db4f53e-6218-4ae0-ae4e-5e0343b5d301");
 	}
 	
 }

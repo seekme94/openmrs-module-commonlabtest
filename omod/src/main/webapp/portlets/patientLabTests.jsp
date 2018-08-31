@@ -64,10 +64,11 @@ legend.scheduler-border {
 	 		<strong>Success!</strong> <c:out value="${status}" />
 		</div>
 	</c:if> --%>
-		 <div class="alert alert-info" hidden ="true" id="specimenalert">
+		<!--  <div class="alert alert-info" hidden ="true" id="specimenalert">
 	      <a href="#" class="close" data-dismiss="alert">&times;</a>
-	      <p>This test order is not required test sample...</p>
-   		 </div>
+	      <p id="info-message">This test order is not required test sample...</p>
+   		 </div>  -->
+   		 <div id="alert_placeholder"></div>
 	<br>
 	<!--List of Test Order  -->
 	<div class=" boxHeader" style="background-color: #1aac9b">
@@ -164,6 +165,7 @@ legend.scheduler-border {
 
 <script type="text/javascript">	
  var testOrderArray ;
+ var isStatusAccepted = false;
 $(document).ready(function () {
 		
 	
@@ -177,6 +179,15 @@ $(document).ready(function () {
 	  console.log("Array: "+ testOrderArray);
 	  
 });
+	function showalert(message,alerttype) {
+		//alertType : .alert-success, .alert-info, .alert-warning & .alert-danger
+	    $('#alert_placeholder').append('<div id="alertdiv" class="alert ' +  alerttype + '"><a class="close" data-dismiss="alert">×</a><span>'+message+'</span></div>')
+	     autoHide();
+	   /*  setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+	      $("#alertdiv").remove();
+	
+	    }, 5000);*/
+	  } 
 
  function fillTestOrder(){
 	 testOrderArray = new Array();
@@ -193,11 +204,10 @@ function getTestOrderList(){
    }
 
 function autoHide(){
-	
-	   $("#specimenalert").fadeTo(2000, 500).slideUp(500, function(){
-           $("#specimenalert").slideUp(500);
-            }); 
-	
+	   $("#alertdiv").fadeTo(2000, 500).slideUp(500, function(){
+	           $("#alertdiv").slideUp(500);
+	           $("#alertdiv").remove();
+            }); 	
 }
 
 	/*Edit Test Order  */
@@ -234,8 +244,7 @@ function autoHide(){
 							      .find(".orderId") 
 							      .text(); 
 		if(requiresSpecimen == 'false'){
-			$('#specimenalert').removeAttr('hidden');
-			autoHide();
+			showalert("This test order is not required test sample...","alert-info");
 		}
 		else{
 			window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId; 
@@ -246,11 +255,40 @@ function autoHide(){
 		var testOrderId = $(resultEl).closest("tr")
 						        .find(".orderId") 
 						        .text(); 
-		console.log("Test order Id : " + testOrderId);
+		 var requiresSpecimen = $(resultEl).closest("tr")  
+									         .find(".rspecimen")   
+									         .text();
+		 
+		 checkTestSampleStatus(testOrderId);
 		if(testOrderId == "" || testOrderId == null ){}
-		else{
+		else if(requiresSpecimen == 'true' && isStatusAccepted == true){
 			window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?testOrderId="+testOrderId;  
 		}
+		else {
+			showalert("Before submiting test results you should submit Test sample with accept status against this Test order...","alert-info");
+		}
+	}
+	
+	function checkTestSampleStatus(testOrderId){
+		 $.ajax({
+				type : "GET",
+				contentType : "application/json",
+				url : '${pageContext.request.contextPath}/module/commonlabtest/getTestSampleStatus.form?testOrderId='+testOrderId,
+				async:false,
+				dataType : "json",
+				success : function(data) {
+				   console.log("success  : " + data);
+				   isStatusAccepted = true;
+				},
+				error : function(data) {
+					 isStatusAccepted = false;
+					  console.log("fail  : " + data);
+				},
+				done : function(e) {
+					console.log("DONE");
+				}
+		});
+		
 	}
 	
 	function populateTestOrder(testOrderArr){

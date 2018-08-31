@@ -20,11 +20,19 @@ session.removeAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR);
 <link
 	href="/openmrs/moduleResources/commonlabtest/css/bootstrap.min.css"
 	rel="stylesheet" />
-
+	
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/hover-min.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/mdb.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/mdb.min.css" />	
 <style>
 
 body {
-	font-size: 12px;
+	font-size: 10px;
 }
 input[type=submit] {
 	background-color: #1aac9b;
@@ -160,6 +168,10 @@ legend.scheduler-border {
 							   <div class="col-md-6">
 									<form:input class="form-control" maxlength="2"  path="sortWeight" id="sortWeight"  onkeypress="return isNumber(event)"></form:input>
 								    <span id="sortweight" class="text-danger "> </span>
+							   	</div class="col-md-4">
+							   		 <a style="text-decoration:none" onclick="showSortWeightList(this);" id="addTestSamples" class="hvr-icon-grow"><i class="fa fa-eye hvr-icon"></i> Sort Weight hierarchy</a>
+							   	<div>
+							   	
 							   	</div>
 					 	   </div>
 					 	   <!-- datatypeClassname -->
@@ -316,6 +328,24 @@ legend.scheduler-border {
       </fieldset>
 	</c:if> --%>
  </div>
+ 
+ 
+	<div class="modal fade right modal-scrolling" id="sortWeightModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="false" style="display: none;" aria-hidden="true">
+	    <div class="modal-dialog modal-side modal-top-right modal-notify modal-info" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header" style="background-color:#1aac9b">
+		          <p class="heading lead white-text">Sort Weight Order</p>
+			          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		            <span aria-hidden="true" class="white-text">×</span>
+		          </button>
+	       		</div>
+		        <div class="modal-body" >
+		          <div id="sortweightList"></div>
+		        </div>
+		      </div>
+		    </div>
+	  </div>
+ 
 </body>
 
 <!--Java Script  -->
@@ -636,7 +666,63 @@ legend.scheduler-border {
 		   }
 
 		 });
-	 });	 
+	 });
+	
+	///Sort Weight Modal 
+	
+	function showSortWeightList(sortweight){
+		var testTypeId = document.getElementById("testTypeSuggestBox").value;
+		 if(testTypeId != ""){
+			    getTestAttributeType(testTypeId);
+		  }
+		 else{
+			 
+		 }
+	}
+	
+	function getTestAttributeType(testTypeId){
+		console.log("Type : "+testTypeId);
+		 $.ajax({
+				type : "GET",
+				contentType : "application/json",
+				url : '${pageContext.request.contextPath}/module/commonlabtest/getTestAttributeTypeSortWeight.form?testTypeId='+testTypeId,
+				async:false,
+				dataType : "json",
+				success : function(data) {
+				   console.log("success  : " + data);
+				   renderSortWeight(data.sortweightlist);
+				},
+				error : function(data) {
+					  console.log("fail  : " + data);
+				},
+				done : function(e) {
+					console.log("DONE");
+				}
+		});
+		
+	}
+	function renderSortWeight(array){
+		  var resultsItems = "";
+					resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">');
+					resultsItems = resultsItems.concat('<thead><tr>');
+						resultsItems = resultsItems.concat('<th><a>Test Order</a></th>');
+						resultsItems = resultsItems.concat('<th><a>Attribute Type Name</a></th>');
+						resultsItems = resultsItems.concat('<th><a>Sort Weight</a></th>');
+						jQuery(array).each(function() {
+							resultsItems = resultsItems.concat('<tbody><tr>'); 
+							resultsItems = resultsItems.concat('<td>'+this.testOrderId+'</td>');
+							resultsItems = resultsItems.concat('<td>'+this.attributeTypeName+'</td>');
+							resultsItems = resultsItems.concat('<td>'+this.sortWeight+'</td>');
+							resultsItems = resultsItems.concat('</tr></tbody>'); 
+						 });
+					resultsItems = resultsItems.concat('</tr></thead>');
+					resultsItems = resultsItems.concat('</table>');
+			   console.log("Sample Container : "+ resultsItems);
+			   document.getElementById("sortweightList").innerHTML = resultsItems;
+		   //show the module
+		   $('#sortWeightModal').modal('show'); 
+	}
+
  
 
 </script>

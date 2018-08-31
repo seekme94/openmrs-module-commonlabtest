@@ -13,7 +13,11 @@
 	href="/openmrs/moduleResources/commonlabtest/css/hover.css" />
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/hover-min.css" />
-
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/mdb.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openmrs/moduleResources/commonlabtest/css/mdb.min.css" />	
+	
 <style>
 body {
 	font-size: 12px;
@@ -79,20 +83,25 @@ legend.scheduler-border {
 	        <thead>
 	            <tr>
 	            	<th hidden="true"></th>
+	            	<th hidden="true"></th>
 					<th>Name</th>
 					<th>Short Name</th>
 					<th>Test Group</th>
 					<th>Reference Concept</th>
+					<th>Linked Attribute Types</th>
 				</tr>
 	        </thead>
 	        <tbody>
 		       <c:forEach var="tt" items="${labTestTypes}">
 						<tr>
-							<td hidden="true" id="uuid">${tt.uuid}</td>
+							<td hidden="true" class="uuid">${tt.uuid}</td>
+							<td hidden="true" class="testTypeId">${tt.labTestTypeId}</td>
 							<td><a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid=${tt.uuid}" class="hvr-icon-grow"><span><i class="fa fa-edit hvr-icon"></i></span> ${tt.name}</a></td>
 							<td>${tt.shortName}</td>
 							<td>${tt.testGroup}</td>
 							<td>${tt.referenceConcept.name}</td>
+						    <td> <span class="table-edit hvr-icon-grow" onclick="editTestOrder(this)"><i class="fa fa-eye fa-2x hvr-icon"></i></span></td>
+							
 						</tr>
 					</c:forEach>
 	        </tbody>
@@ -121,6 +130,25 @@ legend.scheduler-border {
 					</c:forEach>
 				</tbody>
 			</table> --%>
+		<!-- Full Height Modal Right -->
+		
+	<div class="modal fade left modal-scrolling" id="sortWeightModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="false" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-side modal-top-left modal-notify modal-info" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header" style="background-color:#1aac9b">
+	          <p class="heading lead white-text">Sort Weight Order</p>
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	            <span aria-hidden="true" class="white-text">×</span>
+	          </button>
+       		</div>
+	        <div class="modal-body" >
+	          <div id="sortweightList"></div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+			
+			
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
 
@@ -137,12 +165,28 @@ legend.scheduler-border {
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery.dataTables.min.js"></script>
 <script
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/dataTables.bootstrap4.min.js"></script>
+<%-- <script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/mdb.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/mdb.min.js"></script> --%>
 
 <script>
 function relocate_home()
 {
      location.href = "addLabTestType.form";
 } 
+
+	function editTestOrder(ele){
+		 var testTypeId = $(ele).closest("tr")  
+							         .find(".testTypeId")   
+							         .text(); 
+		 if(testTypeId != ""){
+			    getTestAttributeType(testTypeId);
+		  }
+		 else{
+			 
+		 }
+	}
 
 $(document).ready(function() {
 
@@ -155,20 +199,52 @@ $(document).ready(function() {
 		 "bPaginate": true
 	  });
 	  $('.dataTables_length').addClass('bs-select');
-	  
-	
-    $('#manageTestTypeTable td').click(function() {
-    	 //$(this).parents('tr').detach();
-	 	
-    	 var $row = $(this).closest("tr");    // Find the row
-	     var $tds = $row.find("td:first");
-	 	 var uuid =$tds.text();
-		 window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid="+uuid;
-	     
-	     
-    });
 
 });
+
+
+function getTestAttributeType(testTypeId){
+	console.log("Type : "+testTypeId);
+	 $.ajax({
+			type : "GET",
+			contentType : "application/json",
+			url : '${pageContext.request.contextPath}/module/commonlabtest/getTestAttributeTypeSortWeight.form?testTypeId='+testTypeId,
+			async:false,
+			dataType : "json",
+			success : function(data) {
+			   console.log("success  : " + data);
+			   renderSortWeight(data.sortweightlist);
+			},
+			error : function(data) {
+				  console.log("fail  : " + data);
+			},
+			done : function(e) {
+				console.log("DONE");
+			}
+	});
+	
+}
+function renderSortWeight(array){
+	  var resultsItems = "";
+				resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">');
+				resultsItems = resultsItems.concat('<thead><tr>');
+					resultsItems = resultsItems.concat('<th><a>Test Order</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Attribute Type Name</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Sort Weight</a></th>');
+					jQuery(array).each(function() {
+						resultsItems = resultsItems.concat('<tbody><tr>'); 
+						resultsItems = resultsItems.concat('<td>'+this.testOrderId+'</td>');
+						resultsItems = resultsItems.concat('<td>'+this.attributeTypeName+'</td>');
+						resultsItems = resultsItems.concat('<td>'+this.sortWeight+'</td>');
+						resultsItems = resultsItems.concat('</tr></tbody>'); 
+					 });
+				resultsItems = resultsItems.concat('</tr></thead>');
+				resultsItems = resultsItems.concat('</table>');
+		   console.log("Sample Container : "+ resultsItems);
+		   document.getElementById("sortweightList").innerHTML = resultsItems;
+	   //show the module
+	   $('#sortWeightModal').modal('show'); 
+}
 
 
 </script>

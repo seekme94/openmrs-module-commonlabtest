@@ -2,9 +2,6 @@
 <%@ include file="/WEB-INF/template/header.jsp"%>
 <openmrs:require privilege="View labTestResult" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestResult.form" />
 
-
-<link type="text/css" rel="stylesheet"
-	href="/openmrs/moduleResources/commonlabtest/css/commonlabcustomstyles.css" />
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link
@@ -170,7 +167,7 @@ function navigatedToPatientDashboard(){
     	    else{
                  resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="" />'); 
     	      }
-			 if(this.dataType == 'org.openmrs.customdatatype.datatype.ConceptDatatype'){
+			 if(this.dataType == 'coded'){
 				  	 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
@@ -180,7 +177,7 @@ function navigatedToPatientDashboard(){
 					  });
 					 resultsItems =resultsItems.concat('</select></div></div>');
 			 }
-			 else if(this.dataType == 'org.openmrs.customdatatype.datatype.LongFreeTextDatatype'){
+			 else if(this.dataType == 'Text'){
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
@@ -191,18 +188,18 @@ function navigatedToPatientDashboard(){
 					 }
 					 resultsItems =resultsItems.concat('</div></div>');
 			 }
-			 else if(this.dataType == 'org.openmrs.customdatatype.datatype.FloatDatatype'){
+			 else if(this.dataType == 'Numeric'){
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 					 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" value="'+this.value+'" required />');
 					 resultsItems =resultsItems.concat('</div></div>');
 		 	}
-			 else if(this.dataType == 'org.openmrs.customdatatype.datatype.BooleanDatatype'){
+			 else if(this.dataType == 'Boolean'){
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
-					 resultsItems = resultsItems.concat('<input type="checkbox" class="form-check-input"  value="true" checked id="bool.'+this.id+'" name="bool.'+this.id+'" onchange="setValue(this)" required />');
+					 resultsItems = resultsItems.concat('<input type="checkbox" class="form-check-input"  value="true" checked id="bool.'+this.id+'" name="bool.'+this.id+'" onchange="setValue(this)" />');
 					 resultsItems =resultsItems.concat('</div></div>');
 					
 		   }
