@@ -62,18 +62,17 @@ public class LabTestResultController {
 		attributeTypeList = commonLabTestService.getLabTestAttributeTypes(labTest.getLabTestType(), false);
 		JsonArray attributeTypeArray = new JsonArray();
 		List<LabTestAttribute> testAttributes = commonLabTestService.getLabTestAttributes(testOrderId);
-
 		
 		//commonLabTestService.getLabTestAttributes(patient, labTestAttributeType, includeVoided);
-		Collections.sort(attributeTypeList,new Comparator<LabTestAttributeType>() {
-
+		Collections.sort(attributeTypeList, new Comparator<LabTestAttributeType>() {
+			
 			@Override
 			public int compare(LabTestAttributeType o1, LabTestAttributeType o2) {
 				// TODO Auto-generated method stub
 				return o1.getSortWeight().compareTo(o2.getSortWeight());
 			}
-		} );
-
+		});
+		
 		for (LabTestAttributeType lta : attributeTypeList) {
 			JsonObject objAttrType = new JsonObject();
 			objAttrType.addProperty("name", lta.getName());
@@ -166,7 +165,7 @@ public class LabTestResultController {
 		LabTest labTest = commonLabTestService.getLabTest(testOrderId);
 		List<LabTestAttributeType> attributeTypeList = commonLabTestService.getLabTestAttributeTypes(
 		    labTest.getLabTestType(), false);
-		String conceptValue = "", textValue = "", boolValue = "", floatValue, testAtrrId;
+		String conceptValue = "", textValue = "", boolValue = "", floatValue, testAtrrId, dateValue;
 		List<LabTestAttribute> labTestAttributes = new ArrayList<LabTestAttribute>();
 		
 		for (LabTestAttributeType labTestAttributeType : attributeTypeList) {
@@ -176,25 +175,25 @@ public class LabTestResultController {
 			textValue = request.getParameter("valueText." + labTestAttributeType.getId());
 			boolValue = request.getParameter("bool." + labTestAttributeType.getId());
 			floatValue = request.getParameter("float." + labTestAttributeType.getId());
+			dateValue = request.getParameter("date." + labTestAttributeType.getId());
 			testAtrrId = request.getParameter("testAttributeId." + labTestAttributeType.getId());
 			if (update && testAtrrId != "") {
 				testAttribute = commonLabTestService.getLabTestAttribute(Integer.parseInt(testAtrrId));
 				
 				if (conceptValue != null && conceptValue != "" && !conceptValue.isEmpty()) {
 					testAttribute.setValueReference(conceptValue);
-					
 					labTestAttributes.add(testAttribute);
 				} else if (textValue != null && textValue != "" && !textValue.isEmpty()) {
 					testAttribute.setValueReference(textValue);
-					
 					labTestAttributes.add(testAttribute);
 				} else if (boolValue != null && boolValue != "" && !boolValue.isEmpty()) {
 					testAttribute.setValueReference(boolValue);
-					
 					labTestAttributes.add(testAttribute);
 				} else if (floatValue != null && floatValue != "" && !floatValue.isEmpty()) {
 					testAttribute.setValueReference(floatValue);
-					
+					labTestAttributes.add(testAttribute);
+				} else if (dateValue != null && dateValue != "" && !dateValue.isEmpty()) {
+					testAttribute.setValueReference(dateValue);
 					labTestAttributes.add(testAttribute);
 				}
 			} else {
@@ -202,19 +201,18 @@ public class LabTestResultController {
 				testAttribute.setAttributeTypeId(labTestAttributeType);
 				if (conceptValue != null && conceptValue != "" && !conceptValue.isEmpty()) {
 					testAttribute.setValueReference(conceptValue);
-					
 					labTestAttributes.add(testAttribute);
 				} else if (textValue != null && textValue != "" && !textValue.isEmpty()) {
 					testAttribute.setValueReference(textValue);
-					
 					labTestAttributes.add(testAttribute);
 				} else if (boolValue != null && boolValue != "" && !boolValue.isEmpty()) {
 					testAttribute.setValueReference(boolValue);
-					
 					labTestAttributes.add(testAttribute);
 				} else if (floatValue != null && floatValue != "" && !floatValue.isEmpty()) {
 					testAttribute.setValueReference(floatValue);
-					
+					labTestAttributes.add(testAttribute);
+				} else if (dateValue != null && dateValue != "" && !dateValue.isEmpty()) {
+					testAttribute.setValueReference(dateValue);
 					labTestAttributes.add(testAttribute);
 				}
 			}
@@ -264,7 +262,8 @@ public class LabTestResultController {
 			return "Coded";
 		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.LocationDatatype")) {
 			return "location";
-		} else if (dataTypeName.endsWith("org.openmrs.customdatatype.datatype.DateDatatype")) {
+		} else if (dataTypeName.endsWith("org.openmrs.customdatatype.datatype.DateDatatype") || dataTypeName.equals("Date")
+		        || dataTypeName.equals("Datetime")) {
 			return "Date";
 		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.FloatDatatype")
 		        || dataTypeName.equals("Numeric")) {

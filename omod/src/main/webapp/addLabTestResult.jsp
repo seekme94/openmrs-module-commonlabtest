@@ -161,7 +161,7 @@ function navigatedToPatientDashboard(){
      jQuery(local_source).each(function() {
     	   
     	    if(this.testAttributeId != 'undefined')
-    	    	{ console.log("testAttributeId "+this.testAttributeId);
+    	    	{
                  resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="'+this.testAttributeId+'" />'); 
     	    	}
     	    else{
@@ -173,7 +173,13 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 					 resultsItems = resultsItems.concat('<select class="form-control" id="concept.'+this.id+'" name="concept.'+this.id+'" ><options />');
 					 jQuery(this.conceptOptions).each(function() {
-						  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>');
+						 if(this.value == 'undefined'){
+							  resultsItems =resultsItems.concat( '<option>'+this.value+'</option>'); 
+							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
+						 }
+						 else{
+							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>');
+						 }
 					  });
 					 resultsItems =resultsItems.concat('</select></div></div>');
 			 }
@@ -189,6 +195,7 @@ function navigatedToPatientDashboard(){
 					 resultsItems =resultsItems.concat('</div></div>');
 			 }
 			 else if(this.dataType == 'Numeric'){
+				 
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
@@ -196,13 +203,34 @@ function navigatedToPatientDashboard(){
 					 resultsItems =resultsItems.concat('</div></div>');
 		 	}
 			 else if(this.dataType == 'Boolean'){
+				 
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 					 resultsItems = resultsItems.concat('<input type="checkbox" class="form-check-input"  value="true" checked id="bool.'+this.id+'" name="bool.'+this.id+'" onchange="setValue(this)" />');
 					 resultsItems =resultsItems.concat('</div></div>');
 					
-		   }
+		   }else if(this.dataType == 'Date'){
+			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+				 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
+				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+				 if(this.value == 'undefined'){
+					 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="">');
+				 }else{
+					 resultsItems = resultsItems.concat('<input id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="'+this.value+'" required>');
+				 }
+				 resultsItems =resultsItems.concat('</div></div>');
+		   }/* else if(this.dataType == 'Datetime'){
+			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+				 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
+				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+				 if(this.value == 'undefined'){
+					 resultsItems = resultsItems.concat('<input  id="datetime.'+this.id+'" name="datetime.'+this.id+'" type="datetime-local" value="">');
+				 }else{
+					 resultsItems = resultsItems.concat('<input id="datetime.'+this.id+'" name="datetime.'+this.id+'" type="datetime-local" value="'+this.value+'" required>');
+				 }
+				 resultsItems =resultsItems.concat('</div></div>');
+		   } */
 		  			 
 	     });               
 	   				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
@@ -210,8 +238,9 @@ function navigatedToPatientDashboard(){
 	   				 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
 	   				 resultsItems = resultsItems.concat('<input type="file" name="documentTypeFile" id="documentTypeFile" accept="*image/*" />');
 	   				 if(filepath != ""){
+	   					 console.log("File : "+filepath);
 	   					 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
-		   				 resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="http://ichef.bbci.co.uk/images/ic/256x256/p03r5406.jpg" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>'); 					 
+		   				 resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="file:///'+filepath+'" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>'); 					 
 	   				 }
 	   			     resultsItems = resultsItems.concat('</div></div>');
 				     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-2">');
