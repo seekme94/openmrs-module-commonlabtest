@@ -59,7 +59,10 @@ public class LabTestSampleController {
 		String orderDate = "";
 		if (orderId != null) {
 			LabTest labTest = commonLabTestService.getLabTest(orderId);
-			if (labTest.getVoided()) {
+			if (labTest == null) {
+				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order does not exist");
+				return "redirect:../../patientDashboard.form?patientId=" + patientId;
+			} else if (labTest.getVoided()) {
 				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order is voided");
 				return "redirect:../../patientDashboard.form?patientId=" + patientId;
 			}

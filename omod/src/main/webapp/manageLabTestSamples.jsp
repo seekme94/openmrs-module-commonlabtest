@@ -301,7 +301,7 @@ legend.scheduler-border {
 					dataType : "json",
 					success : function(data) {
 					   console.log("success  : " + data);
-					   isTure = false;
+					   isTure = data;
 					},
 					error : function(data) {
 						  isTure = true;

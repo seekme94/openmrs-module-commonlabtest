@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 <openmrs:require privilege="View labTestResult" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestResult.form" />
+<openmrs:portlet url="patientHeader" id="patientDashboardHeader" patientId="${patientId}"/>
 
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
@@ -92,7 +93,14 @@ legend.scheduler-border {
 <div class="container"> 
 
 	 <fieldset  class="scheduler-border" >
-		<legend  class="scheduler-border"><spring:message code="commonlabtest.result.add" /></legend>
+	    <c:choose>
+	         <c:when test = "${not empty update}">
+	         	<legend  class="scheduler-border"><spring:message code="commonlabtest.result.add" /></legend>
+	         </c:when>
+	         <c:otherwise>
+	         	<legend  class="scheduler-border"><spring:message code="commonlabtest.result.add" /></legend>
+	         </c:otherwise>
+     	</c:choose>
 		   <div id="resultContainer">
 		   
 		   </div> 
@@ -174,7 +182,6 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('<select class="form-control" id="concept.'+this.id+'" name="concept.'+this.id+'" ><options />');
 					 jQuery(this.conceptOptions).each(function() {
 						 if(this.value == 'undefined'){
-							  resultsItems =resultsItems.concat( '<option>'+this.value+'</option>'); 
 							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
 						 }
 						 else{
@@ -184,6 +191,7 @@ function navigatedToPatientDashboard(){
 					 resultsItems =resultsItems.concat('</select></div></div>');
 			 }
 			 else if(this.dataType == 'Text'){
+				 
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
@@ -199,7 +207,12 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
-					 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" value="'+this.value+'" required />');
+					 if(this.value == 'undefined'){
+						 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" value="" required />');
+					 }
+					 else{
+						 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" value="'+this.value+'" required />'); 
+					 }
 					 resultsItems =resultsItems.concat('</div></div>');
 		 	}
 			 else if(this.dataType == 'Boolean'){
@@ -207,8 +220,21 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
-					 resultsItems = resultsItems.concat('<input type="checkbox" class="form-check-input"  value="true" checked id="bool.'+this.id+'" name="bool.'+this.id+'" onchange="setValue(this)" />');
-					 resultsItems =resultsItems.concat('</div></div>');
+					 resultsItems = resultsItems.concat('<select class="form-control" id="bool.'+this.id+'" name="bool.'+this.id+'">');
+					 if(this.value == 'undefined'){
+							 resultsItems = resultsItems.concat('<option value="true" selected>Yes</option>');
+							 resultsItems = resultsItems.concat('<option value="false" >No</option>');
+					 }else{
+						 
+						 if(this.value == "true"){
+							  resultsItems = resultsItems.concat('<option value="true" selected>Yes</option>');
+							  resultsItems = resultsItems.concat('<option value="false" >No</option>'); 
+						 }else{
+						      resultsItems = resultsItems.concat('<option value="true" >Yes</option>');
+							  resultsItems = resultsItems.concat('<option value="false" selected >No</option>'); 
+						 }	 
+					 }
+				 resultsItems =resultsItems.concat('</select></div></div>');
 					
 		   }else if(this.dataType == 'Date'){
 			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
@@ -220,27 +246,16 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('<input id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="'+this.value+'" required>');
 				 }
 				 resultsItems =resultsItems.concat('</div></div>');
-		   }/* else if(this.dataType == 'Datetime'){
-			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
-				 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
-				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
-				 if(this.value == 'undefined'){
-					 resultsItems = resultsItems.concat('<input  id="datetime.'+this.id+'" name="datetime.'+this.id+'" type="datetime-local" value="">');
-				 }else{
-					 resultsItems = resultsItems.concat('<input id="datetime.'+this.id+'" name="datetime.'+this.id+'" type="datetime-local" value="'+this.value+'" required>');
-				 }
-				 resultsItems =resultsItems.concat('</div></div>');
-		   } */
-		  			 
+		   } 
 	     });               
 	   				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 	   				 resultsItems = resultsItems.concat('<label class="control-label">Attachment</label>');
 	   				 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
-	   				 resultsItems = resultsItems.concat('<input type="file" name="documentTypeFile" id="documentTypeFile" accept="*image/*" />');
+	   				 resultsItems = resultsItems.concat('<input type="file" name="documentTypeFile" id="documentTypeFile" accept="image/*,application/pdf" />');
 	   				 if(filepath != ""){
 	   					 console.log("File : "+filepath);
 	   					 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
-		   				 resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="file:///'+filepath+'" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>'); 					 
+		   				 resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="'+filepath+'" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>'); 					 
 	   				 }
 	   			     resultsItems = resultsItems.concat('</div></div>');
 				     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-2">');
@@ -253,13 +268,7 @@ function navigatedToPatientDashboard(){
 	   
    }
    function setValue(checkboxElem) {
-	   $(checkboxElem).val(checkboxElem.checked ? "true" : "false");
-	   
-	  /*  if (checkboxElem.checked) {
-	      alert ("hi");
-	   } else {
-	     alert ("bye");
-	   } */
+	   $(checkboxElem).val(checkboxElem.checked ? true : false);
 	 }
    
    function textValidation(textElem){

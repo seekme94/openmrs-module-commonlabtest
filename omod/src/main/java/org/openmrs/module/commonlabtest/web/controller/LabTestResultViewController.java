@@ -81,7 +81,8 @@ public class LabTestResultViewController {
 		List<LabTestSample> testSample;
 		testSample = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);
 		for (LabTestSample labTestSample : testSample) {
-			if (labTestSample.getStatus().equals(LabTestSampleStatus.ACCEPTED)) {
+			if (labTestSample.getStatus().equals(LabTestSampleStatus.ACCEPTED)
+			        || labTestSample.getStatus().equals(LabTestSampleStatus.PROCESSED)) {
 				return Boolean.TRUE;
 			}
 			

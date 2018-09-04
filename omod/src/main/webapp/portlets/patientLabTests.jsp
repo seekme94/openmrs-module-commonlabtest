@@ -193,7 +193,7 @@ $(document).ready(function () {
 	 testOrderArray = new Array();
      <c:if test="${not empty model.testOrder}">
 	        <c:forEach var="testOrder" items="${model.testOrder}" varStatus="status">
-	       			 testOrderArray.push({requiresSpecimen:"${testOrder.labTestType.requiresSpecimen}",id:"${testOrder.testOrderId}", name :"${testOrder.labTestType.name}" ,testGroup:"${testOrder.labTestType.testGroup}",labReferenceNumber:"${testOrder.labReferenceNumber}",dateCreated:"${testOrder.labTestType.dateCreated}",createdBy:"${testOrder.labTestType.creator.username}",changedBy:"${testOrder.labTestType.changedBy}",uuid:"${testOrder.uuid}"});
+	       			 testOrderArray.push({requiresSpecimen:"${testOrder.labTestType.requiresSpecimen}",id:"${testOrder.testOrderId}", name :"${testOrder.labTestType.name}" ,testGroup:"${testOrder.labTestType.testGroup}",labReferenceNumber:"${testOrder.labReferenceNumber}",dateCreated:"${testOrder.labTestType.dateCreated}",createdBy:"${testOrder.creator.username}",changedBy:"${testOrder.changedBy}",uuid:"${testOrder.uuid}"});
 	        </c:forEach>
      </c:if>   
 	 
@@ -204,7 +204,7 @@ function getTestOrderList(){
    }
 
 function autoHide(){
-	   $("#alertdiv").fadeTo(2000, 500).slideUp(500, function(){
+	   $("#alertdiv").fadeTo(5000, 500).slideUp(500, function(){
 	           $("#alertdiv").slideUp(500);
 	           $("#alertdiv").remove();
             }); 	
@@ -261,12 +261,19 @@ function autoHide(){
 		 
 		 checkTestSampleStatus(testOrderId);
 		if(testOrderId == "" || testOrderId == null ){}
-		else if(requiresSpecimen == 'true' && isStatusAccepted == true){
-			window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?testOrderId="+testOrderId;  
+		else if(requiresSpecimen == 'true'){
+			console.log("Called");
+		    if(isStatusAccepted == true){
+				window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId;  
+			}
+			else {
+				showalert("Before submiting test results you should submit Test sample with ACCEPTED status","alert-info");
+			}
 		}
 		else {
-			showalert("Before submiting test results you should submit Test sample with accept status against this Test order...","alert-info");
+			window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId;
 		}
+		
 	}
 	
 	function checkTestSampleStatus(testOrderId){
@@ -278,7 +285,7 @@ function autoHide(){
 				dataType : "json",
 				success : function(data) {
 				   console.log("success  : " + data);
-				   isStatusAccepted = true;
+				   isStatusAccepted = data;
 				},
 				error : function(data) {
 					 isStatusAccepted = false;

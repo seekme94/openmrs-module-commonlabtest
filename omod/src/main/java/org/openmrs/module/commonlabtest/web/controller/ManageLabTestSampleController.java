@@ -40,7 +40,10 @@ public class ManageLabTestSampleController {
 			testSample = new ArrayList<LabTestSample>();
 		} else {
 			LabTest labTest = commonLabTestService.getLabTest(testOrderId);
-			if (labTest.getVoided()) {
+			if (labTest == null) {
+				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order does not exist");
+				return "redirect:../../patientDashboard.form?patientId=" + patientId;
+			} else if (labTest.getVoided()) {
 				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order is not found");
 				return "redirect:../../patientDashboard.form?patientId=" + patientId;
 			}
@@ -64,8 +67,8 @@ public class ManageLabTestSampleController {
 		String status;
 		try {
 			if (isAccepted.equals("1")) {
-				
 				labTestSample.setStatus(LabTestSampleStatus.ACCEPTED);
+				labTestSample.setComments("");
 				
 			} else {
 				labTestSample.setStatus(LabTestSampleStatus.REJECTED);

@@ -92,11 +92,11 @@ public class LabTestSample extends BaseOpenmrsData {
 	
 	private transient Boolean expirable = Boolean.FALSE;
 	
-	@Temporal(TemporalType.DATE)
+	// @Temporal(TemporalType.DATE)
 	@Column(name = "expiry_date")
 	private Date expiryDate;
 	
-	@Temporal(TemporalType.DATE)
+	// @Temporal(TemporalType.DATE)
 	@Column(name = "processed_date")
 	private Date processedDate;
 	

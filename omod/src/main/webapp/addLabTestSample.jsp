@@ -83,7 +83,7 @@ legend.scheduler-border {
 		   	<form:input  path="labTest.testOrderId" hidden="true" value="${orderId}"></form:input>
 		    <form:input  path="labTestSampleId" hidden="true" value=""></form:input>
 		    <form:input  path="status" hidden="true" value=""></form:input>
-		    
+		    <form:input  path="comments" hidden="true" value=""></form:input>
 		    <div class="row" >
 				   <div class="col-md-2">
 				        <form:label  class="control-label" path="specimenType"><spring:message code="general.specimenType" /><span class="text-danger required">*</span></form:label>
