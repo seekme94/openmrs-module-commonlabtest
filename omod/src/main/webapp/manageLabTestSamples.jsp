@@ -106,6 +106,7 @@ legend.scheduler-border {
 	        
 		       <c:forEach var="testSample" items="${labSampleTest}">
 		          <c:if test="${! empty labSampleTest}">
+		          
 						<tr>
 						   <td><a style="text-decoration:none"  href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}" class="hvr-icon-grow"  ><span><i class="fa fa-edit hvr-icon"></i></span>  ${testSample.labTestSampleId}</a></td>
 						    <td>${testSample.getSpecimenType().getName()}</td>
@@ -113,20 +114,16 @@ legend.scheduler-border {
 						    <td> <fmt:formatDate value="${testSample.collectionDate}" pattern="yyyy-mm-dd" /></td>
 						    <td>${testSample.getStatus()}</td>
 						    <td hidden ="true" class ="uuid">${testSample.uuid}</td>
-							<td>
-							<button type="button" onclick="rejection(this)" class="btn  reject" >Reject</button> 
-							<%-- <c:choose>
-									 <c:when test="${testSample.getStatus()}== 'REJECTED'">
-									    <button type="button" class="btn  reject" >Reject</button> 
-								        <br />
-								    </c:when>    
-								    <c:otherwise>
-								    	 <button type="button" disabled class="btn  reject" >Reject</button> 
-								         <br />
-								    </c:otherwise>
-							 </c:choose>    --%>
-							</td> 
-							<td><button type="button" onclick="accept(this)" class="btn  accept" >Accept</button></td> 	
+						    	<c:choose>
+							         <c:when test = "${testSample.status == 'PROCESSED'}">
+							          	    <td><button type="button" disabled  class="btn  reject" >Reject</button> </td> 
+											<td><button type="button" disabled  class="btn  accept" >Accept</button></td>
+							         </c:when>
+							         <c:otherwise>
+								          	<td><button type="button" onclick="rejection(this)" class="btn  reject" >Reject</button> </td> 
+											<td><button type="button" onclick="accept(this)" class="btn  accept" >Accept</button></td> 	
+							         </c:otherwise>
+			       				</c:choose>
 						</tr>
 					</c:if>	
 				 </c:forEach>

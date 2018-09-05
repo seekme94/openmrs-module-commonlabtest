@@ -40,14 +40,14 @@ public class LabTestOrderController {
 	CommonLabTestService commonLabTestService;
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestOrder.form")
-	public String showLabTestTypes(@RequestParam(required = true) Integer patientId,
+	public String showForm(@RequestParam(required = true) Integer patientId,
 	        @RequestParam(required = false) Integer testOrderId, @RequestParam(required = false) String error, ModelMap model) {
 		
-		LabTest test;
+		LabTest labTest;
 		if (testOrderId == null) {
-			test = new LabTest();
+			labTest = new LabTest();
 		} else {
-			test = commonLabTestService.getLabTest(testOrderId);
+			labTest = commonLabTestService.getLabTest(testOrderId);
 		}
 		//Patient patient =Context.getPatientService().getPatient(patientId);
 		
@@ -73,7 +73,7 @@ public class LabTestOrderController {
 			}
 		}
 		
-		model.addAttribute("labTest", test);
+		model.addAttribute("labTest", labTest);
 		model.addAttribute("patientId", patientId);
 		model.addAttribute("testTypes", labTestTypeHaveAttributes);
 		model.addAttribute("error", error);
@@ -136,7 +136,7 @@ public class LabTestOrderController {
 			}
 		}
 		catch (Exception e) {
-			status = "Lab Test Order could not be saved";
+			status = "Error! could not save Lab Test Order";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTest.getTestOrderId() == null) {
@@ -152,7 +152,7 @@ public class LabTestOrderController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/voidlabtestorder.form")
-	public String onRetire(ModelMap model, HttpSession httpSession, HttpServletRequest request,
+	public String onVoid(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid, @RequestParam("voidReason") String voidReason) {
 		LabTest labTest = commonLabTestService.getLabTestByUuid(uuid);
 		String status;
@@ -165,7 +165,7 @@ public class LabTestOrderController {
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = "Lab Test Order could not be retire due to exceptions";
+			status = "Error! could not save Lab Test Order";
 			e.printStackTrace();
 			if (labTest.getTestOrderId() == null) {
 				return "redirect:addLabTestOrder.form?patientId=" + labTest.getOrder().getPatient().getPatientId();

@@ -213,7 +213,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		//		return sessionFactory.getCurrentSession().createSQLQuery(query.toString()).list();
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestAttribute.class);
 		if (labTestAttributeType != null) {
-			criteria.add(Restrictions.eqOrIsNull("attributeTypeId", labTestAttributeType.getId()));
+			criteria.add(Restrictions.eqOrIsNull("attributeTypeId.labTestAttributeTypeId", labTestAttributeType.getId()));
 		}
 		if (labTest != null) {
 			// TODO: criteria.add(Restrictions.eqOrIsNull("labTest", labTest));
@@ -230,7 +230,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));
 		}
-		criteria.addOrder(Order.asc("testOrderId")).addOrder(Order.asc("voided")).list();
+		criteria.addOrder(Order.asc("testOrderId.testOrderId")).addOrder(Order.asc("voided")).list();
 		return criteria.list();
 	}
 	

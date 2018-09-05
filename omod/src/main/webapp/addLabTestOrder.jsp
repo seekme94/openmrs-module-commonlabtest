@@ -81,7 +81,9 @@ legend.scheduler-border {
 			<form:input  path="order.orderer.providerId" hidden="true" value="${provider.providerId}"></form:input>	
 			<form:input  path="order.orderType.orderTypeId" hidden="true" value="3"></form:input>	
 			<form:input  path="order.orderId" hidden="true" id="orderId" ></form:input>
-		    <div class="row" >
+			<form:input  path="resultComments" hidden="true" id="resultComments" ></form:input>
+			<form:input  path="filePath" hidden="true" id="filePath" ></form:input>	    
+               <div class="row" >
 				   <div class="col-md-3">
 				        <form:label  class="control-label" path="order.encounter"><spring:message code="general.encounter" /><span class=" text-danger required">*</span></form:label>
 				   </div>

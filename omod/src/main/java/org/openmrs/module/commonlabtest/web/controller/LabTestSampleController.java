@@ -38,8 +38,6 @@ public class LabTestSampleController {
 	
 	private final String SUCCESS_ADD_FORM_VIEW = "/module/commonlabtest/addLabTestSample";
 	
-	public static String DEFAULT_DATE_PATTERN = "MM/dd/yyyy HH:mm:ss";
-	
 	@Autowired
 	CommonLabTestService commonLabTestService;
 	
@@ -51,11 +49,10 @@ public class LabTestSampleController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestSample.form")
-	public String showLabTestTypes(HttpServletRequest request, ModelMap model,
-	        @RequestParam(required = true) Integer patientId, @RequestParam(required = false) Integer testSampleId,
-	        @RequestParam(required = false) Integer orderId, @RequestParam(value = "error", required = false) String error) {
+	public String showForm(HttpServletRequest request, ModelMap model, @RequestParam(required = true) Integer patientId,
+	        @RequestParam(required = false) Integer testSampleId, @RequestParam(required = false) Integer orderId,
+	        @RequestParam(value = "error", required = false) String error) {
 		
-		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
 		String orderDate = "";
 		if (orderId != null) {
 			LabTest labTest = commonLabTestService.getLabTest(orderId);
@@ -155,7 +152,7 @@ public class LabTestSampleController {
 			}
 		}
 		catch (Exception e) {
-			status = "Lab Test sample could not be saved";
+			status = "Error! could not save Lab Test Sample";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestSample.getLabTestSampleId() == null) {
@@ -187,7 +184,7 @@ public class LabTestSampleController {
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = "Lab Test sample could not be voided";
+			status = "Error! could not save Lab Test Sample";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestSample.getLabTestSampleId() == null) {

@@ -539,5 +539,16 @@
 			<column name="report_file_path" type="varchar(1024)"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="commonlabtest-2018-09-05-5" author="shujaat.ali">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="commonlabtest_test" columnName="result_comments"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="commonlabtest_test">
+			<column name="result_comments" type="varchar(1024)"/>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

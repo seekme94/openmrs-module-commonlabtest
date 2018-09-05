@@ -657,10 +657,10 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 	@Authorized(CommonLabTestConfig.DELETE_LAB_TEST_PRIVILEGE)
 	@Transactional
 	public void voidLabTest(LabTest labTest, String voidReason) throws APIException {
-		for (LabTestSample sample : labTest.getLabTestSamples()) {
+		for (LabTestSample sample : dao.getLabTestSamples(labTest, Boolean.FALSE)) {
 			voidLabTestSample(sample, voidReason);
 		}
-		for (LabTestAttribute attribute : labTest.getAttributes()) {
+		for (LabTestAttribute attribute : dao.getLabTestAttributes(labTest.getId())) {
 			voidLabTestAttribute(attribute, voidReason);
 		}
 		labTest.setVoided(true);
@@ -680,6 +680,7 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 		labTestAttribute.setVoided(true);
 		labTestAttribute.setVoidedBy(Context.getAuthenticatedUser());
 		labTestAttribute.setVoidReason(voidReason);
+		labTestAttribute.setDateVoided(new Date());
 		dao.saveLabTestAttribute(labTestAttribute);
 	}
 	
@@ -693,6 +694,7 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 		labTestSample.setVoided(true);
 		labTestSample.setVoidedBy(Context.getAuthenticatedUser());
 		labTestSample.setVoidReason(voidReason);
+		labTestSample.setDateVoided(new Date());
 		dao.saveLabTestSample(labTestSample);
 	}
 	

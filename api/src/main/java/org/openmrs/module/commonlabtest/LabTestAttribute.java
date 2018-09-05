@@ -125,11 +125,11 @@ public class LabTestAttribute extends BaseAttribute<LabTestAttributeType, LabTes
 	 * @param attributeTypeId the attributeTypeId to set
 	 * @deprecated use <code>setAttributeType</code> instead
 	 */
-	@Deprecated
+	/*@Deprecated
 	public void setAttributeTypeId(Integer attributeTypeId) {
 		getAttributeType().setId(attributeTypeId);
 	}
-	
+	*/
 	/**
 	 * @return the valueReference
 	 */

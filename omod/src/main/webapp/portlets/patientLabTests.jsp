@@ -267,7 +267,7 @@ function autoHide(){
 				window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId;  
 			}
 			else {
-				showalert("Before submiting test results you should submit Test sample with ACCEPTED status","alert-info");
+				showalert("To enter a test result, one sample with ACCEPTED status should exist","alert-info");
 			}
 		}
 		else {

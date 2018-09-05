@@ -81,7 +81,7 @@ public class ManageLabTestSampleController {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			status = "Lab Test sample could not be saved";
+			status = "Error! could not save Lab Test Sample.";
 			model.addAttribute("error", status);
 			return "redirect:manageLabTestSamples.form?patientId=" + patientId + "&testOrderId="
 			        + labTestSample.getLabTest().getTestOrderId();

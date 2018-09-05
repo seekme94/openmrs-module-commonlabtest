@@ -50,7 +50,7 @@ public class LabTestResultController {
 	ServletContext context;
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestResult.form")
-	public String showLabTestTypes(HttpServletRequest request, @RequestParam(required = false) Integer testOrderId,
+	public String showForm(HttpServletRequest request, @RequestParam(required = false) Integer testOrderId,
 	        @RequestParam(required = false) Integer patientId, ModelMap model) {
 		
 		LabTest labTest = commonLabTestService.getLabTest(testOrderId);
@@ -148,11 +148,12 @@ public class LabTestResultController {
 		model.addAttribute("attributeTypeList", attributeTypeArray);
 		if (testAttributes.size() > 0) {
 			model.addAttribute("update", Boolean.TRUE);
-			model.addAttribute("filepath", labTest.getFilepath());
+			model.addAttribute("filepath", labTest.getFilePath());
+			model.addAttribute("resultComments", labTest.getResultComments());
 		} else {
 			model.addAttribute("update", Boolean.FALSE);
 			model.addAttribute("filepath", "");
-			
+			model.addAttribute("resultComments", "");
 		}
 		model.addAttribute("testOrderId", testOrderId);
 		model.addAttribute("testTypeName", attributeTypeList.get(0).getLabTestType().getName());
@@ -189,23 +190,23 @@ public class LabTestResultController {
 				testAttribute.setLabTest(labTest);
 				testAttribute.setAttributeTypeId(labTestAttributeType);
 			}
-			   //set the value reference 
-				if (conceptValue != null && !conceptValue.equals("") && !conceptValue.isEmpty()) {
-					testAttribute.setValueReference(conceptValue);
-					labTestAttributes.add(testAttribute);
-				} else if (textValue != null && !textValue.equals("") && !textValue.isEmpty()) {
-					testAttribute.setValueReference(textValue);
-					labTestAttributes.add(testAttribute);
-				} else if (boolValue != null && !boolValue.equals("") && !boolValue.isEmpty()) {
-					testAttribute.setValueReference(boolValue);
-					labTestAttributes.add(testAttribute);
-				} else if (floatValue != null && !floatValue.equals("") && !floatValue.isEmpty()) {
-					testAttribute.setValueReference(floatValue);
-					labTestAttributes.add(testAttribute);
-				} else if (dateValue != null && !dateValue.equals("") && !dateValue.isEmpty()) {
-					testAttribute.setValueReference(dateValue);
-					labTestAttributes.add(testAttribute);
-				}
+			//set the value reference 
+			if (conceptValue != null && !conceptValue.equals("") && !conceptValue.isEmpty()) {
+				testAttribute.setValueReference(conceptValue);
+				labTestAttributes.add(testAttribute);
+			} else if (textValue != null && !textValue.equals("") && !textValue.isEmpty()) {
+				testAttribute.setValueReference(textValue);
+				labTestAttributes.add(testAttribute);
+			} else if (boolValue != null && !boolValue.equals("") && !boolValue.isEmpty()) {
+				testAttribute.setValueReference(boolValue);
+				labTestAttributes.add(testAttribute);
+			} else if (floatValue != null && !floatValue.equals("") && !floatValue.isEmpty()) {
+				testAttribute.setValueReference(floatValue);
+				labTestAttributes.add(testAttribute);
+			} else if (dateValue != null && !dateValue.equals("") && !dateValue.isEmpty()) {
+				testAttribute.setValueReference(dateValue);
+				labTestAttributes.add(testAttribute);
+			}
 		}
 		//save the file
 		if (documentTypeFile.isEmpty()) {} else {
@@ -217,8 +218,8 @@ public class LabTestResultController {
 				        + documentTypeFile.getOriginalFilename().replace(" ", "-")));
 				
 				String name = documentTypeFile.getOriginalFilename().replace(" ", "-");
-				labTest.setFilepath(fileDirectory + "/" + name);
-				commonLabTestService.saveLabTest(labTest);
+				labTest.setFilePath(fileDirectory + "/" + name);
+				commonLabTestService.saveLabTest(labTest); //need to review this lines
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -232,11 +233,11 @@ public class LabTestResultController {
 				labTestSample.setProcessedDate(new Date());
 				commonLabTestService.saveLabTestSample(labTestSample);
 			}
-			/*else {
-				labTestSample.setStatus(LabTestSampleStatus.REJECTED);
-				labTestSample.setProcessedDate(new Date());
-				commonLabTestService.saveLabTestSample(labTestSample);
-			}*/
+		}
+		String resultComments = request.getParameter("resultComments");
+		if (!resultComments.equals("") && resultComments != null) {
+			labTest.setResultComments(resultComments);
+			commonLabTestService.saveLabTest(labTest);//need to review this lines
 		}
 		
 		commonLabTestService.saveLabTestAttributes(labTestAttributes);

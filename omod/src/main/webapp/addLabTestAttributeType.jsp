@@ -174,19 +174,30 @@ legend.scheduler-border {
 							   	
 							   	</div>
 					 	   </div>
+					 	   
 					 	   <!-- datatypeClassname -->
 					 	    <div class="row">
 							   <div class="col-md-2">
 									<form:label path="datatypeClassname" class="control-label"><spring:message code="general.dataType" /></form:label>							
 							   </div> 
 							   <div class="col-md-6">
-									<form:select class="form-control" path="datatypeClassname" id="data_type_name">
-										 <form:options  />
-										<c:forEach items="${datatypes}"  var="datatype">
-<%-- 											<form:option item = "${datatype}" value="${datatype}" <c:if test="${datatype == status.value}">selected</c:if>><spring:message code="${datatype}.name"/></form:option>
- --%>										    <form:option item ="${datatype}" value="${datatype}" ><c:out value="${datatype}.name" /></form:option>
-										</c:forEach>
-									</form:select>
+							      <c:if test = "${available != true}">
+							   
+								         		<form:select class="form-control" path="datatypeClassname" id="data_type_name">
+													 <form:options  />
+													<c:forEach items="${datatypes}"  var="datatype">
+													    <form:option item ="${datatype}" value="${datatype}" ><c:out value="${datatype}.name" /></form:option>
+													</c:forEach>
+												</form:select>
+								         </c:if>
+								         <c:if test = "${available == true}">
+												<form:select class="form-control" disabled="true" path="datatypeClassname" id="data_type_name">
+													 <form:options  />
+													<c:forEach items="${datatypes}"  var="datatype">
+													    <form:option item ="${datatype}" value="${datatype}" ><c:out value="${datatype}.name" /></form:option>
+													</c:forEach>
+												</form:select>								        
+										 </c:if>
 							   	</div>
 							   	<div class ="col-md-4">
 							   		<font color="#D0D0D0"><span id="datatypeDescription"></span></font>
@@ -198,7 +209,12 @@ legend.scheduler-border {
 					 	  		   <form:label path="datatypeConfig" class="control-label"><spring:message code="general.datatypeConfiguration" /></form:label>
 								</div>
 							   <div class="col-md-6">
-									<form:textarea class="form-control" path="datatypeConfig" id="datatypeConfig" ></form:textarea>
+								         <c:if test = "${available != true}">
+								         	<form:textarea class="form-control" path="datatypeConfig" id="datatypeConfig" ></form:textarea>
+								         </c:if>
+								        <c:if test = "${available == true}">
+								          	<form:textarea class="form-control" disabled="true" path="datatypeConfig" id="datatypeConfig" ></form:textarea>
+								        </c:if>   
 							   	</div>
 					 	   </div>
 					 	     <!-- preferredHandlerClassname -->
@@ -616,6 +632,10 @@ legend.scheduler-border {
 					document.getElementById("sortweight").style.display= 'none';	
 				} 
 			
+		if(isValidate ==true){
+			document.getElementById("data_type_name").disabled = false;
+			document.getElementById("datatypeConfig").disabled = false;
+		}
 	
 		return isValidate;
 	}

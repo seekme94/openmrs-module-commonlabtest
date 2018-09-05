@@ -83,7 +83,7 @@ public class LabTestTypeController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/addLabTestType.form")
-	public String onAdd(ModelMap model, HttpSession httpSession,
+	public String onSubmit(ModelMap model, HttpSession httpSession,
 	        @ModelAttribute("anyRequestObject") Object anyRequestObject, HttpServletRequest request,
 	        @ModelAttribute("labTestType") LabTestType labTestType, BindingResult result) {
 		String status = "";
@@ -105,7 +105,7 @@ public class LabTestTypeController {
 				status = sb.toString();
 			}
 			catch (Exception e) {
-				status = "Lab Test type could not be saved due to exceptions";
+				status = "Error! could not save Lab Test Type.";
 				e.printStackTrace();
 				model.addAttribute("error", status);
 				if (labTestType.getLabTestTypeId() == null) {
@@ -134,7 +134,7 @@ public class LabTestTypeController {
 			status = sb.toString();
 		}
 		catch (Exception exception) {
-			status = "Lab Test type could not be retired due to exceptions";
+			status = "Error! could not save Lab Test Type.";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestType.getLabTestTypeId() == null) {
@@ -163,7 +163,7 @@ public class LabTestTypeController {
 			status = sb.toString();
 		}
 		catch (Exception exception) {
-			status = "Lab Test type could not be delete due to exceptions";
+			status = "Error! could not save Lab Test Type.";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestType.getLabTestTypeId() == null) {

@@ -3,6 +3,7 @@ package org.openmrs.module.commonlabtest.web.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.customdatatype.CustomDatatypeUtil;
+import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.LabTestAttributeType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.util.Collection;
+import java.util.List;
 
 @Controller
 public class LabTestAttributeTypeController {
@@ -49,6 +52,14 @@ public class LabTestAttributeTypeController {
 			attributeType = new LabTestAttributeType();
 		} else {
 			attributeType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
+			List<LabTestAttribute> labTestAttributes = commonLabTestService.getLabTestAttributes(attributeType,
+			    Boolean.FALSE);
+			
+			if (labTestAttributes.size() > 0) {
+				model.addAttribute("available", Boolean.TRUE);
+			} else {
+				model.addAttribute("available", Boolean.FALSE);
+			}
 		}
 		model.addAttribute("listTestType", commonLabTestService.getAllLabTestTypes(Boolean.FALSE));
 		model.addAttribute("attributeType", attributeType);
@@ -81,7 +92,7 @@ public class LabTestAttributeTypeController {
 			}
 		}
 		catch (Exception e) {
-			status = "Lab Test Attribute type could not be saved due to exceptions";
+			status = "Error! could not save Lab Test Attribute Type";
 			//status = e.getLocalizedMessage();
 			e.printStackTrace();
 			
@@ -111,7 +122,7 @@ public class LabTestAttributeTypeController {
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = "Lab Test Attribute type could not be retire due to exceptions";
+			status = "Error! could not save Lab Test Attribute Type";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (attributeType.getLabTestAttributeTypeId() == null) {
@@ -140,7 +151,7 @@ public class LabTestAttributeTypeController {
 		}
 		catch (Exception exception) {
 			//status = exception.getLocalizedMessage();
-			status = "Lab Test Attribute type could not be Delete due to exceptions";
+			status = "Error! could not save Lab Test Attribute Type";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			return "redirect:addLabTestAttributeType.form?uuid=" + attributeType.getUuid();

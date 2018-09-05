@@ -72,7 +72,10 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 	private String labInstructions;
 	
 	@Column(name = "report_file_path")
-	private String filepath;
+	private String filePath;
+	
+	@Column(name = "result_comments")
+	private String resultComments;
 	
 	@ContainedIn
 	private transient Set<LabTestSample> labTestSamples = new HashSet<LabTestSample>(0);
@@ -110,12 +113,20 @@ public class LabTest extends BaseCustomizableData<LabTestAttribute> implements j
 		order.setId(getTestOrderId());
 	}
 	
-	public String getFilepath() {
-		return filepath;
+	public String getResultComments() {
+		return resultComments;
 	}
 	
-	public void setFilepath(String filepath) {
-		this.filepath = filepath;
+	public void setResultComments(String resultComments) {
+		this.resultComments = resultComments;
+	}
+	
+	public String getFilePath() {
+		return filePath;
+	}
+	
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 	
 	/**
