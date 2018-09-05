@@ -15,6 +15,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,11 +25,15 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -587,9 +593,116 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 * {@link org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl#deleteLabTestType(org.openmrs.module.commonlabtest.LabTestType)}
 	 * .
 	 */
+	@SuppressWarnings("deprecation")
 	@Test(expected = APIException.class)
 	public final void shouldNotDeleteLabTestType() {
 		service.deleteLabTestType(chestXRay, false);
 	}
 	
+	/**
+	 * Test method for
+	 * {@link org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl#deleteLabTestType(org.openmrs.module.commonlabtest.LabTestType, org.openmrs.module.commonlabtest.LabTestType)}
+	 * .
+	 */
+	@Test
+	public final void shouldHandleDependenciesOnLabTestTypeDelete_LabTests() {
+		doNothing().when(dao).purgeLabTestType(any(LabTestType.class));
+		List<LabTest> labTests = Arrays.asList(harryGxp, hermioneGxp);
+		when(
+		    dao.getLabTests(any(LabTestType.class), any(Patient.class), any(String.class), any(String.class),
+		        any(Concept.class), any(Provider.class), any(Date.class), any(Date.class), any(Boolean.class))).thenReturn(
+		    labTests);
+		for (LabTest labTest : labTests) {
+			when(dao.saveLabTest(labTest)).thenReturn(labTest);
+		}
+		when(dao.getLabTestAttributeTypes(any(LabTestType.class), any(Boolean.class))).thenReturn(null);
+		when(dao.getLabTestSamples(any(LabTest.class), any(Boolean.class))).thenReturn(null);
+		when(dao.getLabTestAttributes(any(Integer.class))).thenReturn(null);
+		doNothing().when(dao).purgeLabTestType(geneXpert);
+		service.deleteLabTestType(geneXpert, unknownTest);
+		// Assert that the test type has changed
+		for (LabTest labTest : labTests) {
+			assertTrue("LabTestType should be changed to Unkonwn after deletion",
+			    labTest.getLabTestType().equals(unknownTest));
+		}
+		verify(dao, times(1)).getLabTests(any(LabTestType.class), any(Patient.class), any(String.class), any(String.class),
+		    any(Concept.class), any(Provider.class), any(Date.class), any(Date.class), any(Boolean.class));
+		verify(dao, times(1)).getLabTestAttributeTypes(any(LabTestType.class), any(Boolean.class));
+		verify(dao, atLeast(2)).saveLabTest(any(LabTest.class));
+		verify(dao, atLeast(2)).getLabTestSamples(any(LabTest.class), any(Boolean.class));
+		verify(dao, atLeast(2)).getLabTestAttributes(any(Integer.class));
+		verify(dao, times(1)).purgeLabTestType(any(LabTestType.class));
+		verifyNoMoreInteractions(dao);
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl#deleteLabTestType(org.openmrs.module.commonlabtest.LabTestType, org.openmrs.module.commonlabtest.LabTestType)}
+	 * .
+	 */
+	@Test
+	@Ignore
+	public final void shouldHandleDependenciesOnLabTestTypeDelete_LabTestAttributes() {
+		// TODO: 
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl#voidLabTest(org.openmrs.module.commonlabtest.LabTest)}
+	 * .
+	 */
+	@Test
+	public final void testVoidLabTest() {
+		// TODO: 
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl#voidLabTestAttributes(org.openmrs.module.commonlabtest.LabTest)}
+	 * .
+	 */
+	@Test
+	public final void testVoidLabTestAttributes() {
+		// Add a rejected sample
+		LabTestSample rejectedSample = new LabTestSample(99);
+		rejectedSample.setCollector(owais);
+		Calendar collectionDate = Calendar.getInstance();
+		collectionDate.set(2018 - 1900, 5, 1);
+		rejectedSample.setCollectionDate(collectionDate.getTime());
+		rejectedSample.setStatus(LabTestSampleStatus.REJECTED);
+		rejectedSample.setSpecimenType(new Concept(99));
+		rejectedSample.setSpecimenSite(new Concept(100));
+		rejectedSample.setSampleIdentifier("HARRY-SPUTUM-2");
+		rejectedSample.setQuantity(1D);
+		rejectedSample.setUnits("ml");
+		rejectedSample.setUuid(UUID.randomUUID().toString());
+		harryGxp.addLabTestSample(rejectedSample);
+		
+		when(dao.saveLabTestSample(any(LabTestSample.class))).thenReturn(harrySample);
+		for (LabTestAttribute attribute : harryGxp.getAttributes()) {
+			when(dao.saveLabTestAttribute(attribute)).thenReturn(attribute);
+		}
+		List<LabTestSample> harrySamples = Arrays.asList(harrySample, rejectedSample);
+		when(dao.getLabTestSamples(any(LabTest.class), any(Boolean.class))).thenReturn(harrySamples);
+		List<LabTestAttribute> harryAttributes = Arrays.asList(harryCartridgeId, harryMtbResult, harryRifResult);
+		when(dao.getLabTestAttributes(any(Integer.class))).thenReturn(harryAttributes);
+		
+		service.voidLabTestAttributes(harryGxp, "Testing");
+		// Test if (only) PROCESSED samples are reverted back to COLLECTED
+		Set<LabTestSample> samples = harryGxp.getLabTestSamples();
+		for (LabTestSample sample : samples) {
+			if (sample.getSampleIdentifier().equals("HARRY-SPUTUM-1")) {
+				assertTrue("PROCESSED LabTestSample should be reverted to COLLECTED",
+				    sample.getStatus() == LabTestSampleStatus.COLLECTED);
+			} else if (sample.getSampleIdentifier().equals("HARRY-SPUTUM-2")) {
+				assertTrue("REJECTED LabTestSample should remain unchanged",
+				    sample.getStatus() == LabTestSampleStatus.REJECTED);
+			}
+		}
+		verify(dao, times(1)).getLabTestSamples(any(LabTest.class), any(Boolean.class));
+		verify(dao, times(1)).getLabTestAttributes(any(Integer.class));
+		verify(dao, times(1)).saveLabTestSample(any(LabTestSample.class));
+		verify(dao, atLeastOnce()).saveLabTestAttribute(any(LabTestAttribute.class));
+		verifyNoMoreInteractions(dao);
+	}
 }
