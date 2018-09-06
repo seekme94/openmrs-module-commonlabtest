@@ -100,22 +100,26 @@ public class LabTestResultController {
 			if (lta.getDatatypeClassname().equalsIgnoreCase("org.openmrs.customdatatype.datatype.ConceptDatatype")) {
 				if (lta.getDatatypeConfig() != null && lta.getDatatypeConfig() != "" && !lta.getDatatypeConfig().isEmpty()) {
 					System.out.println("Data Conf :" + lta.getDatatypeConfig());
-					Concept concept = Context.getConceptService().getConcept(Integer.parseInt(lta.getDatatypeConfig()));
-					
-					if (concept.getDatatype().getName().equals("Coded")) {
-						JsonArray codedArray = new JsonArray();
-						Collection<ConceptAnswer> ans = concept.getAnswers();
-						for (ConceptAnswer ca : ans) {
-							JsonObject jo = new JsonObject();
-							jo.addProperty("conceptName", ca.getAnswerConcept().getName().getName());
-							jo.addProperty("conceptId", ca.getConceptAnswerId());
-							codedArray.add(jo);
+					boolean isInt = isInteger(lta.getDatatypeConfig());//check whether is integer or not ..
+					if (isInt) {
+						Concept concept = Context.getConceptService().getConcept(Integer.parseInt(lta.getDatatypeConfig()));
+						if (concept != null) {
+							if (concept.getDatatype().getName().equals("Coded")) {
+								JsonArray codedArray = new JsonArray();
+								Collection<ConceptAnswer> ans = concept.getAnswers();
+								for (ConceptAnswer ca : ans) {
+									JsonObject jo = new JsonObject();
+									jo.addProperty("conceptName", ca.getAnswerConcept().getName().getName());
+									jo.addProperty("conceptId", ca.getAnswerConcept().getId());
+									codedArray.add(jo);
+								}
+								objAttrType.add("conceptOptions", codedArray);
+								objAttrType.addProperty("dataType", getDataType(lta.getDatatypeClassname()));
+								
+							} else {
+								objAttrType.addProperty("dataType", getDataType(concept.getDatatype().getName()));
+							}
 						}
-						objAttrType.add("conceptOptions", codedArray);
-						objAttrType.addProperty("dataType", getDataType(lta.getDatatypeClassname()));
-						
-					} else {
-						objAttrType.addProperty("dataType", getDataType(concept.getDatatype().getName()));
 					}
 				}
 			}/* else if (lta.getDatatypeClassname().equalsIgnoreCase("org.openmrs.customdatatype.datatype.BooleanDatatype")) {
@@ -156,6 +160,7 @@ public class LabTestResultController {
 			model.addAttribute("resultComments", "");
 		}
 		model.addAttribute("testOrderId", testOrderId);
+		model.addAttribute("patientId", patientId);
 		model.addAttribute("testTypeName", attributeTypeList.get(0).getLabTestType().getName());
 		model.addAttribute("patientId", labTest.getOrder().getPatient().getPatientId());
 		
@@ -164,10 +169,19 @@ public class LabTestResultController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/addLabTestResult.form")
 	public String onSubmit(HttpServletRequest request, @RequestParam(required = true) Integer testOrderId,
-	        @RequestParam(required = false) Integer testAttributeId,
+	        @RequestParam(required = false) Integer testAttributeId, @RequestParam(required = false) Integer patientId,
 	        @RequestParam(required = false) MultipartFile documentTypeFile, @RequestParam(required = false) Boolean update) {
 		
 		LabTest labTest = commonLabTestService.getLabTest(testOrderId);
+		
+		if (labTest == null) {
+			request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order does not exist");
+			return "redirect:../../patientDashboard.form?patientId=" + patientId;
+		} else if (labTest.getVoided()) {
+			request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order is voided");
+			return "redirect:../../patientDashboard.form?patientId=" + patientId;
+		}
+		
 		List<LabTestAttributeType> attributeTypeList = commonLabTestService.getLabTestAttributeTypes(
 		    labTest.getLabTestType(), false);
 		String conceptValue = "", textValue = "", boolValue = "", floatValue, testAtrrId, dateValue;
@@ -267,5 +281,19 @@ public class LabTestResultController {
 		}
 		
 		return "N/A";
+	}
+	
+	public static boolean isInteger(String s) {
+		try {
+			Integer.parseInt(s);
+		}
+		catch (NumberFormatException e) {
+			return false;
+		}
+		catch (NullPointerException e) {
+			return false;
+		}
+		// only got here if we didn't return false
+		return true;
 	}
 }

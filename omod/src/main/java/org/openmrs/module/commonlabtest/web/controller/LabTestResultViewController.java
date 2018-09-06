@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.LabTestAttributeType;
@@ -60,13 +62,38 @@ public class LabTestResultViewController {
 		for (LabTestAttribute labTestResult : testAttributes) {
 			JsonObject objTestResult = new JsonObject();
 			if (labTestResult.getAttributeType() != null) {
-				objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
-				objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
+				if (labTestResult.getAttributeType().getDatatypeClassname()
+				        .equals("org.openmrs.customdatatype.datatype.ConceptDatatype")) {
+					objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
+					boolean isTrue = isInteger(labTestResult.getAttributeType().getDatatypeConfig());
+					if (isTrue) {
+						Concept conceptConfig = Context.getConceptService().getConcept(
+						    Integer.parseInt(labTestResult.getAttributeType().getDatatypeConfig()));
+						if (conceptConfig != null) {
+							if (conceptConfig.getDatatype().getName().equals("Coded")) {
+								Concept concept = Context.getConceptService().getConcept(
+								    Integer.parseInt(labTestResult.getValueReference()));
+								objTestResult.addProperty("valuesReference", concept.getName().getName());
+							} else {
+								objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
+							}
+						}
+					}
+				} else {
+					objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
+					objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
+				}
+				
 				testResultArray.add(objTestResult);
 			}
-			
 		}
-		
+		String comments = labTest.getResultComments();
+		if (!comments.equals("")) {
+			JsonObject objTestResult = new JsonObject();
+			objTestResult.addProperty("question", "Comments");
+			objTestResult.addProperty("valuesReference", comments);
+			testResultArray.add(objTestResult);
+		}
 		testResultList.add("sample", testSampleArray);
 		testResultList.add("result", testResultArray);
 		
@@ -127,6 +154,20 @@ public class LabTestResultViewController {
 		}
 		testAttributeList.add("sortweightlist", testAttributeArray);
 		return testAttributeList.toString();
+	}
+	
+	public static boolean isInteger(String s) {
+		try {
+			Integer.parseInt(s);
+		}
+		catch (NumberFormatException e) {
+			return false;
+		}
+		catch (NullPointerException e) {
+			return false;
+		}
+		// only got here if we didn't return false
+		return true;
 	}
 	
 }

@@ -75,10 +75,11 @@ public class CommonLabTestActivator extends BaseModuleActivator {
 		GlobalProperty gp = service.getGlobalPropertyObject(prop);
 		if (gp == null) {
 			service.saveGlobalProperty(new GlobalProperty(prop, val));
-		} else if (StringUtils.isEmpty(gp.getPropertyValue())) {
+		} else {
 			gp.setPropertyValue(val);
 			service.saveGlobalProperty(gp);
 		}
+		//if (StringUtils.isEmpty(gp.getPropertyValue())) 
 	}
 	
 	/**

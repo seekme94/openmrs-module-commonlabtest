@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestSample;
@@ -41,7 +42,7 @@ public class LabTestSampleController {
 	@Autowired
 	CommonLabTestService commonLabTestService;
 	
-	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-mm-dd");
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
@@ -63,9 +64,9 @@ public class LabTestSampleController {
 				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order is voided");
 				return "redirect:../../patientDashboard.form?patientId=" + patientId;
 			}
-			orderDate = simpleDateFormat.format(labTest.getOrder().getEncounter().getDateCreated());
+			Date datetime = labTest.getOrder().getEncounter().getEncounterDatetime();
+			orderDate = simpleDateFormat.format(labTest.getOrder().getEncounter().getEncounterDatetime());
 		}
-		
 		LabTestSample test;
 		if (testSampleId == null) {
 			test = new LabTestSample();
@@ -129,6 +130,16 @@ public class LabTestSampleController {
 		
 		String status = "";
 		try {
+			Integer OrderId = labTestSample.getLabTest().getTestOrderId();
+			Patient patientId = labTestSample.getLabTest().getOrder().getPatient();
+			LabTest labTest = commonLabTestService.getLabTest(OrderId);
+			if (labTest == null) {
+				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order does not exist");
+				return "redirect:../../patientDashboard.form?patientId=" + patientId.getPatientId();
+			} else if (labTest.getVoided()) {
+				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order is voided");
+				return "redirect:../../patientDashboard.form?patientId=" + patientId.getPatientId();
+			}
 			if (result.hasErrors()) {
 				///If we get any exception while binding it should be redirected to same page with binding error		
 				if (labTestSample.getLabTestSampleId() == null) {

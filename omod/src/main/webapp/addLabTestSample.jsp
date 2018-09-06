@@ -231,6 +231,10 @@ function goTo(){
 
 
 $(document).ready(function () {
+	
+	var date = '${orderEncDate}';
+	console.log("minDate : "+date);
+	
 	$("#collectionDatePciker").datepicker({
     dateFormat: 'yy-mm-dd',
     minDate:'${orderEncDate}',

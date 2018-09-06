@@ -132,7 +132,7 @@ var testOrder ;
 var update;
 var filepath ="";
 var resultComments="";
-
+var patientId ;
 var testTypeName="";
 $(document).ready(function () {
 	local_source = getAttributeTypes();
@@ -140,8 +140,10 @@ $(document).ready(function () {
 	testTypeName = '${testTypeName}';
 	filepath = '${filepath}';
 	resultComments = '${resultComments}';
-     update ='${update}'
-     console.log("Values : "+update);
+    update ='${update}';
+    patientId ='${patientId}';
+    
+    
 	if(local_source.length > 0){
 		 populateResultForm();
 	}	
@@ -167,6 +169,7 @@ function navigatedToPatientDashboard(){
   
      resultsItems = resultsItems.concat('<form method="post" id="entryForm" action="${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form" enctype="multipart/form-data">');
      resultsItems = resultsItems.concat('<input hidden="true" id="testOrderId" name ="testOrderId" value="'+testOrder+'" />');  
+     resultsItems = resultsItems.concat('<input hidden="true" id="patientId" name ="patientId" value="'+patientId+'" />');
      resultsItems = resultsItems.concat('<center><h4>'+testTypeName+'</h4></center><hr class="style-three">');   
      resultsItems = resultsItems.concat('<input  hidden="true" id="update" name ="update" value="'+update+'" />'); 
 
@@ -179,18 +182,13 @@ function navigatedToPatientDashboard(){
     	    else{
                  resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="" />'); 
     	      }
-			 if(this.dataType == 'coded'){
+			 if(this.dataType == 'Coded'){
 				  	 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 					 resultsItems = resultsItems.concat('<select class="form-control" id="concept.'+this.id+'" name="concept.'+this.id+'" ><options />');
 					 jQuery(this.conceptOptions).each(function() {
-						 if(this.value == 'undefined'){
-							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
-						 }
-						 else{
-							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>');
-						 }
+						  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
 					  });
 					 resultsItems =resultsItems.concat('</select></div></div>');
 			 }

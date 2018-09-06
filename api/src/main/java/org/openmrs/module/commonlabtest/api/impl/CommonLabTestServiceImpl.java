@@ -666,6 +666,7 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 		labTest.setVoided(true);
 		labTest.setVoidedBy(Context.getAuthenticatedUser());
 		labTest.setVoidReason(voidReason);
+		labTest.setDateVoided(new Date());
 		Context.getOrderService().voidOrder(labTest.getOrder(), voidReason);
 		dao.saveLabTest(labTest);
 	}
