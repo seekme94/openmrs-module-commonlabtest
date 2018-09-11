@@ -167,7 +167,7 @@ legend.scheduler-border {
  var testOrderArray ;
  var isStatusAccepted = false;
 $(document).ready(function () {
-		
+	console.log('');
 	
 	$('#testOrderTable').dataTable({
 		 "bPaginate": true

@@ -211,9 +211,11 @@ legend.scheduler-border {
 							   <div class="col-md-6">
 								         <c:if test = "${available != true}">
 								         	<form:textarea class="form-control" path="datatypeConfig" id="datatypeConfig" ></form:textarea>
+								            <span id="datatypeconfig" class="text-danger "> </span>
 								         </c:if>
 								        <c:if test = "${available == true}">
 								          	<form:textarea class="form-control" disabled="true" path="datatypeConfig" id="datatypeConfig" ></form:textarea>
+								          	  <span id="datatypeconfig" class="text-danger "> </span>
 								        </c:if>   
 							   	</div>
 					 	   </div>
@@ -506,6 +508,8 @@ legend.scheduler-border {
 		var minOccurs = document.getElementById('min_occurs').value;
 		var maxOccurs = document.getElementById('max_occurs').value;
 		var sortWeight = document.getElementById('sortWeight').value;
+		var dataType = document.getElementById('data_type_name');
+		
 		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%\\-]*$");
 		var regInt =new RegExp("^[0-9]+$");
         var regErrorMesssage ="Text contains Invalid characters.Test Attribute name only accepts alphabets with _ -().% special characters";
@@ -515,6 +519,7 @@ legend.scheduler-border {
 		var integerErrorMessage ="Only interger values are allowed";
 		var emptyErrorMessage ="This field cannot be empty";
         var isValidate =true; 
+        
 		
 		if(labTestType == ""){
 			document.getElementById("labtesttypeid").style.display= 'block';	
@@ -631,17 +636,44 @@ legend.scheduler-border {
 			 else {
 					document.getElementById("sortweight").style.display= 'none';	
 				} 
-			
-		if(isValidate ==true){
-			document.getElementById("data_type_name").disabled = false;
-			document.getElementById("datatypeConfig").disabled = false;
-		}
+				 var dataTypeOp = dataType.options[dataType.selectedIndex].value;
+				 console.log("dtOp : "+dataTypeOp);
+	         if(dataTypeOp != "" && dataTypeOp == "org.openmrs.customdatatype.datatype.ConceptDatatype"){
+	        	 var dataTypeConfig = document.getElementById('datatypeConfig').value;
+	        	 if(dataTypeConfig != "" && dataTypeConfig != null ){
+	        		if(checkConceptExistent(dataTypeConfig)){
+	        			 document.getElementById("datatypeconfig").style.display= 'none';
+	        		 }else{	        			 
+	        			  document.getElementById("datatypeconfig").style.display= 'block';	
+	      				  document.getElementById('datatypeconfig').innerHTML = "Concept Id  does not exist in concept dictionary";
+	      				  isValidate = false;
+	        		 }
+	        	 }
+	          }	else{
+	        	     document.getElementById("datatypeconfig").style.display= 'none';
+	          }			
+			  if(isValidate ==true){
+				document.getElementById("data_type_name").disabled = false;
+				document.getElementById("datatypeConfig").disabled = false;
+			}
+
 	
 		return isValidate;
 	}
 	
-	//Retire Validate 
+	function checkConceptExistent(concepId){
+		console.log("Concept ID : "+concepId);
+		console.log("integer : "+isInt(concepId));
+		if(isInt(concepId)){
+		return	getCheckExist(concepId);
+		}
+		else {
+			return false;
+		}
+	}
 	
+	
+	//Retire Validate
 	function retireValidate(){
 		var retireReason = document.getElementById('retireReason').value;
 		var isValidate= true;
@@ -741,6 +773,32 @@ legend.scheduler-border {
 			   document.getElementById("sortweightList").innerHTML = resultsItems;
 		   //show the module
 		   $('#sortWeightModal').modal('show'); 
+	}
+	
+	//CHECK THE CONCEPT EXIST
+	function getCheckExist(conceptId){
+		console.log("Type : "+conceptId);
+		var isExist =false;
+		 $.ajax({
+				type : "GET",
+				contentType : "application/json",
+				url : '${pageContext.request.contextPath}/module/commonlabtest/getConceptExist.form?conceptId='+conceptId,
+				async:false,
+				dataType : "json",
+				success : function(data) {
+				   console.log("success  : " + data);	
+				   isExist = data;
+				},
+				error : function(data) {
+					  console.log("fail  : " + data);
+					  isExist =false;
+				},
+				done : function(e) {
+					console.log("DONE");
+					isExist = false;
+				}
+		});
+	  return isExist;	
 	}
 
  

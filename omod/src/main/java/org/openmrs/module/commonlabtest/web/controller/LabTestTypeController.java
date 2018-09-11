@@ -7,6 +7,7 @@ import org.openmrs.ConceptClass;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
+import org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -41,13 +42,16 @@ public class LabTestTypeController {
 	@Qualifier("labTestTypeValidator")
 	private Validator validator;
 	*/
-	@Autowired
-	CommonLabTestService commonLabTestService;
+	/*@Autowired
+	 Context.getService(CommonLabTestService.class)  Context.getService(CommonLabTestService.class);*/
+	//private  Context.getService(CommonLabTestService.class)  Context.getService(CommonLabTestService.class) = Context.getService( Context.getService(CommonLabTestService.class).class);
 	
 	/*@InitBinder
 	private void initBinder(WebDataBinder binder) {
 		binder.setValidator(validator);
 	}*/
+	@Autowired
+	CommonLabTestService commonLabTestService;
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestType.form")
 	public String showForm(ModelMap model, @RequestParam(value = "uuid", required = false) String uuid,
@@ -123,7 +127,10 @@ public class LabTestTypeController {
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtesttype.form")
 	public String onRetire(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid, @RequestParam("retireReason") String retireReason) {
+		CommonLabTestService service = Context.getService(CommonLabTestService.class);
+		
 		LabTestType labTestType = commonLabTestService.getLabTestTypeByUuid(uuid);
+		
 		String status;
 		try {
 			commonLabTestService.retireLabTestType(labTestType, retireReason);
@@ -134,7 +141,7 @@ public class LabTestTypeController {
 			status = sb.toString();
 		}
 		catch (Exception exception) {
-			status = "Error! could not save Lab Test Type.";
+			status = "could not save Lab Test Type.";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestType.getLabTestTypeId() == null) {
@@ -152,7 +159,7 @@ public class LabTestTypeController {
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/deletelabtesttype.form")
 	public String onDelete(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid) {
-		LabTestType labTestType = commonLabTestService.getLabTestTypeByUuid(uuid);
+		LabTestType labTestType = Context.getService(CommonLabTestService.class).getLabTestTypeByUuid(uuid);
 		String status;
 		try {
 			commonLabTestService.deleteLabTestType(labTestType, true);

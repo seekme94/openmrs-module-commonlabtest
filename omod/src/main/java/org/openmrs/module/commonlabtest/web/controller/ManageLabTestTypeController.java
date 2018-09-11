@@ -38,6 +38,8 @@ public class ManageLabTestTypeController {
 	@Autowired
 	CommonLabTestService commonLabTestService;
 	
+	//private CommonLabTestService commonLabTestService = Context.getService(CommonLabTestService.class);
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showLabTestTypes(@RequestParam(required = false) String save, ModelMap model) {
 		

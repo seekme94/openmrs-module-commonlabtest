@@ -90,10 +90,11 @@ legend.scheduler-border {
 				   </div>
 				   <div class="col-md-6">
 				   		<form:select class="form-control" path="specimenType" id="specimen_type" >
+								<form:options  />
 								<c:if test="${not empty specimenType}">	
 									<c:forEach var="spType" items="${specimenType}">
-										<form:option item ="${spType}" value="${spType}">${spType.name}</form:option>
-									</c:forEach>
+										<form:option item ="${spType}" value="${spType}">${spType.name}</form:option>		
+						      </c:forEach>
 								</c:if>
 						</form:select>
 				        <span id="specimentype" class="text-danger "> </span>
@@ -144,6 +145,17 @@ legend.scheduler-border {
 				  		<form:errors path="units" cssClass="error" />
 			   </div>
 			 </div>
+		   <!--Sample Identifier  -->
+			  <div class="row">
+			   <div class="col-md-2">
+			   		<form:label  class="control-label" path="sampleIdentifier"><spring:message code="commonlabtest.labtestsample.sampleIdentifier" /><span class="text-danger required">*</span></form:label>
+			   </div>
+			   <div class="controls col-md-6">
+			        <form:input class="form-control"  path="sampleIdentifier"  id="sample_identifier" ></form:input>
+					<span id="sampleidentifier" class="text-danger "> </span>
+					<form:errors path="sampleIdentifier" cssClass="error" />
+				</div>
+			 </div> 
 			 <!--collectionDate  -->
 			  <div class="row">
 			   <div class="col-md-2">
@@ -231,6 +243,11 @@ function goTo(){
 
 
 $(document).ready(function () {
+	/* let specimenTypeIdentifier = document.getElementById('specimenTypeIdentifier').value;
+	console.log("Type : "+specimenTypeIdentifier); */
+	
+	document.getElementById('sample_identifier').value = (new Date).toISOString().replace(/z|t/gi,' ').trim();;
+	
 	$("#collectionDatePciker").datepicker({
     dateFormat: 'yy-mm-dd',
     minDate:'${orderEncDate}',
@@ -250,6 +267,12 @@ $(document).ready(function () {
         $('#datepicker').val(datetext);
     },
 	});
+	
+	 $('#sample_identifier').change(function(){
+		 
+		 
+		 
+	 });
 
 });
 
@@ -260,6 +283,7 @@ function validate(form){
 		var specimenSite =document.getElementById('specimen_site').value;
 		var quantity = document.getElementById('quantity').value;
 		var units = document.getElementById('units').value;
+		var sampleIdentifier = document.getElementById('sample_identifier').value;
 		var datepicker = document.getElementById('collectionDatePciker').value;
 	
 		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%]*$");
@@ -289,6 +313,15 @@ function validate(form){
 		}
 		else {
 			document.getElementById("specimensite").style.display= 'none';		
+		}
+		/* sampleIdentifier */
+		if(sampleIdentifier == ""){
+			document.getElementById("sampleidentifier").style.display= 'block';	
+			document.getElementById('sampleidentifier').innerHTML =emptyErorMessage;
+			isValidate = false;
+		}
+		else {
+			document.getElementById("sampleidentifier").style.display= 'none';		
 		}
 		
 		/*Quantity  */

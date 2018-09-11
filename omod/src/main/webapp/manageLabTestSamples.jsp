@@ -71,11 +71,18 @@ legend.scheduler-border {
 	   <div class="row" >
 		    <div class="col-md-3">
 		    	 <a style="text-decoration:none" onclick="navigatedToPatientDashboard();" id="addTestSamples" class="hvr-icon-back"><i class="fa fa-chevron-circle-left hvr-icon"></i> <spring:message code="general.backToDashboard" /> </a>
+		   </div> 
+		    <div class="col-md-2">
+		    	<c:choose>
+					<c:when test = "${sampleProcessed == 'true'}">
+					   <a style="text-decoration:none ; pointer-events: none;  cursor: default;" onclick="navigatedToLabTestSample();" id="addTestSamples" class="hvr-icon-grow"  ><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
+					</c:when>
+					<c:otherwise>
+					   <a style="text-decoration:none" onclick="navigatedToLabTestSample();" id="addTestSamples" class="hvr-icon-grow"  ><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
+					</c:otherwise>
+				</c:choose>
 		   </div>
-		   <div class="col-md-2">
-		    	<a style="text-decoration:none" onclick="navigatedToLabTestSample();" id="addTestSamples" class="hvr-icon-grow"  ><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.labtestsample.add" /> </a>
-		   </div>
-	</div>
+	  </div>
 	<br>
 	<c:if test="${not empty status}">
 		<div class="alert alert-success" id="success-alert">
@@ -103,28 +110,34 @@ legend.scheduler-border {
 				</tr>
 	        </thead>
 	        <tbody>
-	        
 		       <c:forEach var="testSample" items="${labSampleTest}">
 		          <c:if test="${! empty labSampleTest}">
-		          
-						<tr>
-						   <td><a style="text-decoration:none"  href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}" class="hvr-icon-grow"  ><span><i class="fa fa-edit hvr-icon"></i></span>  ${testSample.labTestSampleId}</a></td>
-						    <td>${testSample.getSpecimenType().getName()}</td>
-						    <td>${testSample.getSpecimenSite().getName()}</td>
-						    <td> <fmt:formatDate value="${testSample.collectionDate}" pattern="yyyy-mm-dd" /></td>
-						    <td>${testSample.getStatus()}</td>
-						    <td hidden ="true" class ="uuid">${testSample.uuid}</td>
-						    	<c:choose>
-							         <c:when test = "${testSample.status == 'PROCESSED'}">
-							          	    <td><button type="button" disabled  class="btn  reject" >Reject</button> </td> 
-											<td><button type="button" disabled  class="btn  accept" >Accept</button></td>
-							         </c:when>
-							         <c:otherwise>
-								          	<td><button type="button" onclick="rejection(this)" class="btn  reject" >Reject</button> </td> 
-											<td><button type="button" onclick="accept(this)" class="btn  accept" >Accept</button></td> 	
-							         </c:otherwise>
-			       				</c:choose>
-						</tr>
+			          	<c:choose>
+							<c:when test = "${sampleProcessed == 'true'}">
+								<tr>
+									<td><a style="text-decoration:none;  pointer-events: none;  cursor: default;" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}" class="hvr-icon-grow"  ><span><i class="fa fa-edit hvr-icon"></i></span>  ${testSample.labTestSampleId}</a></td>
+								    <td>${testSample.getSpecimenType().getName()}</td>
+								    <td>${testSample.getSpecimenSite().getName()}</td>
+								    <td> <fmt:formatDate value="${testSample.collectionDate}" pattern="yyyy-mm-dd" /></td>
+								    <td>${testSample.getStatus()}</td>
+								    <td hidden ="true" class ="uuid">${testSample.uuid}</td>
+					          	    <td><button type="button" disabled  class="btn  reject" >Reject</button> </td> 
+									<td><button type="button" disabled  class="btn  accept" >Accept</button></td>
+								</tr>
+							 </c:when>
+						    <c:otherwise>
+						    	<tr>
+									<td><a style="text-decoration:none"  href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}" class="hvr-icon-grow"  ><span><i class="fa fa-edit hvr-icon"></i></span>  ${testSample.labTestSampleId}</a></td>
+								    <td>${testSample.getSpecimenType().getName()}</td>
+								    <td>${testSample.getSpecimenSite().getName()}</td>
+								    <td> <fmt:formatDate value="${testSample.collectionDate}" pattern="yyyy-mm-dd" /></td>
+								    <td>${testSample.getStatus()}</td>
+								    <td hidden ="true" class ="uuid">${testSample.uuid}</td>
+					          	    <td><button type="button" onclick="rejection(this)"   class="btn  reject" >Reject</button> </td> 
+									<td><button type="button" onclick="accept(this)" class="btn  accept" >Accept</button></td>
+								</tr>
+						   </c:otherwise>
+				        </c:choose>
 					</c:if>	
 				 </c:forEach>
 	        </tbody>

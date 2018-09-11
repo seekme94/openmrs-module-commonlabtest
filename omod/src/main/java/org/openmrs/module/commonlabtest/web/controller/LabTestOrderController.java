@@ -99,7 +99,7 @@ public class LabTestOrderController {
 			if (result.hasErrors()) {
 				
 			} else {
-				/*	LabTestType lbTestType = commonLabTestService.getLabTestType(labTest.getLabTestType().getLabTestTypeId());
+				/*	LabTestType lbTestType =  Context.getService(CommonLabTestService.class).getLabTestType(labTest.getLabTestType().getLabTestTypeId());
 				Concept referConcept = lbTestType.getReferenceConcept();
 				
 				TestOrder testOrder;
@@ -154,7 +154,7 @@ public class LabTestOrderController {
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/voidlabtestorder.form")
 	public String onVoid(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid, @RequestParam("voidReason") String voidReason) {
-		LabTest labTest = commonLabTestService.getLabTestByUuid(uuid);
+		LabTest labTest = Context.getService(CommonLabTestService.class).getLabTestByUuid(uuid);
 		String status;
 		try {
 			commonLabTestService.voidLabTest(labTest, voidReason);

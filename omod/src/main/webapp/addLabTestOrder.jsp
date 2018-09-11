@@ -137,7 +137,7 @@ legend.scheduler-border {
 			   		<form:label  class="control-label" path="labReferenceNumber"><spring:message code="commonlabtest.order.labReferenceNo" /><span class="text-danger required">*</span></form:label>
 			   </div>
 			   <div class="col-md-6">
-			   		<form:input class="form-control" maxlength="30" path="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber"></form:input>
+			   		<form:input class="form-control" maxlength="100" path="labReferenceNumber" id="labReferenceNumber"  name="labReferenceNumber"></form:input>
 			  		<span id="labreferencenumber" class="text-danger "> </span>
 			  		
 			   </div>
@@ -229,12 +229,19 @@ legend.scheduler-border {
 
 <script type="text/javascript">
 
-		var local_source;
-		
+	var local_source;
 	 function getConcepts(){
 	    	return JSON.parse(JSON.stringify('${encounters}'));
 	    }
 	$(document).ready(function () {
+		let testShortName = ""//document.getElementById("testtypename").value;
+		console.log("Ready : "+testShortName);
+		if(testShortName == null || testShortName === ""){
+			document.getElementById('labReferenceNumber').value = document.getElementById("testType").value+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
+		}else{
+			document.getElementById('labReferenceNumber').value = testShortName+"-"+(new Date).toISOString().replace(/z|t/gi,' ').trim();
+		}
+		
 		 $('#conceptId').val(document.getElementById("testType").value);
 		
 		 local_source = new Array();
@@ -245,8 +252,16 @@ legend.scheduler-border {
 	        </c:if>   
 	
 		 $('#testType').change(function(){
-			  $('#conceptId').val(document.getElementById("testType").value);
-		 });
+			 let  testType = document.getElementById("testType").value;
+			  $('#conceptId').val(testType);
+			  
+			   let testShortName = document.getElementById("testtypename").value;
+			   console.log("change : "+testShortName);
+			   if(testShortName == null || testShortName === ""){
+					document.getElementById('labReferenceNumber').value = testType+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
+				}else{
+					document.getElementById('labReferenceNumber').value = testShortName+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();
+				}		 });
 		
 		 $("#encounter").on("change", function() {
 			    //arrayEn.filter(x => x.id === $("#encounter").find(":selected").val());
@@ -257,6 +272,7 @@ legend.scheduler-border {
 				console.log(encounter.date);
 				document.getElementById('encounterDate').innerHTML = formatDate(encounter.date);
 		 });
+		 
 
 		/*   $("#datepicker").datepicker({
 		        dateFormat: 'yy-dd-mm',
@@ -283,7 +299,7 @@ legend.scheduler-border {
 		var referenceNumber = document.getElementById('labReferenceNumber').value;
 		var testType = document.getElementById('testType').value;
 		var encounter = document.getElementById('encounter').value
-		var  reText = new RegExp("^[A-Za-z0-9_:#\\-\\/]*$");
+		var  reText = new RegExp("^[A-Za-z0-9_(). %:#\\-\\/]*$");
         var regErrorMesssage ="Text contains Invalid characters.LabReference name only accepts alphanumeric characters with _-/:# special characters";
         var alphabetsCharacter ="Numeric values and special characters are not allowed";
 		var isValidate =true; 

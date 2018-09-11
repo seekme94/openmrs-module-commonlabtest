@@ -103,10 +103,33 @@ legend.scheduler-border {
 	         </c:otherwise>
         </c:choose>
 		   <div id="resultContainer">
-		   
 		   </div> 
-		
-	 </fieldset>
+	</fieldset>
+	<br>
+	  <c:if test="${update == true}">
+		 <fieldset  class="scheduler-border">
+      	   <legend  class="scheduler-border"><spring:message code="commonlabtest.result.void" /></legend>
+					<form method="post" action="${pageContext.request.contextPath}/module/commonlabtest/voidlabtestresult.form" >
+						 <!-- UUID -->
+						 <div class="row">
+						   <div class="col-md-2">
+								<input value="${testOrderId}" hidden="true"  id="testOrderId" name="testOrderId"></input>
+								<input value="${patientId}" hidden="true"  id="patientId" name="patientId"></input>
+								<label  class="control-label" path="voidReason"><spring:message code="general.reason" /><span class="required">*</span></label>
+						   </div>
+						   <div class="col-md-6">
+						   		<input class="form-control" value="" id="voidReason" name="voidReason" required="required">
+						   </div>
+						 </div>
+						 <!-- Retire -->
+						 <div class="row">
+						   <div class="col-md-2" >
+						 		 <input type="submit" value="<spring:message code="commonlabtest.result.void" />"></input>
+						   </div>
+						 </div>
+				</form>
+        </fieldset>
+	</c:if>
  </div>
 
 </body>
@@ -132,16 +155,24 @@ var testOrder ;
 var update;
 var filepath ="";
 var resultComments="";
-
+var patientId ;
 var testTypeName="";
+var fileExtensions ="";
+var fileExtensionsArr =[];
+var fileExtensionArray = [];
 $(document).ready(function () {
+	fileExtensions = '${fileExtensions}';
+	fileExtensionsArr =  JSON.stringify(fileExtensions).split(",");
+	fileExtensionArray = JSON.stringify(fileExtensions).split(",");
 	local_source = getAttributeTypes();
 	testOrder = ${testOrderId};
 	testTypeName = '${testTypeName}';
 	filepath = '${filepath}';
 	resultComments = '${resultComments}';
-     update ='${update}'
-     console.log("Values : "+update);
+    update ='${update}';
+    patientId ='${patientId}';
+    
+    
 	if(local_source.length > 0){
 		 populateResultForm();
 	}	
@@ -167,6 +198,7 @@ function navigatedToPatientDashboard(){
   
      resultsItems = resultsItems.concat('<form method="post" id="entryForm" action="${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form" enctype="multipart/form-data">');
      resultsItems = resultsItems.concat('<input hidden="true" id="testOrderId" name ="testOrderId" value="'+testOrder+'" />');  
+     resultsItems = resultsItems.concat('<input hidden="true" id="patientId" name ="patientId" value="'+patientId+'" />');
      resultsItems = resultsItems.concat('<center><h4>'+testTypeName+'</h4></center><hr class="style-three">');   
      resultsItems = resultsItems.concat('<input  hidden="true" id="update" name ="update" value="'+update+'" />'); 
 
@@ -179,18 +211,13 @@ function navigatedToPatientDashboard(){
     	    else{
                  resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="" />'); 
     	      }
-			 if(this.dataType == 'coded'){
+			 if(this.dataType == 'Coded'){
 				  	 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 					 resultsItems = resultsItems.concat('<select class="form-control" id="concept.'+this.id+'" name="concept.'+this.id+'" ><options />');
 					 jQuery(this.conceptOptions).each(function() {
-						 if(this.value == 'undefined'){
-							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
-						 }
-						 else{
-							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>');
-						 }
+						  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
 					  });
 					 resultsItems =resultsItems.concat('</select></div></div>');
 			 }
@@ -245,14 +272,14 @@ function navigatedToPatientDashboard(){
 				 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
 				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 				 if(this.value == 'undefined'){
-					 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="">');
+					 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="" required>');
 				 }else{
 					 resultsItems = resultsItems.concat('<input id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="'+this.value+'" required>');
 				 }
 				 resultsItems =resultsItems.concat('</div></div>');
 		   } 
 	     });            
-					resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+				 /* resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					resultsItems = resultsItems.concat('<label class="control-label">Comments</label>');
 					resultsItems = resultsItems.concat('</div><div class="col-md-4">');
 					  if(resultComments != ""){
@@ -260,7 +287,7 @@ function navigatedToPatientDashboard(){
 					  }else {
 						  resultsItems = resultsItems.concat('<textarea  class="form-control"  maxlength="512"  name="resultComments" id="resultComments" value ="" />'); 
 					  }
-					resultsItems = resultsItems.concat('</div></div>');
+					resultsItems = resultsItems.concat('</div></div>'); */
      				//file attachment	
 	   				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 	   				 resultsItems = resultsItems.concat('<label class="control-label">Attachment</label>');
@@ -274,32 +301,20 @@ function navigatedToPatientDashboard(){
 	   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
 	   				 resultsItems = resultsItems.concat('<label class="control-label text-danger" id="documenttypefile"></label>');
 	   			     resultsItems = resultsItems.concat('</div></div>');
+	   			    
+	   			     //extension 
+	   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
+	   				 resultsItems = resultsItems.concat('<label class="control-label text-danger" id="documenttypefileextension"></label>');
+	   			     resultsItems = resultsItems.concat('</div></div>');
+	   			     //end
 				     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-2">');
 				     resultsItems = resultsItems.concat('<input type="submit" value="Save Test Result" id="submitBttn" ></input>');
 				     resultsItems = resultsItems.concat('</div><div class="col-md-2">');
 				     resultsItems = resultsItems.concat('<input type="button" onclick="navigatedToPatientDashboard();" value="Cancel"></input>');
 				     resultsItems = resultsItems.concat('</div></div></form>');
-		   			 //voided Form
-				  /*  if(update == true){
-					   resultsItems = resultsItems.concat('<fieldset  class="scheduler-border">');
-					   resultsItems = resultsItems.concat('<legend  class="scheduler-border"><spring:message code="commonlabtest.result.void" /></legend>');
-					  		resultsItems = resultsItems.concat('<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/module/commonlabtest/retirelabtestattributetype.form" onsubmit="return retireValidate()" >');
-						  		resultsItems = resultsItems.concat(' <div class="row"><div class="col-md-2">');
-							  		resultsItems = resultsItems.concat('<input value="${testAttributeType.uuid}" hidden="true"  id="uuid" name="uuid"></input>');
-							  		resultsItems = resultsItems.concat('<label  class="control-label" ><spring:message code="general.voidReason" /><span class="text-danger required">*</span></label>');
-						  		resultsItems = resultsItems.concat('</div><div class="col-md-6">');
-						  			resultsItems = resultsItems.concat('<input class="form-control" value="" id="voidReason" name="voidReason" >');
-						  		resultsItems = resultsItems.concat('</div></div>');
-						  		resultsItems = resultsItems.concat('<div  class="row"><div class="col-md-2">');
-						  			resultsItems = resultsItems.concat('<input type="submit" value="<spring:message code="commonlabtest.result.void" />"></input>');
-						  		resultsItems = resultsItems.concat('</div></div>');
-						  	resultsItems = resultsItems.concat('</form>');	
-					  	
-				   } */
+			         $("#resultContainer").append(resultsItems);
 		  
-				     
-
-	    $("#resultContainer").append(resultsItems);
+				
 	   
    }
    function setValue(checkboxElem) {
@@ -311,28 +326,28 @@ function navigatedToPatientDashboard(){
 		   console.log("Text Input : "+$(textElem).val()); 
 	   }
    }
-   
-   var _validFileExtensions = [".exe",".zip",".msi",".sql"];   
+
+  // var _validFileExtensions = fileExtensionArray;  //[".exe",".zip",".msi",".sql"]; 
    $(function() {
 	     $("input:file").change(function (){
 	    	 var fileName = $(this).val();
 	    	 if (fileName.length > 0) {
                  var blnValid = false;
-                 for (var j = 0; j < _validFileExtensions.length; j++) {
-                     var sCurExtension = _validFileExtensions[j];
-                     if (fileName.substr(fileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
-                    	 blnValid = true;
-                         break;
-                     }
-                 }
-                 
-                 if (blnValid) {
+                 var fileExt = "."+fileName.split('.').pop();
+                 console.log("include : " +fileExtensionsArr.includes(fileExt));
+                 blnValid = fileExtensionsArr.includes(fileExt);
+                 if (!blnValid) {
+                	    console.log("True : "+blnValid);
          			    document.getElementById("documenttypefile").style.display= 'block';
-         				document.getElementById('documenttypefile').innerHTML = "Sorry,"+ fileName + " is invalid, not allowed extensions are: " + _validFileExtensions.join(", ");
-         				$( "#documentTypeFile" ).val("");
+         				document.getElementById('documenttypefile').innerHTML = "<b>"+ fileName.split('.').pop().toUpperCase()+"</b> file extension is not allowed.You can only upload files with extensions: ";
+         				document.getElementById('documenttypefileextension').innerHTML = ""+fileExtensionArray.join(", ");
+         			
+         				$("#documentTypeFile" ).val("");
          				//document.getElementById('submitBttn').disabled = true;
-                 }else if(!blnValid){
+                 }else if(blnValid){
+                	  console.log("False : "+blnValid);
          			   document.getElementById("documenttypefile").style.display= 'none';	
+         			  document.getElementById("documenttypefileextension").style.display= 'none';	
          			  // document.getElementById('submitBttn').disabled = false;
                  }
              }

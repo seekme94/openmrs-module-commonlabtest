@@ -2,6 +2,7 @@ package org.openmrs.module.commonlabtest.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.CustomDatatypeUtil;
 import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.LabTestAttributeType;
@@ -33,6 +34,8 @@ public class LabTestAttributeTypeController {
 	
 	@Autowired
 	CommonLabTestService commonLabTestService;
+	
+	//private CommonLabTestService commonLabTestService = Context.getService(CommonLabTestService.class);
 	
 	@ModelAttribute("datatypes")
 	public Collection<String> getDatatypes() {
@@ -92,7 +95,7 @@ public class LabTestAttributeTypeController {
 			}
 		}
 		catch (Exception e) {
-			status = "Error! could not save Lab Test Attribute Type";
+			status = "could not save Lab Test Attribute Type";
 			//status = e.getLocalizedMessage();
 			e.printStackTrace();
 			
@@ -111,7 +114,8 @@ public class LabTestAttributeTypeController {
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtestattributetype.form")
 	public String onRetire(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid, @RequestParam("retireReason") String retireReason) {
-		LabTestAttributeType attributeType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
+		LabTestAttributeType attributeType = Context.getService(CommonLabTestService.class).getLabTestAttributeTypeByUuid(
+		    uuid);
 		String status;
 		try {
 			commonLabTestService.retireLabTestAttributeType(attributeType, retireReason);
@@ -122,7 +126,7 @@ public class LabTestAttributeTypeController {
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = "Error! could not save Lab Test Attribute Type";
+			status = "could not save Lab Test Attribute Type";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (attributeType.getLabTestAttributeTypeId() == null) {
@@ -139,7 +143,8 @@ public class LabTestAttributeTypeController {
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/deletelabtestattributetype.form")
 	public String onDelete(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid) {
-		LabTestAttributeType attributeType = commonLabTestService.getLabTestAttributeTypeByUuid(uuid);
+		LabTestAttributeType attributeType = Context.getService(CommonLabTestService.class).getLabTestAttributeTypeByUuid(
+		    uuid);
 		String status;
 		try {
 			commonLabTestService.deleteLabTestAttributeType(attributeType, true);
@@ -151,7 +156,7 @@ public class LabTestAttributeTypeController {
 		}
 		catch (Exception exception) {
 			//status = exception.getLocalizedMessage();
-			status = "Error! could not save Lab Test Attribute Type";
+			status = "could not save Lab Test Attribute Type";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			return "redirect:addLabTestAttributeType.form?uuid=" + attributeType.getUuid();

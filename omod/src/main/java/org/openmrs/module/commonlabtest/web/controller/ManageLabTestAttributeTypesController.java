@@ -2,16 +2,10 @@ package org.openmrs.module.commonlabtest.web.controller;
 
 import java.util.List;
 
-import javax.naming.Context;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.CareSetting;
-import org.openmrs.Concept;
-import org.openmrs.Encounter;
-import org.openmrs.Patient;
-import org.openmrs.TestOrder;
-import org.openmrs.api.OrderContext;
+
+import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTestAttributeType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +28,8 @@ public class ManageLabTestAttributeTypesController {
 	
 	@Autowired
 	CommonLabTestService commonLabTestService;
+	
+	//private CommonLabTestService commonLabTestService = Context.getService(CommonLabTestService.class);
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showLabTestAttributeTypes(@RequestParam(required = false) String save, ModelMap model) {

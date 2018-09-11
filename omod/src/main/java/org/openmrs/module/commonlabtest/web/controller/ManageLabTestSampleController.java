@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestSample;
 import org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus;
@@ -50,6 +51,14 @@ public class ManageLabTestSampleController {
 			testSample = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);//need to check this get sample method...
 		}
 		
+		for (LabTestSample labTestSample : testSample) {
+			if (labTestSample.getStatus().equals(LabTestSampleStatus.PROCESSED)) {
+				model.addAttribute("sampleProcessed", Boolean.TRUE);
+				break;
+			} else {
+				model.addAttribute("sampleProcessed", Boolean.FALSE);
+			}
+		}
 		model.addAttribute("labSampleTest", testSample);
 		model.addAttribute("orderId", testOrderId);
 		model.addAttribute("patientId", patientId);
