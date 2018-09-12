@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -114,8 +115,8 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
 		List<LabTestType> list = commonLabTestService.getAllLabTestTypes(false);
-		NeedsPaging<LabTestType> pr = new NeedsPaging<LabTestType>(list, context);
-		return (PageableResult) (pr.hasMoreResults() ? pr.getPageOfResults() : super.doGetAll(context));
+		
+		return new NeedsPaging<LabTestType>(list, context);
 	}
 	
 }

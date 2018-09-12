@@ -1,5 +1,7 @@
 package org.openmrs.module.commonlabtest.web.resource;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
@@ -7,6 +9,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.LabTestSample;
+import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
