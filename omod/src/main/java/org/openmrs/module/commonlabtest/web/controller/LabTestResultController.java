@@ -109,7 +109,7 @@ public class LabTestResultController {
 						for (ConceptAnswer ca : ans) {
 							JsonObject jo = new JsonObject();
 							jo.addProperty("conceptName", ca.getAnswerConcept().getName().getName());
-							jo.addProperty("conceptId", ca.getConceptAnswerId());
+							jo.addProperty("conceptId", ca.getAnswerConcept().getConceptId());
 							codedArray.add(jo);
 						}
 						objAttrType.add("conceptOptions", codedArray);

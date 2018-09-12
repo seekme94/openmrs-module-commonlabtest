@@ -226,6 +226,8 @@ legend.scheduler-border {
 
 <script type="text/javascript">
 
+
+var specimentTypeArray;
 function isNumber(evt) {
 	
     evt = (evt) ? evt : window.event;
@@ -243,11 +245,7 @@ function goTo(){
 
 
 $(document).ready(function () {
-	/* let specimenTypeIdentifier = document.getElementById('specimenTypeIdentifier').value;
-	console.log("Type : "+specimenTypeIdentifier); */
-	
-	document.getElementById('sample_identifier').value = (new Date).toISOString().replace(/z|t/gi,' ').trim();;
-	
+
 	$("#collectionDatePciker").datepicker({
     dateFormat: 'yy-mm-dd',
     minDate:'${orderEncDate}',
@@ -267,14 +265,38 @@ $(document).ready(function () {
         $('#datepicker').val(datetext);
     },
 	});
-	
-	 $('#sample_identifier').change(function(){
-		 
-		 
-		 
+	 
+    //fill the array 
+		specimentTypeArray = new Array();
+	    <c:if test="${not empty specimenType}">
+	        <c:forEach var="specimentype" items="${specimenType}" varStatus="status">
+	         specimentTypeArray.push({name:"${specimentype.name}",id:"${specimentype.conceptId}"});
+	        </c:forEach>
+	    </c:if>  
+	 //on change 
+	  $("#specimen_type").on("change", function() {
+		 let specimentTypeId = document.getElementById('specimen_type').value;
+		 setSpecimenTypeVal(specimentTypeId);
 	 });
-
+    //initial value;
+	    console.log("specimen Type: "+document.getElementById('specimen_type').value);
+	    let specimentTypeId = document.getElementById('specimen_type').value;
+	    setSpecimenTypeVal(specimentTypeId);
 });
+
+
+function setSpecimenTypeVal(id){
+	   var testType = specimentTypeArray.find(o => o.id == id);
+	   let testName = "" ;
+	   testName = testType.name;
+	   console.log("change : "+testName);
+	   if(testName == null || testName === ""){
+			document.getElementById('sample_identifier').value = id+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
+		}else{
+			document.getElementById('sample_identifier').value = testName.toLowerCase().trim()+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();
+		}	
+	}
+
 
 /* Validate */
 function validate(form){

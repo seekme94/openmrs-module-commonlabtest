@@ -102,6 +102,7 @@ legend.scheduler-border {
 					<th>Sample ID</th>
 					<th>Specimen Type</th>
 					<th>Specimen Site</th>
+					<th>Sample Identifier</th>
 					<th>Collected On</th>
 					<th>Status</th>
 					<th hidden="true"></th>
@@ -118,6 +119,7 @@ legend.scheduler-border {
 									<td><a style="text-decoration:none;  pointer-events: none;  cursor: default;" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}" class="hvr-icon-grow"  ><span><i class="fa fa-edit hvr-icon"></i></span>  ${testSample.labTestSampleId}</a></td>
 								    <td>${testSample.getSpecimenType().getName()}</td>
 								    <td>${testSample.getSpecimenSite().getName()}</td>
+								    <td>${testSample.getSampleIdentifier()}</td>
 								    <td> <fmt:formatDate value="${testSample.collectionDate}" pattern="yyyy-mm-dd" /></td>
 								    <td>${testSample.getStatus()}</td>
 								    <td hidden ="true" class ="uuid">${testSample.uuid}</td>
@@ -130,6 +132,7 @@ legend.scheduler-border {
 									<td><a style="text-decoration:none"  href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?testSampleId=${testSample.labTestSampleId}&patientId=${patientId}&orderId=${orderId}" class="hvr-icon-grow"  ><span><i class="fa fa-edit hvr-icon"></i></span>  ${testSample.labTestSampleId}</a></td>
 								    <td>${testSample.getSpecimenType().getName()}</td>
 								    <td>${testSample.getSpecimenSite().getName()}</td>
+								    <td>${testSample.getSampleIdentifier()}</td>
 								    <td> <fmt:formatDate value="${testSample.collectionDate}" pattern="yyyy-mm-dd" /></td>
 								    <td>${testSample.getStatus()}</td>
 								    <td hidden ="true" class ="uuid">${testSample.uuid}</td>

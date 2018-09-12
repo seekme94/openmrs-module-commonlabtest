@@ -217,6 +217,7 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 					 resultsItems = resultsItems.concat('<select class="form-control" id="concept.'+this.id+'" name="concept.'+this.id+'" ><options />');
 					 jQuery(this.conceptOptions).each(function() {
+						  console.log("Concept Id : "+this.conceptId);
 						  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
 					  });
 					 resultsItems =resultsItems.concat('</select></div></div>');

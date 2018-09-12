@@ -5,6 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
+import org.openmrs.module.commonlabtest.LabTestAttribute;
+import org.openmrs.module.commonlabtest.LabTestSample;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -61,7 +63,16 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 	
 	@Override
 	public LabTest save(LabTest labTest) {
-		return commonLabTestService.saveLabTest(labTest);
+		
+		LabTestSample ss = null;
+		
+		for (LabTestSample sample : labTest.getLabTestSamples()) {
+			if (sample.getVoided().booleanValue() == false) {
+				ss = sample;
+			}
+			
+		}
+		return commonLabTestService.saveLabTest(labTest, ss, labTest.getAttributes());
 	}
 	
 	@Override

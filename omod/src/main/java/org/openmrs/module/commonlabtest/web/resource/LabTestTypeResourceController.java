@@ -1,5 +1,7 @@
 package org.openmrs.module.commonlabtest.web.resource;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -11,8 +13,10 @@ import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.MetadataDelegatingCrudResource;
+import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
@@ -105,6 +109,13 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
 		delegatingResourceDescription.addProperty("description");
 		
 		return delegatingResourceDescription;
+	}
+	
+	@Override
+	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
+		List<LabTestType> list = commonLabTestService.getAllLabTestTypes(false);
+		NeedsPaging<LabTestType> pr = new NeedsPaging<LabTestType>(list, context);
+		return (PageableResult) (pr.hasMoreResults() ? pr.getPageOfResults() : super.doGetAll(context));
 	}
 	
 }

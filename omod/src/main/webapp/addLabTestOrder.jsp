@@ -229,18 +229,14 @@ legend.scheduler-border {
 
 <script type="text/javascript">
 
-	var local_source;
+	var local_source; //name convention  is wrong .
+	var testTypeArray;
+	//not in used 
 	 function getConcepts(){
 	    	return JSON.parse(JSON.stringify('${encounters}'));
 	    }
 	$(document).ready(function () {
-		let testShortName = ""//document.getElementById("testtypename").value;
-		console.log("Ready : "+testShortName);
-		if(testShortName == null || testShortName === ""){
-			document.getElementById('labReferenceNumber').value = document.getElementById("testType").value+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
-		}else{
-			document.getElementById('labReferenceNumber').value = testShortName+"-"+(new Date).toISOString().replace(/z|t/gi,' ').trim();
-		}
+
 		
 		 $('#conceptId').val(document.getElementById("testType").value);
 		
@@ -250,18 +246,20 @@ legend.scheduler-border {
 		        	local_source.push({date:"${encounter.encounterDatetime}",id:"${encounter.encounterId}"});
 		        </c:forEach>
 	        </c:if>   
-	
+	        
+	       //fill the Test type ;
+	   	   testTypeArray = new Array();
+	        <c:if test="${not empty testTypes}">
+		        <c:forEach var="testType" items="${testTypes}" varStatus="status">
+		           testTypeArray.push({shortName:"${testType.shortName}",id:"${testType.labTestTypeId}"});
+		        </c:forEach>
+	        </c:if>   
+	    
 		 $('#testType').change(function(){
-			 let  testType = document.getElementById("testType").value;
-			  $('#conceptId').val(testType);
-			  
-			   let testShortName = document.getElementById("testtypename").value;
-			   console.log("change : "+testShortName);
-			   if(testShortName == null || testShortName === ""){
-					document.getElementById('labReferenceNumber').value = testType+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
-				}else{
-					document.getElementById('labReferenceNumber').value = testShortName+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();
-				}		 });
+			 let  testTypeId = document.getElementById("testType").value;
+			 $('#conceptId').val(testTypeId);
+			 setTestTypeVal(testTypeId);	
+		 });
 		
 		 $("#encounter").on("change", function() {
 			    //arrayEn.filter(x => x.id === $("#encounter").find(":selected").val());
@@ -273,26 +271,22 @@ legend.scheduler-border {
 				document.getElementById('encounterDate').innerHTML = formatDate(encounter.date);
 		 });
 		 
-
-		/*   $("#datepicker").datepicker({
-		        dateFormat: 'yy-dd-mm',
-		        onSelect: function(datetext){
-		            var d = new Date(); // for now
-		            var h = d.getHours();
-		        		h = (h < 10) ? ("0" + h) : h ;
-
-		        		var m = d.getMinutes();
-		            m = (m < 10) ? ("0" + m) : m ;
-
-		            var s = d.getSeconds();
-		            s = (s < 10) ? ("0" + s) : s ;
-
-		        		datetext = datetext + " " + h + ":" + m + ":" + s;
-		            $('#datepicker').val(datetext);
-		        },
-		    });
-		 */
+		 //set lab Reference value 
+		    let labTestTypeId = document.getElementById("testType").value;
+		    setTestTypeVal(labTestTypeId);
 	});
+	
+	function setTestTypeVal(id){
+	   var testType = testTypeArray.find(o => o.id == id);
+	   let testShortName = "" ;
+	   testShortName = testType.shortName;
+	   console.log("change : "+testShortName);
+	   if(testShortName == null || testShortName === ""){
+			document.getElementById('labReferenceNumber').value = id+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
+		}else{
+			document.getElementById('labReferenceNumber').value = testShortName+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();
+		}	
+	}
 	
 	function validate(){
 		

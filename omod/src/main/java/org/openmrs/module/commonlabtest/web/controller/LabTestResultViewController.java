@@ -37,67 +37,74 @@ public class LabTestResultViewController {
 		LabTest labTest = commonLabTestService.getLabTest(testOrderId);
 		List<LabTestSample> testSample;
 		List<LabTestAttribute> testAttributes = commonLabTestService.getLabTestAttributes(testOrderId);
-		
-		for (LabTestAttributeType attribut : commonLabTestService.getLabTestAttributeTypes(labTest.getLabTestType(), false)) {
-			for (int i = 0; i < testAttributes.size(); i++) {
-				if (!testAttributes.get(i).getVoided()) {
-					if (testAttributes.get(i).getAttributeTypeId() == attribut.getLabTestAttributeTypeId()) {
-						testAttributes.get(i).setAttributeType(attribut);
-					}
-				}
-			}
-		}
-		
-		testSample = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);
 		JsonObject testResultList = new JsonObject();
-		
 		JsonArray testSampleArray = new JsonArray();
-		for (LabTestSample labTestSample : testSample) {
-			JsonObject objTestSample = new JsonObject();
-			objTestSample.addProperty("testOrderId", testOrderId);
-			objTestSample.addProperty("specimenType", labTestSample.getSpecimenType().getName().getName());
-			objTestSample.addProperty("specimenSite", labTestSample.getSpecimenSite().getName().getName());
-			objTestSample.addProperty("status", labTestSample.getStatus().name());
-			testSampleArray.add(objTestSample);
-		}
 		JsonArray testResultArray = new JsonArray();
-		for (LabTestAttribute labTestResult : testAttributes) {
-			JsonObject objTestResult = new JsonObject();
-			if (labTestResult.getAttributeType() != null) {
-				if (labTestResult.getAttributeType().getDatatypeClassname()
-				        .equals("org.openmrs.customdatatype.datatype.ConceptDatatype")) {
-					objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
-					boolean isTrue = isInteger(labTestResult.getAttributeType().getDatatypeConfig());
-					if (isTrue) {
-						Concept conceptConfig = Context.getConceptService().getConcept(
-						    Integer.parseInt(labTestResult.getAttributeType().getDatatypeConfig()));
-						if (conceptConfig != null) {
-							if (conceptConfig.getDatatype().getName().equals("Coded")) {
-								Concept concept = Context.getConceptService().getConcept(
-								    Integer.parseInt(labTestResult.getValueReference()));
-								objTestResult.addProperty("valuesReference", concept.getName().getName());
-							} else {
-								objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
-							}
+		
+		try {
+			for (LabTestAttributeType attribut : commonLabTestService.getLabTestAttributeTypes(labTest.getLabTestType(),
+			    false)) {
+				for (int i = 0; i < testAttributes.size(); i++) {
+					if (!testAttributes.get(i).getVoided()) {
+						if (testAttributes.get(i).getAttributeTypeId() == attribut.getLabTestAttributeTypeId()) {
+							testAttributes.get(i).setAttributeType(attribut);
 						}
 					}
-				} else {
-					objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
-					objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
 				}
-				
-				testResultArray.add(objTestResult);
 			}
+			
+			testSample = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);
+			
+			for (LabTestSample labTestSample : testSample) {
+				JsonObject objTestSample = new JsonObject();
+				objTestSample.addProperty("testOrderId", testOrderId);
+				objTestSample.addProperty("specimenType", labTestSample.getSpecimenType().getName().getName());
+				objTestSample.addProperty("specimenSite", labTestSample.getSpecimenSite().getName().getName());
+				objTestSample.addProperty("status", labTestSample.getStatus().name());
+				testSampleArray.add(objTestSample);
+			}
+			for (LabTestAttribute labTestResult : testAttributes) {
+				JsonObject objTestResult = new JsonObject();
+				if (labTestResult.getAttributeType() != null) {
+					if (labTestResult.getAttributeType().getDatatypeClassname()
+					        .equals("org.openmrs.customdatatype.datatype.ConceptDatatype")) {
+						objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
+						boolean isTrue = isInteger(labTestResult.getAttributeType().getDatatypeConfig());
+						if (isTrue) {
+							Concept conceptConfig = Context.getConceptService().getConcept(
+							    Integer.parseInt(labTestResult.getAttributeType().getDatatypeConfig()));
+							if (conceptConfig != null) {
+								if (conceptConfig.getDatatype().getName().equals("Coded")) {
+									Concept concept = Context.getConceptService().getConcept(
+									    Integer.parseInt(labTestResult.getValueReference()));
+									objTestResult.addProperty("valuesReference", concept.getName().getName());
+								} else {
+									objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
+								}
+							}
+						}
+					} else {
+						objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
+						objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
+					}
+					
+					testResultArray.add(objTestResult);
+				}
+			}
+			
+			/*		String comments = labTest.getResultComments();
+			if (!comments.equals("")) {
+				JsonObject objTestResult = new JsonObject();
+				objTestResult.addProperty("question", "Comments");
+				objTestResult.addProperty("valuesReference", comments);
+				testResultArray.add(objTestResult);
+			}*/
 		}
-		
-		/*		String comments = labTest.getResultComments();
-		if (!comments.equals("")) {
-			JsonObject objTestResult = new JsonObject();
-			objTestResult.addProperty("question", "Comments");
-			objTestResult.addProperty("valuesReference", comments);
-			testResultArray.add(objTestResult);
-		}*/
-		
+		catch (Exception e) {
+			e.printStackTrace();
+			testResultList.add("sample", testSampleArray);
+			testResultList.add("result", testResultArray);
+		}
 		testResultList.add("sample", testSampleArray);
 		testResultList.add("result", testResultArray);
 		

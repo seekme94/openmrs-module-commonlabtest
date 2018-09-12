@@ -280,7 +280,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="expiry_date" type="datetime"/>
-			<column name="lab_sample_identifier" type="varchar(50)"/>
+			<column name="lab_sample_identifier" type="varchar(255)"/>
 			<column name="collector" defaultValueNumeric="0" type="int">
 				<constraints nullable="false"/>
 			</column>
