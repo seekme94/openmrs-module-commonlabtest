@@ -1,9 +1,12 @@
 package org.openmrs.module.commonlabtest.web.resource;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
@@ -66,16 +69,45 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 	
 	@Override
 	public LabTest save(LabTest labTest) {
-		
-		LabTestSample ss = null;
-		
-		for (LabTestSample sample : labTest.getLabTestSamples()) {
-			if (sample.getVoided().booleanValue() == false) {
-				ss = sample;
+		try {
+			LabTestSample ss = null;
+			
+			for (LabTestSample sample : labTest.getLabTestSamples()) {
+				if (sample.getVoided().booleanValue() == false) {
+					ss = sample;
+				}
+				
+			}
+			Set<LabTestAttribute> attributes = labTest.getAttributes();
+			System.out.println("Attribute Size ::: " + attributes.size());
+			System.out.println(labTest);
+			
+			System.out.println(labTest.getOrder());
+			Order o = Context.getOrderService().saveOrder(labTest.getOrder(), null);
+			labTest.setOrder(o);
+			LabTest labTestSaved = commonLabTestService.saveLabTest(labTest);
+			List<LabTestAttribute> resultAttributes = attributes.size() > 0 ? new ArrayList<LabTestAttribute>() : null;
+			for (LabTestAttribute attribute : labTest.getAttributes()) {
+				attribute.setLabTest(labTestSaved);
+				resultAttributes.add(attribute);
 			}
 			
+			System.out.println("result Attribue ::: " + resultAttributes);
+			if (ss != null) {
+				ss.setLabTest(labTestSaved);
+				ss = commonLabTestService.saveLabTestSample(ss);
+			}
+			if (resultAttributes != null) {
+				commonLabTestService.saveLabTestAttributes(resultAttributes);
+			}
+			
+			return labTestSaved;
 		}
-		return commonLabTestService.saveLabTest(labTest, ss, labTest.getAttributes());
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new ResourceDoesNotSupportOperationException("Test Order wasnot saved successfully", e);
+		}
+		
 	}
 	
 	@Override
@@ -92,7 +124,6 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 			description.addProperty("order");
 			description.addProperty("labTestType");
 			description.addProperty("labReferenceNumber");
-			description.addProperty("labTestSamples");
 			
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
@@ -125,13 +156,38 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 			description.addProperty("order");
 			description.addProperty("labTestType");
 			description.addProperty("labReferenceNumber");
-			description.addProperty("labTestSamples");
+		
 			
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
 		}
 		return null;
+	}
+	
+	@Override
+	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
+		List<LabTest> list = commonLabTestService.getLabTests(
+		    Context.getPatientService().getPatient(Integer.parseInt(context.getRequest().getParameter("patientId"))), true);
+		
+		return new NeedsPaging<LabTest>(list, context);
+	}
+	
+	@Override
+	public DelegatingResourceDescription getCreatableProperties() throws ResourceDoesNotSupportOperationException {
+		DelegatingResourceDescription delegatingResourceDescription = new DelegatingResourceDescription();
+		//delegatingResourceDescription.addProperty();
+		
+		delegatingResourceDescription.addProperty("labReferenceNumber");
+		delegatingResourceDescription.addProperty("labInstructions");
+		delegatingResourceDescription.addProperty("resultComments");
+		delegatingResourceDescription.addProperty("labTestType");
+		delegatingResourceDescription.addProperty("labTestSamples");
+		delegatingResourceDescription.addProperty("order");
+		delegatingResourceDescription.addProperty("patient");
+		delegatingResourceDescription.addProperty("attributes");
+		
+		return delegatingResourceDescription;
 	}
 	
 }

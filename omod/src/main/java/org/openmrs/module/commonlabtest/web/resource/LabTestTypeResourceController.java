@@ -1,6 +1,7 @@
 package org.openmrs.module.commonlabtest.web.resource;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,7 @@ import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.MetadataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
+import org.openmrs.module.webservices.rest.web.response.ConversionException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
@@ -108,6 +110,8 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
 		delegatingResourceDescription.addProperty("referenceConcept");
 		delegatingResourceDescription.addProperty("name");
 		delegatingResourceDescription.addProperty("description");
+		delegatingResourceDescription.addProperty("labTestSamples");
+		delegatingResourceDescription.addProperty("order");
 		
 		return delegatingResourceDescription;
 	}
