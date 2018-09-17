@@ -43,7 +43,7 @@ public class LabTestResultViewController {
 		
 		try {
 			for (LabTestAttributeType attribut : commonLabTestService.getLabTestAttributeTypes(labTest.getLabTestType(),
-			    false)) {
+			    Boolean.TRUE)) {
 				for (int i = 0; i < testAttributes.size(); i++) {
 					if (!testAttributes.get(i).getVoided()) {
 						if (testAttributes.get(i).getAttributeTypeId() == attribut.getLabTestAttributeTypeId()) {
@@ -87,7 +87,7 @@ public class LabTestResultViewController {
 						objTestResult.addProperty("question", labTestResult.getAttributeType().getName());
 						objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
 					}
-					
+					objTestResult.addProperty("void", labTestResult.getVoided());
 					testResultArray.add(objTestResult);
 				}
 			}
@@ -158,7 +158,7 @@ public class LabTestResultViewController {
 		JsonArray testAttributeArray = new JsonArray();
 		for (LabTestAttributeType labTestAttributeTypeObj : labTestAttributeType) {
 			JsonObject objTestSample = new JsonObject();
-			objTestSample.addProperty("testOrderId", testTypeId);
+			objTestSample.addProperty("testTypeId", testTypeId);
 			objTestSample.addProperty("attributeTypeName", labTestAttributeTypeObj.getName());
 			objTestSample.addProperty("sortWeight", labTestAttributeTypeObj.getSortWeight());
 			testAttributeArray.add(objTestSample);

@@ -51,7 +51,7 @@ public class LabTestSampleController {
 	@RequestMapping(method = RequestMethod.GET, value = "/module/commonlabtest/addLabTestSample.form")
 	public String showForm(HttpServletRequest request, ModelMap model, @RequestParam(required = true) Integer patientId,
 	        @RequestParam(required = false) Integer testSampleId, @RequestParam(required = false) Integer orderId,
-	        @RequestParam(value = "error", required = false) String error) {
+	        @RequestParam(required = false) String error) {
 		
 		String orderDate = "";
 		if (orderId != null) {
@@ -133,11 +133,13 @@ public class LabTestSampleController {
 				///If we get any exception while binding it should be redirected to same page with binding error		
 				if (labTestSample.getLabTestSampleId() == null) {
 					return "redirect:addLabTestSample.form?patientId="
-					        + labTestSample.getLabTest().getOrder().getPatient().getPatientId();
+					        + labTestSample.getLabTest().getOrder().getPatient().getPatientId() + "&orderId="
+					        + labTestSample.getLabTest().getOrder().getId();
 				} else {
 					return "redirect:addLabTestSample.form?patientId="
 					        + labTestSample.getLabTest().getOrder().getPatient().getPatientId() + "&testSampleId="
-					        + labTestSample.getLabTest().getTestOrderId();
+					        + labTestSample.getLabTest().getTestOrderId() + "&orderId="
+					        + labTestSample.getLabTest().getOrder().getId();
 				}
 			} else {
 				//   labTest.set
@@ -157,11 +159,13 @@ public class LabTestSampleController {
 			model.addAttribute("error", status);
 			if (labTestSample.getLabTestSampleId() == null) {
 				return "redirect:addLabTestSample.form?patientId="
-				        + labTestSample.getLabTest().getOrder().getPatient().getPatientId();
+				        + labTestSample.getLabTest().getOrder().getPatient().getPatientId() + "&orderId="
+				        + labTestSample.getLabTest().getOrder().getId();
 			} else {
 				return "redirect:addLabTestSample.form?patientId="
 				        + labTestSample.getLabTest().getOrder().getPatient().getPatientId() + "&testSampleId="
-				        + labTestSample.getLabTest().getTestOrderId();
+				        + labTestSample.getLabTest().getTestOrderId() + "&orderId="
+				        + labTestSample.getLabTest().getOrder().getId();
 			}
 		}
 		model.addAttribute("save", status);

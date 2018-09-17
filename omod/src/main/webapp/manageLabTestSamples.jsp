@@ -146,7 +146,7 @@ legend.scheduler-border {
 	        </tbody>
 	    </table>
 	 </div>
-	 
+	
 	  <!-- Rejected Reason Modal -->
 	<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

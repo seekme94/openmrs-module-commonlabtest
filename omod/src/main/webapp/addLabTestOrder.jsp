@@ -93,14 +93,14 @@ legend.scheduler-border {
 			   		     <form:label class="form-control" path="order.encounter" id="encounter"  name="encounter">${labTest.order.encounter.getEncounterType().getName()}</form:label>
 					 </c:if>
 					  <c:if test="${empty labTest.labReferenceNumber}"> 
-					  	<form:select class="form-control" path="order.encounter" id="encounter" >
-								<form:options  />
-								 <c:if test="${not empty encounters}">
-										<c:forEach var= "encounter" items="${encounters}">
-											<form:option item ="${encounter}" value="${encounter}">${encounter.getEncounterType().getName()}</form:option>
-										</c:forEach>
-					 			</c:if>
-						</form:select>
+						  	<form:select class="form-control" path="order.encounter" id="encounter" >
+									<form:options  />
+									 <c:if test="${not empty encounters}">
+											<c:forEach var= "encounter" items="${encounters}">
+												<form:option item ="${encounter}" value="${encounter}">${encounter.getEncounterType().getName()}</form:option>
+											</c:forEach>
+						 			</c:if>
+							</form:select>
 						</c:if>
 						<span id="encounters" class="text-danger "></span>
 				   </div>

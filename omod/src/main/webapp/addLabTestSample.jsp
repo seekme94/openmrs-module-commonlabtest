@@ -151,7 +151,7 @@ legend.scheduler-border {
 			   		<form:label  class="control-label" path="sampleIdentifier"><spring:message code="commonlabtest.labtestsample.sampleIdentifier" /><span class="text-danger required">*</span></form:label>
 			   </div>
 			   <div class="controls col-md-6">
-			        <form:input class="form-control"  path="sampleIdentifier"  id="sample_identifier" ></form:input>
+			        <form:input class="form-control"  path="sampleIdentifier" maxlength="50"  id="sample_identifier" ></form:input>
 					<span id="sampleidentifier" class="text-danger "> </span>
 					<form:errors path="sampleIdentifier" cssClass="error" />
 				</div>

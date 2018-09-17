@@ -61,7 +61,7 @@ public class LabTestResultController {
 			return "redirect:../../patientDashboard.form?patientId=" + patientId;
 		}
 		
-		List<LabTestAttributeType> attributeTypeList;
+		List<LabTestAttributeType> attributeTypeList = new ArrayList<LabTestAttributeType>();
 		attributeTypeList = commonLabTestService.getLabTestAttributeTypes(labTest.getLabTestType(), Boolean.FALSE);
 		JsonArray attributeTypeArray = new JsonArray();
 		List<LabTestAttribute> testAttributes = commonLabTestService.getLabTestAttributes(testOrderId);
@@ -127,16 +127,20 @@ public class LabTestResultController {
 		
 		model.addAttribute("attributeTypeList", attributeTypeArray);
 		//check the voided values ..
-		if (testAttributes.size() > 0) {
+		if (testAttributes.size() > 0 && attributeTypeList.size() > 0) {
+			boolean updateMode = false;
 			for (LabTestAttribute labTestAttribute : testAttributes) {
 				if (!labTestAttribute.getVoided()) {
-					model.addAttribute("update", Boolean.TRUE);
-					model.addAttribute("filepath", labTest.getFilePath());
-				} else {
-					model.addAttribute("update", Boolean.FALSE);
-					model.addAttribute("filepath", "");
+					updateMode = true;
 					break;
 				}
+			}
+			if (updateMode) {
+				model.addAttribute("update", Boolean.TRUE);
+				model.addAttribute("filepath", labTest.getFilePath());
+			} else {
+				model.addAttribute("update", Boolean.FALSE);
+				model.addAttribute("filepath", "");
 			}
 		} else {
 			model.addAttribute("update", Boolean.FALSE);
@@ -145,7 +149,11 @@ public class LabTestResultController {
 		String fileExtensions = Context.getAdministrationService().getGlobalProperty("commonlabtest.fileExtensions");
 		model.addAttribute("fileExtensions", fileExtensions);
 		model.addAttribute("testOrderId", testOrderId);
-		model.addAttribute("testTypeName", attributeTypeList.get(0).getLabTestType().getName());
+		if (attributeTypeList.size() > 0) {
+			model.addAttribute("testTypeName", attributeTypeList.get(0).getLabTestType().getName());
+		} else {
+			model.addAttribute("testTypeName", "Unknown"); //This lines need to be discuss.
+		}
 		model.addAttribute("patientId", labTest.getOrder().getPatient().getPatientId());
 		
 		return SUCCESS_ADD_FORM_VIEW;
@@ -172,7 +180,7 @@ public class LabTestResultController {
 			floatValue = request.getParameter("float." + labTestAttributeType.getId());
 			dateValue = request.getParameter("date." + labTestAttributeType.getId());
 			testAtrrId = request.getParameter("testAttributeId." + labTestAttributeType.getId());
-			if (update && (!testAtrrId.equals("undefined") || !testAtrrId.equals(""))) {
+			if (update && (!testAtrrId.equals("undefined") && !testAtrrId.equals(""))) {
 				testAttribute = commonLabTestService.getLabTestAttribute(Integer.parseInt(testAtrrId));
 			} else {
 				testAttribute.setLabTest(labTest);

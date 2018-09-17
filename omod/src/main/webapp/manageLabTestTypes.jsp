@@ -51,8 +51,12 @@ legend.scheduler-border {
  margin-bottom:15px;
  
  }
+ .modal-body{
+ 	    height: 500px;
+		overflow-y:scroll;
+}
  
-;table.display tbody tr:nth-child(even):hover td{
+table.display tbody tr:nth-child(even):hover td{
     background-color: #1aac9b !important;
 }
 

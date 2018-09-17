@@ -55,20 +55,15 @@ legend.scheduler-border {
 <body>
 	<br>
 	<c:set var="testOrder" scope="session" value="${model.testOrder}" />
-	<div>
-	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.order.add" /> </a>
+	<div class="row">
+	  <div class="col-sm-4 col-md-2">
+	 	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.order.add" /> </a>
+	  </div>
+	   <div class="col-sm-4 col-md-2">
+	   	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestRequest.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.request.add" /> </a>
+	  </div>
 	</div>
-	<%-- <c:if test="${not empty status}">
-		<div class="alert alert-success">
-			 <a href="#" class="close" data-dismiss="alert">&times;</a>
-	 		<strong>Success!</strong> <c:out value="${status}" />
-		</div>
-	</c:if> --%>
-		<!--  <div class="alert alert-info" hidden ="true" id="specimenalert">
-	      <a href="#" class="close" data-dismiss="alert">&times;</a>
-	      <p id="info-message">This test order is not required test sample...</p>
-   		 </div>  -->
-   		 <div id="alert_placeholder"></div>
+   	<div id="alert_placeholder"></div>
 	<br>
 	<!--List of Test Order  -->
 	<div class=" boxHeader" style="background-color: #1aac9b">
@@ -388,6 +383,7 @@ function autoHide(){
 					resultsItems = resultsItems.concat('<th><a>Status</a></th>');
 					jQuery(sampleArray).each(function() {
 						console.log("testOrderId : "+this.testOrderId);
+					   	
 						resultsItems = resultsItems.concat('<tbody><tr>'); 
 						resultsItems = resultsItems.concat('<td>'+this.testOrderId+'</td>');
 						resultsItems = resultsItems.concat('<td>'+this.specimenType+'</td>');
@@ -411,10 +407,18 @@ function autoHide(){
 				resultsItems = resultsItems.concat('<th><a>Value</a></th>');
 				jQuery(resultArray).each(function() {
 					console.log("testOrderId : "+this.testOrderId);
-					resultsItems = resultsItems.concat('<tbody><tr>'); 
-					resultsItems = resultsItems.concat('<td>'+this.question+'</td>');
-					resultsItems = resultsItems.concat('<td>'+this.valuesReference+'</td>');
-					resultsItems = resultsItems.concat('</tr></tbody>'); 
+					 if(this.void === true){
+							resultsItems = resultsItems.concat('<tbody><tr>'); 
+							resultsItems = resultsItems.concat('<td><font color="#FF0000">'+this.question+'</font></td>');
+							resultsItems = resultsItems.concat('<td><font color="#FF0000">'+this.valuesReference+'</font></td>');
+							resultsItems = resultsItems.concat('</tr></tbody>'); 
+					 }else {
+							resultsItems = resultsItems.concat('<tbody><tr>'); 
+							resultsItems = resultsItems.concat('<td>'+this.question+'</td>');
+							resultsItems = resultsItems.concat('<td>'+this.valuesReference+'</td>');
+							resultsItems = resultsItems.concat('</tr></tbody>'); 
+					 }
+				
 				 });
 			resultsItems = resultsItems.concat('</tr></thead>');
 			resultsItems = resultsItems.concat('</table>');

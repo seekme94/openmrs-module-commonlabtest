@@ -172,10 +172,10 @@ $(document).ready(function () {
     update ='${update}';
     patientId ='${patientId}';
     
-    
-	if(local_source.length > 0){
-		 populateResultForm();
-	}	
+    populateResultForm();
+	/* if(local_source.length > 0){
+		
+	}	 */
 	
 
 });
@@ -216,9 +216,16 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 					 resultsItems = resultsItems.concat('<select class="form-control" id="concept.'+this.id+'" name="concept.'+this.id+'" ><options />');
+					 let values = this.value;
 					 jQuery(this.conceptOptions).each(function() {
-						  console.log("Concept Id : "+this.conceptId);
-						  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
+						  if(values === undefined || values === 'undefined'){
+							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
+						  }else{
+							  if(values == this.conceptId)
+							  	 resultsItems =resultsItems.concat( '<option  value="'+this.conceptId+'" selected >'+this.conceptName+'</option>'); 
+							  else
+							  	 resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>');  
+						  }
 					  });
 					 resultsItems =resultsItems.concat('</select></div></div>');
 			 }
@@ -227,9 +234,12 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
-					 if(this.value == 'undefined'){
+					 console.log("values : "+ this.value);
+					 if(this.value === undefined || this.value === 'undefined'){
+						 console.log("Called");
 						 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="" required  data-error-msg="This field cannot be empty" />');
 					 }else{
+						 console.log("else Called");
 						 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'" required  data-error-msg="This field cannot be empty" />'); 
 					 }
 					 resultsItems =resultsItems.concat('</div></div>');
@@ -239,8 +249,10 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
-					 if(this.value == 'undefined'){
-						 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" value="" required />');
+					 console.log("values : "+ this.value);
+					 if(this.value === 'undefined'){
+						
+						 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" required />');
 					 }
 					 else{
 						 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" value="'+this.value+'" required />'); 
@@ -280,7 +292,7 @@ function navigatedToPatientDashboard(){
 				 resultsItems =resultsItems.concat('</div></div>');
 		   } 
 	     });            
-				 /* resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+				  /* resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					resultsItems = resultsItems.concat('<label class="control-label">Comments</label>');
 					resultsItems = resultsItems.concat('</div><div class="col-md-4">');
 					  if(resultComments != ""){
@@ -288,32 +300,40 @@ function navigatedToPatientDashboard(){
 					  }else {
 						  resultsItems = resultsItems.concat('<textarea  class="form-control"  maxlength="512"  name="resultComments" id="resultComments" value ="" />'); 
 					  }
-					resultsItems = resultsItems.concat('</div></div>'); */
-     				//file attachment	
-	   				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
-	   				 resultsItems = resultsItems.concat('<label class="control-label">Attachment</label>');
-	   				 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
-	   				 resultsItems = resultsItems.concat('<input type="file" name="documentTypeFile" id="documentTypeFile" accept="image/*,audio/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />');
-	   				 if(filepath != ""){
-	   					 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
-		   				 resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="'+filepath+'" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>'); 					 
-	   				 }
-	   			     resultsItems = resultsItems.concat('</div></div>');
-	   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
-	   				 resultsItems = resultsItems.concat('<label class="control-label text-danger" id="documenttypefile"></label>');
-	   			     resultsItems = resultsItems.concat('</div></div>');
-	   			    
-	   			     //extension 
-	   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
-	   				 resultsItems = resultsItems.concat('<label class="control-label text-danger" id="documenttypefileextension"></label>');
-	   			     resultsItems = resultsItems.concat('</div></div>');
+					 resultsItems = resultsItems.concat('</div></div>'); */
+					 if(local_source.length > 0){
+		   				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+		   				 resultsItems = resultsItems.concat('<label class="control-label">Attachment</label>');
+		   				 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
+		   				 resultsItems = resultsItems.concat('<input type="file" name="documentTypeFile" id="documentTypeFile" accept="image/*,audio/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />');
+		   				 if(filepath != ""){
+		   					 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
+			   				 resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="'+filepath+'" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>'); 					 
+		   				 }
+		   			     resultsItems = resultsItems.concat('</div></div>');
+		   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
+		   				 resultsItems = resultsItems.concat('<label class="control-label text-danger" id="documenttypefile"></label>');
+		   			     resultsItems = resultsItems.concat('</div></div>');
+		   			    
+		   			     //extension 
+		   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
+		   				 resultsItems = resultsItems.concat('<label class="control-label text-danger" id="documenttypefileextension"></label>');
+		   			     resultsItems = resultsItems.concat('</div></div>');
+					 }else{
+						    resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
+			   				resultsItems = resultsItems.concat('<label class="control-label" id=""><spring:message code="error.message.noAttributeType.found" /></label>');
+			   			    resultsItems = resultsItems.concat('</div></div>'); 
+					 }
 	   			     //end
 				     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-2">');
-				     resultsItems = resultsItems.concat('<input type="submit" value="Save Test Result" id="submitBttn" ></input>');
-				     resultsItems = resultsItems.concat('</div><div class="col-md-2">');
+	   			     if(local_source.length > 0){
+					     resultsItems = resultsItems.concat('<input type="submit" value="Save Test Result" id="submitBttn" ></input>');
+					     resultsItems = resultsItems.concat('</div><div class="col-md-2">');
+   						}
 				     resultsItems = resultsItems.concat('<input type="button" onclick="navigatedToPatientDashboard();" value="Cancel"></input>');
 				     resultsItems = resultsItems.concat('</div></div></form>');
-			         $("#resultContainer").append(resultsItems);
+			         console.log("Resultan String : "+resultsItems);
+				     $("#resultContainer").append(resultsItems);
 		  
 				
 	   
@@ -337,7 +357,7 @@ function navigatedToPatientDashboard(){
                  var fileExt = "."+fileName.split('.').pop();
                  console.log("include : " +fileExtensionsArr.includes(fileExt));
                  blnValid = fileExtensionsArr.includes(fileExt);
-                 if (!blnValid) {
+                /*  if (!blnValid) {
                 	    console.log("True : "+blnValid);
          			    document.getElementById("documenttypefile").style.display= 'block';
          				document.getElementById('documenttypefile').innerHTML = "<b>"+ fileName.split('.').pop().toUpperCase()+"</b> file extension is not allowed.You can only upload files with extensions: ";
@@ -345,12 +365,12 @@ function navigatedToPatientDashboard(){
          			
          				$("#documentTypeFile" ).val("");
          				//document.getElementById('submitBttn').disabled = true;
-                 }else if(blnValid){
+                 }else if(blnValid){ */
                 	  console.log("False : "+blnValid);
          			   document.getElementById("documenttypefile").style.display= 'none';	
          			  document.getElementById("documenttypefileextension").style.display= 'none';	
          			  // document.getElementById('submitBttn').disabled = false;
-                 }
+                 
              }
 	     });
 	  });

@@ -727,6 +727,9 @@ public class CommonLabTestServiceImpl extends BaseOpenmrsService implements Comm
 		List<LabTestAttribute> labTestAttributes = getLabTestAttributes(labTest.getTestOrderId());
 		if (labTestAttributes != null) {
 			for (LabTestAttribute labTestAttribute : labTestAttributes) {
+				if (labTestAttribute.getVoided()) {
+					continue;
+				}
 				voidLabTestAttribute(labTestAttribute, voidReason);
 			}
 		}
