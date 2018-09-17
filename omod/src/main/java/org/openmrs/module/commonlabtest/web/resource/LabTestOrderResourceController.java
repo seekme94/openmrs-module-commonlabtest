@@ -156,7 +156,6 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 			description.addProperty("order");
 			description.addProperty("labTestType");
 			description.addProperty("labReferenceNumber");
-		
 			
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
