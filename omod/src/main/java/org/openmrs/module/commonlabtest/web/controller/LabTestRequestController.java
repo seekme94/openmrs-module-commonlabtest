@@ -1,7 +1,9 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,22 +11,30 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.CareSetting;
+import org.openmrs.CareSetting.CareSettingType;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Order;
+import org.openmrs.Order.Action;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.LabTestType.LabTestGroup;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
+import org.openmrs.web.WebConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @Controller
 public class LabTestRequestController {
@@ -45,7 +55,6 @@ public class LabTestRequestController {
 	        @RequestParam(required = false) Integer patientId, ModelMap model) {
 		
 		JsonArray testParentArray = new JsonArray();
-		
 		for (LabTestGroup labTestGroup : LabTestGroup.values()) {
 			JsonObject labTestGroupObj = new JsonObject();
 			JsonArray jsonChildArray = new JsonArray();
@@ -90,64 +99,57 @@ public class LabTestRequestController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/addLabTestRequest.form")
-	public String onSubmit(ModelMap model, HttpSession httpSession,
-	        @ModelAttribute("anyRequestObject") Object anyRequestObject, HttpServletRequest request,
-	        @ModelAttribute("labTest") LabTest labTest, String json) {
+	@ResponseBody
+	public boolean onSubmit(ModelMap model, HttpSession httpSession, HttpServletRequest request, @RequestBody String json,
+	        @RequestParam(required = false) Integer patientId) {
 		
-		System.out.println(json);
-		Object generalObj = anyRequestObject;
 		String status = "";
+		boolean boolStatus = Boolean.TRUE;
 		try {
-			
-			/*			LabTestType lbTestType =  Context.getService(CommonLabTestService.class).getLabTestType(labTest.getLabTestType().getLabTestTypeId());
-					Concept referConcept = lbTestType.getReferenceConcept();
-					
-					TestOrder testOrder;
-					if (labTest.getOrder().getId() != null) {
-						testOrder = (TestOrder) labTest.getOrder();
-					} else {
-						
-						testOrder = new TestOrder();
-					}
-					
-					// execute this when order and lab test are null
-					testOrder.setCareSetting(labTest.getOrder().getCareSetting());
-					testOrder.setConcept(referConcept);
-					testOrder.setEncounter(labTest.getOrder().getEncounter());
-					testOrder.setPatient(labTest.getOrder().getPatient());
-					testOrder.setOrderer(labTest.getOrder().getOrderer());
-					testOrder.setOrderType(labTest.getOrder().getOrderType());
-					testOrder.setDateActivated(new java.util.Date());
-					testOrder.setOrderId(labTest.getOrder().getOrderId());
-					
-					Order testParentOrder = testOrder;
-					labTest.setOrder(testParentOrder);
-					if (labTest.getTestOrderId() == null) {
-						Order testParentOrder = labTest.getOrder();
-						testParentOrder.setDateActivated(new java.util.Date());
-						labTest.setOrder(testParentOrder);
-					}
-					commonLabTestService.saveLabTest(labTest);
-					StringBuilder sb = new StringBuilder();
-					sb.append("Lab Test Order with Uuid :");
-					sb.append(labTest.getUuid());
-					sb.append(" is  saved!");
-					status = sb.toString();*/
+			System.out.println(json);
+			JsonArray arry = (JsonArray) new JsonParser().parse(json);
+			List<LabTest> labTestArray = new ArrayList<LabTest>();
+			for (int i = 0; i < arry.size(); i++) {
+				LabTest labTest = new LabTest();
+				JsonObject jsonObject = arry.get(i).getAsJsonObject();
+				Order order = new Order();
+				order.setCareSetting(Context.getOrderService().getCareSetting(1));
+				Encounter encounter = Context.getEncounterService().getEncounter(jsonObject.get("encounterId").getAsInt());
+				order.setEncounter(encounter);
+				order.setAction(Action.NEW);
+				order.setOrderer(Context.getProviderService()
+				        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next());
+				order.setOrderType(Context.getOrderService().getOrderType(3));
+				order.setDateActivated(new Date());
+				order.setPatient(Context.getPatientService().getPatient(patientId));
+				Concept concept = Context.getConceptService().getConcept(jsonObject.get("testTypeId").getAsInt());
+				order.setConcept(concept);
+				labTest.setOrder(order);
+				labTest.setLabInstructions(jsonObject.get("labInstructions").getAsString());
+				labTest.setLabReferenceNumber(jsonObject.get("labReferenceNumber").getAsString());
+				LabTestType labTestType = commonLabTestService.getLabTestType(jsonObject.get("testTypeId").getAsInt());
+				labTest.setLabTestType(labTestType);
+				labTestArray.add(labTest);
+			}
+			for (LabTest labTest : labTestArray) {
+				commonLabTestService.saveLabTest(labTest);
+			}
+			StringBuilder sb = new StringBuilder();
+			sb.append("Lab Test Order with Uuid :");
+			sb.append(" is  saved!");
+			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = "could not save Lab Test Order";
+			status = "could not save Lab Test Request";
 			e.printStackTrace();
 			model.addAttribute("error", status);
-			if (labTest.getTestOrderId() == null) {
-				return "redirect:addLabTestOrder.form?patientId=" + labTest.getOrder().getPatient().getPatientId();
-			} else {
-				return "redirect:addLabTestOrder.form?patientId=" + labTest.getOrder().getPatient().getPatientId()
-				        + "&testOrderId=" + labTest.getTestOrderId();
-			}
+			boolStatus = Boolean.FALSE;
 		}
-		//request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Test order saved successfully");
+		if (boolStatus) {
+			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Test Request saved successfully");
+		}
 		//model.addAttribute("status", status);
-		return SUCCESS_ADD_FORM_VIEW; //"redirect:../../patientDashboard.form?patientId=" + labTest.getOrder().getPatient().getPatientId();
+		return boolStatus; //"redirect:../../patientDashboard.form?patientId=" + patientId;
 	}
 	
 }

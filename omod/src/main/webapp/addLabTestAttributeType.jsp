@@ -728,12 +728,9 @@ legend.scheduler-border {
 	
 	function showSortWeightList(sortweight){
 		var testTypeId = document.getElementById("testTypeSuggestBox").value;
-		 if(testTypeId != ""){
+		 if(testTypeId != "" && isInt(testTypeId)){
 			    getTestAttributeType(testTypeId);
 		  }
-		 else{
-			 
-		 }
 	}
 	
 	function getTestAttributeType(testTypeId){

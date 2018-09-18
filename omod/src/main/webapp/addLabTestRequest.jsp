@@ -114,17 +114,16 @@
     <fieldset  class="scheduler-border"  style="margin-top:320px;" >
 		<legend  class="scheduler-border"><spring:message code="commonlabtest.request.add" /></legend>	
         <br>
-            <form id="labTestForm"  onsubmit="return submitAndValidate()">
+        <!--     <form id="labTestForm" method="post"  onsubmit="return submitAndValidate()"> -->
 		        <div class="row" >
 				   <div class="col-md-2">
 				        <label  class="control-label" path="encounter"><spring:message code="general.encounter" /><span class=" text-danger required">*</span></label>
 				   </div>
 				   <div class="col-md-4">
-						  <select class="form-control" path="encounter" id="encounter" >
-									<options  />
+						  <select class="form-control" path="encounter" id="encounter_id" >
 									 <c:if test="${not empty encounters}">
 											<c:forEach var= "encounter" items="${encounters}">
-												<option item ="${encounter}" value="${encounter}">${encounter.getEncounterType().getName()}</option>
+												<option value="${encounter.encounterId}">${encounter.getEncounterType().getName()}</option>
 											</c:forEach>
 						 			</c:if>
 							</select>
@@ -146,13 +145,13 @@
 		  <!-- Submit  -->
 			 <div class="row">
 			   <div class="col-md-2">
-					<input type="submit" value="Save Test Request"></input>
+					<input type="submit" onclick = "return submitAndValidate()" value="Save Test Request"></input>
 			   </div>
 			    <div class="col-md-2" >
 					<input type="button" onclick="location.href = '${pageContext.request.contextPath}/patientDashboard.form?patientId=${patientId}';"  value="Cancel"></input>
 			   </div>
 			 </div>		
-       </form>
+       <!-- </form> -->
  </fieldset>
 </body>
 
@@ -172,7 +171,7 @@
 
 <script type="text/javascript">	
     var localTestRequest;
-	
+	var patiendId;
    $(document).ready(function(){
 	   $( function() {
 		    $( "#accordion" ).accordion({
@@ -180,7 +179,7 @@
 		    	 heightStyle: "fill"
 		    });
 		  } );
-	   
+	   patiendId ='${patientId}';
 		 localTestRequest = getTestRequestList();
 		 generateTestCategory(); 
 	   
@@ -243,50 +242,71 @@
 	return isChecked;
    }
    function getTestTypes(){
-	   var TableData = new Array();
-	   $('#testOrderTable tr').each(function(row, tr){
-		   
+	    var TableData = new Array();
+	    let encounter =  document.getElementById('encounter_id').value;
+ 		$('#testOrderTable tr').each(function(row, tr){
 		   console.log("Check : "+$(tr).find('td:eq(0) input').is(':checked'));
 		   var isTestTypeChecket =$(tr).find('td:eq(0) input').is(':checked');
 		   if(isTestTypeChecket){
-			   console.log("row : " +tr);
 			   TableData[row]={
-			             "testOrderId" :$(tr).find('td:eq(1)').text()
-			             ,"name" :$(tr).find('td:eq(2)').text()
-			             ,"labReference" :$(tr).find('td:eq(3) input').val()
-			             ,"instruction" :$(tr).find('td:eq(4) input').val()
+			             "testTypeId" :$(tr).find('td:eq(1)').text()
+			             ,"testTypename" :$(tr).find('td:eq(2)').text()
+			             ,"labReferenceNumber" :$(tr).find('td:eq(3) input').val()
+			             ,"labInstructions" :$(tr).find('td:eq(4) input').val()
+			             ,"encounterId":encounter
 			      }    
 		   }
 		});
 	   
-	   TableData.shift();
+	  TableData.shift();
 	 console.log("Table datae : "+JSON.stringify(TableData.filter(Boolean))); 
 	 return TableData.filter(Boolean);
    }
    function Validation(){
-	   var encounter = document.getElementById('encounter').value
+	   var encounter = document.getElementById('encounter_id');
+	    let e =   encounter.options[encounter.selectedIndex].text;
 	   var errorMessage= 'This field can not be empty';
 	   var isValidate =true; 
-	   if(encounter == ""){
+	   if(e == ""){
 			document.getElementById("encounters").style.display= 'block';	
 			document.getElementById('encounters').innerHTML =errorMessage;
 			isValidate = false;
 		}else {
 			document.getElementById("encounters").style.display= 'none';	
 		} 
+		$('#testOrderTable tr').each(function(row, tr){
+			   var isTestTypeChecket =$(tr).find('td:eq(0) input').is(':checked');
+			   if(isTestTypeChecket){
+					   let valueReference =$(tr).find('td:eq(3) input').val();
+					   let testTypeId = $(tr).find('td:eq(1)').text();
+					   if(valueReference == "" || valueReference == null ){
+						   document.getElementById('labReference.'+testTypeId+'').style.display= 'block';	
+						   document.getElementById('labReference.'+testTypeId+'').innerHTML =errorMessage;
+						   isValidate = false;
+					   }else{
+							document.getElementById('labReference.'+testTypeId+'').style.display= 'none'; 
+					   }
+			   }
+			});
+	   
+	   alert("valid");
 	   return isValidate;
    }
    function save(data){
-	   alert("save");
 		  var isTure =true;
 			 $.ajax({
-						type : 'POST',
-						url : '${pageContext.request.contextPath}/module/commonlabtest/addLabTestRequest.form',
-					
+						type : "POST",
+						url : "${pageContext.request.contextPath}/module/commonlabtest/addLabTestRequest.form?patientId="+patiendId,
+						contentType : "application/json",
+						dataType : "json",
 						data : JSON.stringify(data),//used without stringify();
 						success : function(data) {
 						   console.log("success  : " + data);
-						   isTure = data;
+						    if(data == true){
+						    	window.location = "${pageContext.request.contextPath}/patientDashboard.form?patientId=${patientId}";
+						    }else{
+							    showalert("Error ! could not save Lab Test Request","alert-warning"); 
+						    }
 						},
 						error : function(data) {
 							  isTure = true;
@@ -324,7 +344,7 @@
 											    	     requestItems = requestItems.concat('<td style="text-align:center;"><input class="form-check-input " type="checkbox" /></td>');   
 											    	     requestItems = requestItems.concat('<td hidden ="true" class ="testTypeId">'+this.testTypeId+'</td>');   
 											    	     requestItems = requestItems.concat('<td>'+this.testTypeName+'</td>');   
-											    	     requestItems = requestItems.concat('<td><input class="form-control" disabled type="text" id="labRef.'+this.testTypeId+'"/></td>');   
+											    	     requestItems = requestItems.concat('<td><input class="form-control" disabled type="text" id="labRef.'+this.testTypeId+'"/><span id="labReference.'+this.testTypeId+'" class="text-danger "></span></td>');   
 											    	     requestItems = requestItems.concat('<td><input class="form-control" disabled type="text" id="ins.'+this.testTypeId+'"/></td>');
 											    	requestItems = requestItems.concat('</tr>');
 										       });
