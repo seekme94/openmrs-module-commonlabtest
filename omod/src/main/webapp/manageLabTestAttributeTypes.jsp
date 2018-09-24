@@ -117,10 +117,10 @@
 
 
 <script>
-function relocate_home()
+/* function relocate_home()
 {
      location.href = "addLabTestAttributeType.form";
-} 
+}  */
 
 $(document).ready(function() {
 	//console.log("${status}");
@@ -151,13 +151,13 @@ $(document).ready(function() {
 	 jQuery(function() {
 
 			 if (performance.navigation.type == 1) {
-				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestAttributeTypes.form";
 			 }
 
 			 jQuery("body").keydown(function(e){
 	
 			 if(e.which==116){
-				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form";
+				 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestAttributeTypes.form";
 			 }
 	
 			 });

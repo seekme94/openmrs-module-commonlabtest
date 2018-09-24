@@ -160,6 +160,20 @@ var testTypeName="";
 var fileExtensions ="";
 var fileExtensionsArr =[];
 var fileExtensionArray = [];
+
+//check for the integer 
+function isNumber(event) {
+	 var key = window.event ? event.keyCode : event.which;
+	    if (event.keyCode === 8 || event.keyCode === 46) {
+	        return true;
+	    } else if ( key < 48 || key > 57 ) {
+	        return false;
+	    } else {
+	    	return true;
+	    }
+}
+
+
 $(document).ready(function () {
 	fileExtensions = '${fileExtensions}';
 	fileExtensionsArr =  JSON.stringify(fileExtensions).split(",");
@@ -196,7 +210,7 @@ function navigatedToPatientDashboard(){
 	   
      var resultsItems ="";
   
-     resultsItems = resultsItems.concat('<form method="post" id="entryForm" action="${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form" enctype="multipart/form-data">');
+     resultsItems = resultsItems.concat('<form method="post" id="entryForm" onsubmit="return validation()" action="${pageContext.request.contextPath}/module/commonlabtest/addLabTestResult.form" enctype="multipart/form-data">');
      resultsItems = resultsItems.concat('<input hidden="true" id="testOrderId" name ="testOrderId" value="'+testOrder+'" />');  
      resultsItems = resultsItems.concat('<input hidden="true" id="patientId" name ="patientId" value="'+patientId+'" />');
      resultsItems = resultsItems.concat('<center><h4>'+testTypeName+'</h4></center><hr class="style-three">');   
@@ -245,20 +259,40 @@ function navigatedToPatientDashboard(){
 					 resultsItems =resultsItems.concat('</div></div>');
 			 }
 			 else if(this.dataType == 'Numeric'){
-				 
+				     console.log("Config : "+this.config);
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 					 console.log("values : "+ this.value);
 					 if(this.value === 'undefined'){
-						
-						 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" required />');
+							 if(this.config === "" || this.config == null ){
+								    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)" required />');
+							 }else{
+								    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid" onkeypress="return isNumber(event)" required />'); 
+							 }
 					 }
 					 else{
-						 resultsItems = resultsItems.concat('<input class="form-control" type="number" id="float.'+this.id+'" name="float.'+this.id+'" value="'+this.value+'" required />'); 
+							 if(this.config === "" || this.config == null ){
+								    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)" required />');
+							 }else{
+								    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="float.'+this.id+'" name="float.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid" onkeypress="return isNumber(event)" required />'); 
+							 }					
 					 }
 					 resultsItems =resultsItems.concat('</div></div>');
 		 	}
+			 else if(this.dataType == 'Integer'){
+				 
+				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+				 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
+				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+				 if(this.value === 'undefined'){
+					 resultsItems = resultsItems.concat('<input class="form-control" type="number" min="0" onkeypress="return isNumber(event)" id="int.'+this.id+'" name="int.'+this.id+'" required /> <span id="intVal" class="text-danger "> </span>');
+				 }
+				 else{
+					 resultsItems = resultsItems.concat('<input class="form-control" type="number" min="0" onkeypress="return isNumber(event)" id="int.'+this.id+'" name="int.'+this.id+'" value="'+this.value+'" required /> <span id="intVal" class="text-danger "> </span>'); 
+				 }
+				 resultsItems =resultsItems.concat('</div></div>');
+	 		}	
 			 else if(this.dataType == 'Boolean'){
 				 
 					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
@@ -291,6 +325,28 @@ function navigatedToPatientDashboard(){
 				 }
 				 resultsItems =resultsItems.concat('</div></div>');
 		   } 
+		   else if(this.dataType == 'Regex'){
+			    console.log("Config : "+this.config);
+				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+				 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
+				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+				 console.log("values : "+ this.value);
+				 if(this.value === 'undefined'){
+						 if(this.config === "" || this.config == null ){
+							    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="regex.'+this.id+'" name="regex.'+this.id+'"  required />');
+						 }else{
+							    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
+						 }
+				 }
+				 else{
+						 if(this.config === "" || this.config == null ){
+							    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="regex.'+this.id+'" name="regex.'+this.id+'"  required />');
+						 }else{
+							    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
+						 }					
+				 }
+				 resultsItems =resultsItems.concat('</div></div>');
+		   }
 	     });            
 				  /* resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					resultsItems = resultsItems.concat('<label class="control-label">Comments</label>');
@@ -347,7 +403,9 @@ function navigatedToPatientDashboard(){
 		   console.log("Text Input : "+$(textElem).val()); 
 	   }
    }
-
+   function numberValidation(val){
+	   alert(val);
+   }  
   // var _validFileExtensions = fileExtensionArray;  //[".exe",".zip",".msi",".sql"]; 
    $(function() {
 	     $("input:file").change(function (){
@@ -371,9 +429,17 @@ function navigatedToPatientDashboard(){
          			  document.getElementById("documenttypefileextension").style.display= 'none';	
          			  // document.getElementById('submitBttn').disabled = false;
                  
-             }
+            }
 	     });
 	  });
+   
+   function validation(){
+	   
+	   
+	   return true;
+   }
+   
+   
    
 </script>
 

@@ -522,6 +522,7 @@ legend.scheduler-border {
 		var numericNotErrorMessage ="Numeric input are not allowed";
 		var integerErrorMessage ="Only interger values are allowed";
 		var emptyErrorMessage ="This field cannot be empty";
+		var regexFormat = "/[^$]/";
         var isValidate =true; 
         
 		
@@ -639,9 +640,47 @@ legend.scheduler-border {
 			 }
 			 else {
 					document.getElementById("sortweight").style.display= 'none';	
-				} 
-				 var dataTypeOp = dataType.options[dataType.selectedIndex].value;
-				 console.log("dtOp : "+dataTypeOp);
+				}
+		
+			 var dataTypeOp = dataType.options[dataType.selectedIndex].value;
+			 
+			 if(dataTypeOp != ""){
+				 var dataTypeConfig = document.getElementById('datatypeConfig').value;
+				     if(dataTypeOp == "org.openmrs.customdatatype.datatype.ConceptDatatype"){
+				    	 if(dataTypeConfig != "" && dataTypeConfig != null ){
+				        		if(checkConceptExistent(dataTypeConfig)){
+				        			 document.getElementById("datatypeconfig").style.display= 'none';
+				        		 }else{	        			 
+				        			  document.getElementById("datatypeconfig").style.display= 'block';	
+				      				  document.getElementById('datatypeconfig').innerHTML = "Concept Id  does not exist in concept dictionary";
+				      				  isValidate = false;
+				        		 }
+				          }
+				     }else if(dataTypeOp == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype"){
+						 console.log("dataTypeConfig : "+dataTypeConfig);
+				    	 if(dataTypeConfig != "" && dataTypeConfig != null ){
+				    		  if(dataTypeConfig.startsWith("^") || dataTypeConfig.endsWith("$")){
+					    			  document.getElementById("datatypeconfig").style.display= 'block';	
+				      				  document.getElementById('datatypeconfig').innerHTML = "Regex string should not contains ^ $ sign.";
+			      				  isValidate = false; 
+				    		   }
+				    		    else {
+				    		    	 document.getElementById("datatypeconfig").style.display= 'none';
+				    		    }
+				    		 
+				    	 }else{
+				    		  document.getElementById("datatypeconfig").style.display= 'block';	
+		      				  document.getElementById('datatypeconfig').innerHTML = "Please enter your regex for this attribute type.";
+		      				  isValidate = false; 
+				    	 }
+				     }
+			 }else{
+        	     document.getElementById("datatypeconfig").style.display= 'none';
+	          }
+			 
+			 
+			 /* 
+			
 	         if(dataTypeOp != "" && dataTypeOp == "org.openmrs.customdatatype.datatype.ConceptDatatype"){
 	        	 var dataTypeConfig = document.getElementById('datatypeConfig').value;
 	        	 if(dataTypeConfig != "" && dataTypeConfig != null ){
@@ -655,7 +694,10 @@ legend.scheduler-border {
 	        	 }
 	          }	else{
 	        	     document.getElementById("datatypeconfig").style.display= 'none';
-	          }			
+	          }
+	          */
+	   
+	         
 			  if(isValidate ==true){
 				document.getElementById("data_type_name").disabled = false;
 				document.getElementById("datatypeConfig").disabled = false;

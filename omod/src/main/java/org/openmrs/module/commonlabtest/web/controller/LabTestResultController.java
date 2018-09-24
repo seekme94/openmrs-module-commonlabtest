@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xpath.operations.Bool;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
+import org.openmrs.ConceptNumeric;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestAttribute;
@@ -71,7 +72,6 @@ public class LabTestResultController {
 			
 			@Override
 			public int compare(LabTestAttributeType o1, LabTestAttributeType o2) {
-				// TODO Auto-generated method stub
 				return o1.getSortWeight().compareTo(o2.getSortWeight());
 			}
 		});
@@ -79,10 +79,10 @@ public class LabTestResultController {
 		for (LabTestAttributeType lta : attributeTypeList) {
 			JsonObject objAttrType = new JsonObject();
 			objAttrType.addProperty("name", lta.getName());
-			objAttrType.addProperty("dataConfig", lta.getDatatypeConfig());
 			objAttrType.addProperty("minOccurs", lta.getMinOccurs());
 			objAttrType.addProperty("maxOccurs", lta.getMaxOccurs());
 			objAttrType.addProperty("sortWeight", lta.getSortWeight());
+			objAttrType.addProperty("config", lta.getDatatypeConfig());
 			
 			if (testAttributes.size() > 0) {
 				for (LabTestAttribute labTestAttribute : testAttributes) {
@@ -120,7 +120,12 @@ public class LabTestResultController {
 					}
 				}
 			} else {
+				/*	if (lta.getDatatypeClassname().equals("org.openmrs.customdatatype.datatype.FloatDatatype")) {
+						objAttrType.addProperty("dataType", getDataType(lta.getDatatypeClassname()));
+						
+					} else {*/
 				objAttrType.addProperty("dataType", getDataType(lta.getDatatypeClassname()));
+				//}
 			}
 			attributeTypeArray.add(objAttrType);
 		}
@@ -167,7 +172,7 @@ public class LabTestResultController {
 		LabTest labTest = commonLabTestService.getLabTest(testOrderId);
 		List<LabTestAttributeType> attributeTypeList = Context.getService(CommonLabTestService.class)
 		        .getLabTestAttributeTypes(labTest.getLabTestType(), false);
-		String conceptValue = "", textValue = "", boolValue = "", floatValue, testAtrrId, dateValue;
+		String conceptValue = "", textValue = "", boolValue = "", floatValue, testAtrrId, regexValue, dateValue;
 		
 		List<LabTestAttribute> labTestAttributes = new ArrayList<LabTestAttribute>();
 		
@@ -179,6 +184,7 @@ public class LabTestResultController {
 			boolValue = request.getParameter("bool." + labTestAttributeType.getId());
 			floatValue = request.getParameter("float." + labTestAttributeType.getId());
 			dateValue = request.getParameter("date." + labTestAttributeType.getId());
+			regexValue = request.getParameter("regex." + labTestAttributeType.getId());
 			testAtrrId = request.getParameter("testAttributeId." + labTestAttributeType.getId());
 			if (update && (!testAtrrId.equals("undefined") && !testAtrrId.equals(""))) {
 				testAttribute = commonLabTestService.getLabTestAttribute(Integer.parseInt(testAtrrId));
@@ -201,6 +207,9 @@ public class LabTestResultController {
 				labTestAttributes.add(testAttribute);
 			} else if (dateValue != null && !dateValue.equals("") && !dateValue.isEmpty()) {
 				testAttribute.setValueReference(dateValue);
+				labTestAttributes.add(testAttribute);
+			} else if (regexValue != null && !regexValue.equals("") && !regexValue.isEmpty()) {
+				testAttribute.setValueReference(regexValue);
 				labTestAttributes.add(testAttribute);
 			}
 		}
@@ -285,6 +294,8 @@ public class LabTestResultController {
 		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.FloatDatatype")
 		        || dataTypeName.equals("Numeric")) {
 			return "Numeric";
+		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype")) {
+			return "Regex";
 		}
 		
 		return "N/A";
