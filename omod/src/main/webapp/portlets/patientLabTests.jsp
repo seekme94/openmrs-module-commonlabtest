@@ -51,16 +51,16 @@ legend.scheduler-border {
  
  }
 </style>
-
+<!--<i class="fa fa-plus hvr-icon"></i>  -->
 <body>
 	<br>
 	<c:set var="testOrder" scope="session" value="${model.testOrder}" />
 	<div class="row">
 	  <div class="col-sm-4 col-md-2">
-	 	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.order.add" /> </a>
+	 	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/plus.png"> <span> </span> <spring:message code="commonlabtest.order.add" /> </a>
 	  </div>
 	   <div class="col-sm-4 col-md-2">
-	   	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestRequest.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.request.add" /> </a>
+	   	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestRequest.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/plus.png"> <span> </span>  <spring:message code="commonlabtest.request.add" /> </a>
 	  </div>
 	</div>
    	<div id="alert_placeholder"></div>
@@ -92,8 +92,8 @@ legend.scheduler-border {
 							     <td hidden ="true" class ="rspecimen">${order.labTestType.requiresSpecimen}</td>
 								 <td>${order.labTestType.name}</td>
 								 <td>${order.labReferenceNumber}</td>
-								 <td> <span class="table-edit hvr-icon-grow" onclick="editTestOrder(this)"><i class="fa fa-edit fa-2x hvr-icon"></i></span></td>
-					             <td> <span class="table-view hvr-icon-grow" onclick="viewTestOrder(this)"><i class="fa fa-eye fa-2x hvr-icon" aria-hidden="true"></i></span></td>
+								 <td> <span class="table-edit hvr-icon-grow" onclick="editTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/edit.png"></span></td>
+					             <td> <span class="table-view hvr-icon-grow" onclick="viewTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/view.png"></span></td>
 					             <td> <span class="table-sample hvr-icon-grow" onclick="samplesTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
 					             <td> <span class="table-result hvr-icon-grow" onclick="resultsTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
 					             
@@ -103,7 +103,7 @@ legend.scheduler-border {
 	        </tbody>
 	    </table>
 	 </div>
-	 
+	 <!--<i class="fa fa-eye fa-2x hvr-icon" aria-hidden="true">  <i class="fa fa-edit fa-2x hvr-icon"></i> -->
     <!-- View Modal -->
 	<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -169,7 +169,6 @@ $(document).ready(function () {
 	  });
 	  $('.dataTables_length').addClass('bs-select');
 	  
-	 // testOrderArray = '${model.testOrder}'; //getTestOrderList();
 	  fillTestOrder();
 	  console.log("Array: "+ testOrderArray);
 	  
@@ -178,10 +177,6 @@ $(document).ready(function () {
 		//alertType : .alert-success, .alert-info, .alert-warning & .alert-danger
 	    $('#alert_placeholder').append('<div id="alertdiv" class="alert ' +  alerttype + '"><a class="close" data-dismiss="alert">×</a><span>'+message+'</span></div>')
 	     autoHide();
-	   /*  setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
-	      $("#alertdiv").remove();
-	
-	    }, 5000);*/
 	  } 
 
  function fillTestOrder(){
