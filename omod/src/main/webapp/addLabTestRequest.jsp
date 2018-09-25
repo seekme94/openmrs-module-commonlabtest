@@ -120,7 +120,7 @@
 				        <label  class="control-label" path="encounter"><spring:message code="general.encounter" /><span class=" text-danger required">*</span></label>
 				   </div>
 				   <div class="col-md-4">
-						  <select class="form-control" path="encounter" id="encounter_id" >
+						  <select class="form-control"  id="encounter_id" >
 									 <c:if test="${not empty encounters}">
 											<c:forEach var= "encounter" items="${encounters}">
 												<option value="${encounter.encounterId}">${encounter.getEncounterType().getName()}</option>
@@ -263,17 +263,17 @@
 	 return TableData.filter(Boolean);
    }
    function Validation(){
-	   var encounter = document.getElementById('encounter_id');
-	    let e =   encounter.options[encounter.selectedIndex].text;
+	    var encounter = document.getElementById('encounter_id');
+	    //let e =   encounter.options[encounter.selectedIndex].text; 
 	   var errorMessage= 'This field can not be empty';
 	   var isValidate =true; 
-	   if(e == ""){
+     if(encounter.childElementCount == 0){
 			document.getElementById("encounters").style.display= 'block';	
 			document.getElementById('encounters').innerHTML =errorMessage;
 			isValidate = false;
 		}else {
 			document.getElementById("encounters").style.display= 'none';	
-		} 
+		}  
 		$('#testOrderTable tr').each(function(row, tr){
 			   var isTestTypeChecket =$(tr).find('td:eq(0) input').is(':checked');
 			   if(isTestTypeChecket){
@@ -289,7 +289,6 @@
 			   }
 			});
 	   
-	   alert("valid");
 	   return isValidate;
    }
    function save(data){

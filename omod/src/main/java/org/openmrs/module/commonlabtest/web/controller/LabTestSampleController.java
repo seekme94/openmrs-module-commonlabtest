@@ -41,7 +41,7 @@ public class LabTestSampleController {
 	@Autowired
 	CommonLabTestService commonLabTestService;
 	
-	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-mm-dd");
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
@@ -63,7 +63,7 @@ public class LabTestSampleController {
 				request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Test Order is voided");
 				return "redirect:../../patientDashboard.form?patientId=" + patientId;
 			}
-			orderDate = simpleDateFormat.format(labTest.getOrder().getEncounter().getDateCreated());
+			orderDate = simpleDateFormat.format(labTest.getOrder().getEncounter().getEncounterDatetime());
 		}
 		
 		LabTestSample test;

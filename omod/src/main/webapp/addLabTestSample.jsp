@@ -245,7 +245,7 @@ function goTo(){
 
 
 $(document).ready(function () {
-
+   console.log("Date : "+'${orderEncDate}');
 	$("#collectionDatePciker").datepicker({
     dateFormat: 'yy-mm-dd',
     minDate:'${orderEncDate}',
@@ -391,13 +391,13 @@ function validate(form){
    	jQuery(function() {
 
 		 if (performance.navigation.type == 1) {
-			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?patientId="+${patientId};
+			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?patientId="+${patientId}+"&orderId="+${orderId};
 		 }
 
 		 jQuery("body").keydown(function(e){
 
 		 if(e.which==116){
-			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?patientId="+${patientId};
+			 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestSample.form?patientId="+${patientId}+"&orderId="+${orderId};
 		 }
 
 		 });

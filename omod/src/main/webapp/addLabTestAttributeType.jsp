@@ -185,6 +185,7 @@ legend.scheduler-border {
 									<form:label path="datatypeClassname" class="control-label"><spring:message code="general.dataType" /></form:label>							
 							   </div> 
 							   <div class="col-md-6">
+							  
 							      <c:if test = "${available != true}">
 							   
 								         		<form:select class="form-control" path="datatypeClassname" id="data_type_name">
@@ -223,6 +224,17 @@ legend.scheduler-border {
 								        </c:if>   
 							   	</div>
 					 	   </div>
+					 	   <!--Regex Hints -->
+					 	   <div class="row" id ="hint_field">
+							   <div class="col-md-2">
+					 	  		   <form:label path="hint" class="control-label"><spring:message code="general.hint" /></form:label>
+								</div>
+							   <div class="col-md-6">
+						         	<form:input class="form-control" path="hint" id="hint" maxlength ="50" ></form:input>
+						            <span id="hints" class="text-danger "> </span>
+							   	</div>
+					 	   </div>
+					 	   
 					 	     <!-- preferredHandlerClassname -->
 					 	    <div class="row">
 							   <div class="col-md-2">
@@ -303,52 +315,9 @@ legend.scheduler-border {
 						 		 <input type="submit" value="<spring:message code="general.test.retire" />"></input>
 						   </div>
 						 </div>
-					<%-- 	<table>
-							 <div class="form-group">
-								<tr>
-									<input value="${testAttributeType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-									<td><label class="control-label" value="retireReason"><spring:message code="general.retireReason" /><span class="required">*</span></label></td>
-									<td><input class="form-control" value="${testAttributeType.retireReason}" id="retireReason" name="retireReason" required="required"></input></td>
-								</tr>
-							</div>
-							<tr>
-								<td>
-									<div id="retireButton" style="margin-top: 15px">
-										<input type="submit" value="<spring:message code="general.test.retire" />"></input>
-									</div>
-								</td>
-							</tr>
-						</table> --%>
 				</form>
         </fieldset>
 	</c:if>
-
-	<%-- <br>
-    <c:if test="${not empty testAttributeType.name}">
-		 <fieldset  class="scheduler-border">
-      	   <legend  class="scheduler-border"><spring:message code="general.foreverDelete" /></legend>
-				<form  method="post" action ="${pageContext.request.contextPath}/module/commonlabtest/deletelabtestattributetype.form" onsubmit="return confirmDelete()">
-					 <!-- Delete -->
-					 <div class="row">
-					   <div class="col-md-2" >
-					  		 <input value="${testAttributeType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-					 		 <input type="submit" value="<spring:message code="general.foreverDelete" />" />
-					   </div>
-					 </div>	
-					
-					<table>
-					<tr>
-						<td>
-							<input value="${testAttributeType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-							<div id="delete" style="margin-top: 15px">
-								<input type="submit" value="<spring:message code="general.foreverDelete" />" />
-							</div>
-						</td>
-					</tr>
-					</table>
-				</form>
-      </fieldset>
-	</c:if> --%>
  </div>
  
  
@@ -385,7 +354,14 @@ legend.scheduler-border {
 	var local_source;
 
 	jQuery(document).ready(function() {
-		 
+		console.log("Available : "+'${available}');
+		console.log("Data Type : "+document.getElementById('data_type_name').value);
+	   if(document.getElementById('data_type_name').value == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype"){
+			$("#hint_field").show();
+		}else{
+			$("#hint_field").hide();
+		}
+	   
 		local_source = new Array();
 	        <c:if test="${not empty listTestType}">
 		        <c:forEach var="testType" items="${listTestType}" varStatus="status">
@@ -445,6 +421,20 @@ legend.scheduler-border {
 	        return match.toUpperCase();
 	    });
 	}
+	//when dataType change 
+	jQuery('#data_type_name').on('input', function(){
+		  let dataType = document.getElementById('data_type_name');
+		  if(dataType.childElementCount != 0){
+			  	 let dataTypeName =   dataType.options[dataType.selectedIndex].text;
+			  	 console.log("dataTypeName : "+ dataTypeName);
+			     if(dataTypeName === "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype.name"){
+			    	 $("#hint_field").show();
+			     }else{
+			    	 $("#hint_field").hide();
+			     }
+		  }
+	});
+	
 	
 	/* /*autocomplete ...  */
 	/* $(function() {
@@ -512,6 +502,7 @@ legend.scheduler-border {
 		var minOccurs = document.getElementById('min_occurs').value;
 		var maxOccurs = document.getElementById('max_occurs').value;
 		var sortWeight = document.getElementById('sortWeight').value;
+		var hintVal = document.getElementById('hint').value;
 		var dataType = document.getElementById('data_type_name');
 		
 		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%\\-]*$");
@@ -667,7 +658,14 @@ legend.scheduler-border {
 				    		    else {
 				    		    	 document.getElementById("datatypeconfig").style.display= 'none';
 				    		    }
-				    		 
+			    		     //check the hint values
+				    		 if(hintVal == "" || hintVal == null){
+				    			  document.getElementById("hints").style.display= 'block';	
+			      				  document.getElementById('hints').innerHTML = emptyErrorMessage;
+		      				      isValidate = false; 
+				    		 }else{
+			    		    	 document.getElementById("hints").style.display= 'none';
+				    		 }
 				    	 }else{
 				    		  document.getElementById("datatypeconfig").style.display= 'block';	
 		      				  document.getElementById('datatypeconfig').innerHTML = "Please enter your regex for this attribute type.";

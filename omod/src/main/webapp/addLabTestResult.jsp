@@ -226,9 +226,9 @@ function navigatedToPatientDashboard(){
                  resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="" />'); 
     	      }
 			 if(this.dataType == 'Coded'){
-				  	 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+				  	 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 					 resultsItems = resultsItems.concat('<select class="form-control" id="concept.'+this.id+'" name="concept.'+this.id+'" ><options />');
 					 let values = this.value;
 					 jQuery(this.conceptOptions).each(function() {
@@ -245,59 +245,68 @@ function navigatedToPatientDashboard(){
 			 }
 			 else if(this.dataType == 'Text'){
 				 
-					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+					 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 					 console.log("values : "+ this.value);
 					 if(this.value === undefined || this.value === 'undefined'){
-						 console.log("Called");
-						 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="" required  data-error-msg="This field cannot be empty" />');
+							 console.log("Called");
+							 console.log("min : " + this.minOccurs);
+		
+							if(this.minOccurs == 0){
+								 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value=""  data-error-msg="This field cannot be empty" />');<c:choose><c:when test="{this.minOccurs > 0}"> required="required"</c:when></c:choose>
+							 }else{
+								 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value=""  data-error-msg="This field cannot be empty" required />');
+							 } 
 					 }else{
-						 console.log("else Called");
-						 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'" required  data-error-msg="This field cannot be empty" />'); 
-					 }
+						     console.log("min : " + this.minOccurs);
+							 /*this condition for required  */
+							 if(this.minOccurs == 0){
+							 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'"  data-error-msg="This field cannot be empty" />'); 
+							 }else{
+								 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'"  data-error-msg="This field cannot be empty"  required/>');  
+							 } 
+						}
+					
+					 //this.minOccurs == 0 ? $(""+id+"").prop('required',false) : $(""+id+"").prop('required',true);
 					 resultsItems =resultsItems.concat('</div></div>');
 			 }
 			 else if(this.dataType == 'Numeric'){
 				     console.log("Config : "+this.config);
-					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+					 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 					 console.log("values : "+ this.value);
 					 if(this.value === 'undefined'){
-							 if(this.config === "" || this.config == null ){
-								    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)" required />');
-							 }else{
+						  if(this.config === "" || this.config == null ){
+								  if(this.minOccurs == 0){
+									    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)"  />'); 
+								   }else{
+									    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)" required />'); 
+								   }
+							}else{
 								    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid" onkeypress="return isNumber(event)" required />'); 
-							 }
+						 } 
 					 }
 					 else{
 							 if(this.config === "" || this.config == null ){
-								    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)" required />');
-							 }else{
+									 if(this.minOccurs == 0){
+										    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)"  />');
+									  }
+									  else {
+										    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)" required />'); 
+									  }							
+							}else{
 								    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="float.'+this.id+'" name="float.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid" onkeypress="return isNumber(event)" required />'); 
-							 }					
+							 }	 			
 					 }
 					 resultsItems =resultsItems.concat('</div></div>');
 		 	}
-			 else if(this.dataType == 'Integer'){
-				 
-				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
-				 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
-				 if(this.value === 'undefined'){
-					 resultsItems = resultsItems.concat('<input class="form-control" type="number" min="0" onkeypress="return isNumber(event)" id="int.'+this.id+'" name="int.'+this.id+'" required /> <span id="intVal" class="text-danger "> </span>');
-				 }
-				 else{
-					 resultsItems = resultsItems.concat('<input class="form-control" type="number" min="0" onkeypress="return isNumber(event)" id="int.'+this.id+'" name="int.'+this.id+'" value="'+this.value+'" required /> <span id="intVal" class="text-danger "> </span>'); 
-				 }
-				 resultsItems =resultsItems.concat('</div></div>');
-	 		}	
 			 else if(this.dataType == 'Boolean'){
 				 
-					 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+					 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 					 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
-					 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 					 resultsItems = resultsItems.concat('<select class="form-control" id="bool.'+this.id+'" name="bool.'+this.id+'">');
 					 if(this.value == 'undefined'){
 							 resultsItems = resultsItems.concat('<option value="true" selected>Yes</option>');
@@ -315,35 +324,54 @@ function navigatedToPatientDashboard(){
 				 resultsItems =resultsItems.concat('</select></div></div>');
 					
 		   }else if(this.dataType == 'Date'){
-			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 				 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
-				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+				 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 				 if(this.value == 'undefined'){
-					 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="" required>');
+					  if(this.minOccurs == 0){
+						
+							 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="" >');
+					  }
+					  else{
+							 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="" required >');
+					  }
 				 }else{
-					 resultsItems = resultsItems.concat('<input id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="'+this.value+'" required>');
+					  if(this.minOccurs == 0){
+							 resultsItems = resultsItems.concat('<input id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="'+this.value+'" >'); 
+					  }else{
+							 resultsItems = resultsItems.concat('<input id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="'+this.value+'" required>');			
+						}
 				 }
 				 resultsItems =resultsItems.concat('</div></div>');
 		   } 
 		   else if(this.dataType == 'Regex'){
 			    console.log("Config : "+this.config);
-				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+				 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 				 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-				 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+				 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 				 console.log("values : "+ this.value);
-				 if(this.value === 'undefined'){
-						 if(this.config === "" || this.config == null ){
+				 if(this.value === 'undefined' || this.value == undefined){
+					      console.log("if condition und");
+					      resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
+					      resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+					      resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">Hint:'+this.hint+'</span>'); 
+						/*  if(this.config === "" || this.config == null ){
 							    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="regex.'+this.id+'" name="regex.'+this.id+'"  required />');
 						 }else{
 							    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
-						 }
+						 } */
 				 }
 				 else{
+					    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
+					    resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+					    resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">Hint:'+this.hint+'</span>'); 
+
+					 /* 
 						 if(this.config === "" || this.config == null ){
 							    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="regex.'+this.id+'" name="regex.'+this.id+'"  required />');
 						 }else{
 							    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
-						 }					
+						 }	 */				
 				 }
 				 resultsItems =resultsItems.concat('</div></div>');
 		   }
@@ -358,33 +386,33 @@ function navigatedToPatientDashboard(){
 					  }
 					 resultsItems = resultsItems.concat('</div></div>'); */
 					 if(local_source.length > 0){
-		   				 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+		   				 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 		   				 resultsItems = resultsItems.concat('<label class="control-label">Attachment</label>');
-		   				 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
+		   				 resultsItems = resultsItems.concat('</div><div class="col-sm-4 col-md-4 col-lg-4">');
 		   				 resultsItems = resultsItems.concat('<input type="file" name="documentTypeFile" id="documentTypeFile" accept="image/*,audio/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />');
 		   				 if(filepath != ""){
-		   					 resultsItems = resultsItems.concat('</div><div class="col-md-4">');
+		   					 resultsItems = resultsItems.concat('</div><div class="col-sm-4 col-md-4 col-lg-4">');
 			   				 resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="'+filepath+'" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>'); 					 
 		   				 }
 		   			     resultsItems = resultsItems.concat('</div></div>');
-		   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
+		   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3"></div><div class="col-sm-6 col-md-6 col-lg-6">');
 		   				 resultsItems = resultsItems.concat('<label class="control-label text-danger" id="documenttypefile"></label>');
 		   			     resultsItems = resultsItems.concat('</div></div>');
 		   			    
 		   			     //extension 
-		   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
+		   			     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3"></div><div class="col-sm-6 col-md-6 col-lg-6">');
 		   				 resultsItems = resultsItems.concat('<label class="control-label text-danger" id="documenttypefileextension"></label>');
 		   			     resultsItems = resultsItems.concat('</div></div>');
 					 }else{
-						    resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3"></div><div class="col-md-6">');
+						    resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3"></div><div class="col-sm-6 col-md-6 col-lg-6">');
 			   				resultsItems = resultsItems.concat('<label class="control-label" id=""><spring:message code="error.message.noAttributeType.found" /></label>');
 			   			    resultsItems = resultsItems.concat('</div></div>'); 
 					 }
 	   			     //end
-				     resultsItems = resultsItems.concat('<div class="row"><div class="col-md-2">');
+				     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-2 col-md-2 col-lg-2">');
 	   			     if(local_source.length > 0){
 					     resultsItems = resultsItems.concat('<input type="submit" value="Save Test Result" id="submitBttn" ></input>');
-					     resultsItems = resultsItems.concat('</div><div class="col-md-2">');
+					     resultsItems = resultsItems.concat('</div><div class="col-sm-2 col-md-2 col-lg-2">');
    						}
 				     resultsItems = resultsItems.concat('<input type="button" onclick="navigatedToPatientDashboard();" value="Cancel"></input>');
 				     resultsItems = resultsItems.concat('</div></div></form>');

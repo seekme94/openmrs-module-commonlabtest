@@ -232,12 +232,12 @@ function renderSortWeight(array){
 	  var resultsItems = "";
 				resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">');
 				resultsItems = resultsItems.concat('<thead><tr>');
-					resultsItems = resultsItems.concat('<th><a>Test Order</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Test Type</a></th>');
 					resultsItems = resultsItems.concat('<th><a>Attribute Type Name</a></th>');
 					resultsItems = resultsItems.concat('<th><a>Sort Weight</a></th>');
 					jQuery(array).each(function() {
 						resultsItems = resultsItems.concat('<tbody><tr>'); 
-						resultsItems = resultsItems.concat('<td>'+this.testOrderId+'</td>');
+						resultsItems = resultsItems.concat('<td>'+this.testTypeId+'</td>');
 						resultsItems = resultsItems.concat('<td>'+this.attributeTypeName+'</td>');
 						resultsItems = resultsItems.concat('<td>'+this.sortWeight+'</td>');
 						resultsItems = resultsItems.concat('</tr></tbody>'); 

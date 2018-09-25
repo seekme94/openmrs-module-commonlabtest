@@ -83,6 +83,7 @@ public class LabTestResultController {
 			objAttrType.addProperty("maxOccurs", lta.getMaxOccurs());
 			objAttrType.addProperty("sortWeight", lta.getSortWeight());
 			objAttrType.addProperty("config", lta.getDatatypeConfig());
+			objAttrType.addProperty("hint", lta.getHint());
 			
 			if (testAttributes.size() > 0) {
 				for (LabTestAttribute labTestAttribute : testAttributes) {
