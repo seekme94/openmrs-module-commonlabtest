@@ -20,11 +20,15 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.openmrs.Concept;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
@@ -264,13 +268,16 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		if (name != null) {
 			criteria.add(Restrictions.ilike("name", name, MatchMode.START));
 		}
+		
 		if (datatypeClassname != null) {
+			System.out.println(datatypeClassname);
 			criteria.add(Restrictions.eq("datatypeClassname", datatypeClassname));
 		}
 		if (!includeRetired) {
 			criteria.add(Restrictions.eq("retired", false));
 		}
 		criteria.addOrder(Order.asc("name")).addOrder(Order.asc("retired")).list();
+		
 		return criteria.list();
 	}
 	
@@ -381,7 +388,15 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	@SuppressWarnings("unchecked")
 	public List<LabTestSample> getLabTestSamples(Patient patient, boolean includeVoided) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestSample.class);
-		criteria.add(Restrictions.eq("order.patient.patientId", patient.getPatientId()));
+		
+		criteria.createAlias("labTest", "labTest", CriteriaSpecification.INNER_JOIN)
+		        .setFetchMode("labTest", FetchMode.JOIN)
+		        //.add(Restrictions.eq("labTest.order.patient.personId", patient.getPatientId()))
+		        .createAlias("labTest.order", "order", CriteriaSpecification.INNER_JOIN)
+		        .setFetchMode("order", FetchMode.JOIN)
+		        .add(Restrictions.eq("order.patient.personId", patient.getPatientId()));
+		//   .createAlias("labTest", "labTest", CriteriaSpecification.INNER_JOIN).setFetchMode("labTest", FetchMode.JOIN);
+		//criteria.add(Restrictions.eq("order.patient.patientId", patient.getPatientId()));
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));
 		}
@@ -439,7 +454,13 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		List<LabTest> firstN = null;
 		List<LabTest> lastN = null;
 		if (patient != null) {
-			criteria.add(Restrictions.eq("order.patient.patientId", patient.getPatientId()));
+			/*DetachedCriteria criteriaChild = DetachedCriteria.forClass(org.openmrs.Order.class);
+			
+			criteriaChild.add(Restrictions.eq("patient.personId", patient.getPatientId()));
+			
+			criteria.add(Subqueries.exists(criteriaChild));*/
+			criteria.createAlias("order", "o", CriteriaSpecification.INNER_JOIN).setFetchMode("o", FetchMode.JOIN)
+			        .add(Restrictions.eq("o.patient.personId", patient.getPatientId()));
 		}
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));
@@ -479,7 +500,11 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestSample.class);
 		List<LabTestSample> firstN = null;
 		List<LabTestSample> lastN = null;
-		criteria.add(Restrictions.eq("labTest.order.patient.patientId", patient.getPatientId()));
+		//criteria.add(Restrictions.eq("labTest.order.patient.patientId", patient.getPatientId()));
+		criteria.createAlias("labTest", "labTest", CriteriaSpecification.INNER_JOIN).setFetchMode("labTest", FetchMode.JOIN)
+		        .createAlias("labTest.order", "order", CriteriaSpecification.INNER_JOIN)
+		        .setFetchMode("order", FetchMode.JOIN)
+		        .add(Restrictions.eq("order.patient.personId", patient.getPatientId()));
 		if (status != null) {
 			criteria.add(Restrictions.eq("status", status));
 		}

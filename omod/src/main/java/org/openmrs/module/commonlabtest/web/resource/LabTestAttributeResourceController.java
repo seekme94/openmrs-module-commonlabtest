@@ -11,6 +11,7 @@ import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
@@ -64,19 +65,21 @@ public class LabTestAttributeResourceController extends DataDelegatingCrudResour
 	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation representation) {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addProperty("uuid");
+		
+		description.addSelfLink();
+		description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
+		description.addProperty("display");
 		if (representation instanceof DefaultRepresentation) {
-			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
 			description.addProperty("labTestAttributeId");
 			description.addProperty("testOrderId");
 			description.addProperty("attributeTypeId");
 			description.addProperty("valueReference");
 			
-			description.addSelfLink();
-			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
 		} else if (representation instanceof FullRepresentation) {
-			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
 			description.addProperty("labTestAttributeId");
 			description.addProperty("testOrderId");
@@ -95,16 +98,28 @@ public class LabTestAttributeResourceController extends DataDelegatingCrudResour
 			description.addProperty("voidReason");
 			return description;
 		}
-		return null;
+		return description;
 	}
 	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
-		System.out.println("DO Search ");
+		
 		String testId = context.getRequest().getParameter("testOrderId");
 		List<LabTestAttribute> attributes = commonLabTestService.getLabTestAttributes(Integer.parseInt(testId));
 		
 		return new NeedsPaging<LabTestAttribute>(attributes, context);//super.doSearch(context);
+	}
+	
+	/**
+	 * @param LabTestAttribute
+	 * @return getValueReference as Display
+	 */
+	@PropertyGetter("display")
+	public String getDisplayString(LabTestAttribute attribute) {
+		if (attribute == null)
+			return "";
+		
+		return attribute.getValueReference();
 	}
 	
 }

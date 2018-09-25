@@ -16,6 +16,7 @@ import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
@@ -43,7 +44,7 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
-		System.out.println("DO Search ");
+		
 		String pId = context.getRequest().getParameter("patientId");
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(pId));
 		//PageableResult pr=PageableResult;
@@ -79,10 +80,7 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 				
 			}
 			Set<LabTestAttribute> attributes = labTest.getAttributes();
-			System.out.println("Attribute Size ::: " + attributes.size());
-			System.out.println(labTest);
 			
-			System.out.println(labTest.getOrder());
 			Order o = Context.getOrderService().saveOrder(labTest.getOrder(), null);
 			labTest.setOrder(o);
 			LabTest labTestSaved = commonLabTestService.saveLabTest(labTest);
@@ -92,7 +90,6 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 				resultAttributes.add(attribute);
 			}
 			
-			System.out.println("result Attribue ::: " + resultAttributes);
 			if (ss != null) {
 				ss.setLabTest(labTestSaved);
 				ss = commonLabTestService.saveLabTestSample(ss);
@@ -117,19 +114,21 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation representation) {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addProperty("uuid");
+		
+		description.addSelfLink();
+		description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
+		description.addProperty("display");
 		if (representation instanceof DefaultRepresentation) {
-			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
 			description.addProperty("testOrderId");
 			description.addProperty("order");
 			description.addProperty("labTestType");
 			description.addProperty("labReferenceNumber");
 			
-			description.addSelfLink();
-			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
 		} else if (representation instanceof FullRepresentation) {
-			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
 			description.addProperty("testOrderId");
 			description.addProperty("order");
@@ -150,18 +149,15 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 			description.addProperty("voidReason");
 			return description;
 		} else if (representation instanceof RefRepresentation) {
-			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
 			description.addProperty("testOrderId");
 			description.addProperty("order");
 			description.addProperty("labTestType");
 			description.addProperty("labReferenceNumber");
 			
-			description.addSelfLink();
-			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
 		}
-		return null;
+		return description;
 	}
 	
 	@Override
@@ -187,6 +183,18 @@ public class LabTestOrderResourceController extends DataDelegatingCrudResource<L
 		delegatingResourceDescription.addProperty("attributes");
 		
 		return delegatingResourceDescription;
+	}
+	
+	/**
+	 * @param LabTest
+	 * @return getLabReferenceNumber as Display
+	 */
+	@PropertyGetter("display")
+	public String getDisplayString(LabTest labTest) {
+		if (labTest == null)
+			return "";
+		
+		return labTest.getLabReferenceNumber();
 	}
 	
 }

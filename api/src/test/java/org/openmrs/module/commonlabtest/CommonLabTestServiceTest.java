@@ -229,6 +229,13 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestAttributesByPatient() {
 		// TODO
+		
+		when(dao.getLabTestAttributes(null, null, harry, null, null, null, false)).thenReturn(
+		    Arrays.asList(harryCartridgeId, harryMtbResult, harryRifResult));
+		List<LabTestAttribute> list = service.getLabTestAttributes(harry, false);
+		
+		assertThat(list, Matchers.hasItems(harryCartridgeId, harryMtbResult, harryRifResult));
+		verify(dao, times(1)).getLabTestAttributes(null, null, harry, null, null, null, false);
 	}
 	
 	/**
@@ -312,6 +319,10 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestType() {
 		// TODO
+		when(dao.getLabTestType(any(Integer.class))).thenReturn(geneXpert);
+		LabTestType labTestType = service.getLabTestType(geneXpert.getId());
+		assertThat(labTestType, Matchers.equalTo(geneXpert));
+		verify(dao, times(1)).getLabTestType(any(Integer.class));
 	}
 	
 	/**
@@ -357,6 +368,16 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestsByProvider() {
 		// TODO
+		when(
+		    dao.getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class), isNull(String.class),
+		        isNull(Concept.class), any(Provider.class), isNull(Date.class), isNull(Date.class), any(Boolean.class)))
+		        .thenReturn(Arrays.asList(harryGxp, hermioneGxp));
+		
+		List<LabTest> list = service.getLabTests(owais, false);
+		assertThat(list, Matchers.hasItems(harryGxp, hermioneGxp));
+		verify(dao, times(1)).getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class),
+		    isNull(String.class), isNull(Concept.class), any(Provider.class), isNull(Date.class), isNull(Date.class),
+		    any(Boolean.class));
 	}
 	
 	/**
@@ -367,6 +388,16 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestsByPatient() {
 		// TODO
+		when(
+		    dao.getLabTests(isNull(LabTestType.class), any(Patient.class), isNull(String.class), isNull(String.class),
+		        isNull(Concept.class), isNull(Provider.class), isNull(Date.class), isNull(Date.class), any(Boolean.class)))
+		        .thenReturn(Arrays.asList(harryGxp, harryCxr));
+		
+		List<LabTest> list = service.getLabTests(harry, false);
+		assertThat(list, Matchers.hasItems(harryGxp, harryCxr));
+		verify(dao, times(1)).getLabTests(isNull(LabTestType.class), any(Patient.class), isNull(String.class),
+		    isNull(String.class), isNull(Concept.class), isNull(Provider.class), isNull(Date.class), isNull(Date.class),
+		    any(Boolean.class));
 	}
 	
 	/**
@@ -377,6 +408,17 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestsByReferenceNumber() {
 		// TODO
+		when(
+		    dao.getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class), any(String.class),
+		        isNull(Concept.class), isNull(Provider.class), isNull(Date.class), isNull(Date.class), any(Boolean.class)))
+		        .thenReturn(Arrays.asList(harryGxp));
+		
+		List<LabTest> list = service.getLabTests(harryGxp.getLabReferenceNumber(), false);
+		assertThat(list, Matchers.hasItems(harryGxp));
+		verify(dao, times(1)).getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class),
+		    any(String.class), isNull(Concept.class), isNull(Provider.class), isNull(Date.class), isNull(Date.class),
+		    any(Boolean.class));
+		
 	}
 	
 	/**
@@ -385,7 +427,17 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestsByDateRange() {
-		// TODO
+		// TODO No method in service for this
+		/*when(
+			    dao.getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class), isNull(String.class),
+			        isNull(Concept.class), isNull(Provider.class), any(Date.class), any(Date.class), any(Boolean.class)))
+			        .thenReturn(Arrays.asList(harryGxp));
+			
+			List<LabTest> list = service.getLabTests(harryGxp.getLabReferenceNumber(), false);
+			assertThat(list, Matchers.hasItems(harryGxp));
+			verify(dao, times(1)).getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class),
+					isNull(String.class), isNull(Concept.class), isNull(Provider.class), any(Date.class), any(Date.class),
+			    any(Boolean.class));*/
 	}
 	
 	/**

@@ -59,9 +59,14 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
 	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation representation) {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addProperty("uuid");
+		description.addSelfLink();
+		description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
+		description.addProperty("display");
 		if (representation instanceof DefaultRepresentation) {
-			DelegatingResourceDescription description = new DelegatingResourceDescription();
-			description.addProperty("uuid");
+			//	DelegatingResourceDescription description = new DelegatingResourceDescription();
+			
 			description.addProperty("testGroup");
 			description.addProperty("labTestTypeId");
 			description.addProperty("shortName");
@@ -74,8 +79,7 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
 		} else if (representation instanceof FullRepresentation) {
-			DelegatingResourceDescription description = new DelegatingResourceDescription();
-			description.addProperty("uuid");
+			
 			description.addProperty("testGroup");
 			description.addProperty("labTestTypeId");
 			description.addProperty("shortName");
@@ -83,19 +87,14 @@ public class LabTestTypeResourceController extends MetadataDelegatingCrudResourc
 			description.addProperty("referenceConcept");
 			description.addProperty("name");
 			description.addProperty("description");
-			description.addProperty("creator");
-			description.addProperty("dateCreated");
-			
-			description.addProperty("changedBy");
-			description.addProperty("dateChanged");
-			
-			description.addProperty("retired");
-			description.addProperty("dateRetired");
-			description.addProperty("retiredBy");
-			description.addProperty("retireReason");
+			description.addProperty("auditInfo");
+			description.addSelfLink();
+			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_DEFAULT);
+			//description.
 			return description;
 		}
-		return null;
+		
+		return description;
 	}
 	
 	@Override

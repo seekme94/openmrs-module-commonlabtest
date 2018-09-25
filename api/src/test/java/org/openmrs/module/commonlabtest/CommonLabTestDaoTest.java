@@ -28,6 +28,7 @@ import org.openmrs.Order.Action;
 import org.openmrs.Order.Urgency;
 import org.openmrs.TestOrder;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus;
 import org.openmrs.module.commonlabtest.LabTestType.LabTestGroup;
 import org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,7 +192,9 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestAttributeType() {
-		// TODO
+		
+		List<LabTestAttributeType> list = dao.getLabTestAttributeTypes(geneXpert, false);
+		assertThat(list, Matchers.containsInAnyOrder(cartridgeId, mtbResult, rifResult));
 	}
 	
 	/**
@@ -201,7 +204,10 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestAttributeTypeByUuid() {
-		// TODO
+		
+		LabTestAttributeType retrivedObject = dao.getLabTestAttributeTypeByUuid(cartridgeId.getUuid());
+		assertEquals("should be equal !", retrivedObject, cartridgeId);
+		
 	}
 	
 	/**
@@ -211,7 +217,25 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestAttributeTypes() {
-		// TODO
+		
+		List<LabTestAttributeType> classNameList = dao.getLabTestAttributeTypes(null,
+		    "org.openmrs.customdatatype.datatype.FreeTextDatatype", false);
+		assertThat(classNameList, Matchers.hasSize(2));
+		
+		List<LabTestAttributeType> classNameListRetired = dao.getLabTestAttributeTypes(null,
+		    "org.openmrs.customdatatype.datatype.FloatDatatype", true);
+		assertThat(classNameListRetired, Matchers.hasSize(1));
+		
+		List<LabTestAttributeType> nameListRetired = dao.getLabTestAttributeTypes("CAD4TB Score", null, true);
+		assertThat(nameListRetired, Matchers.hasSize(1));
+		
+		List<LabTestAttributeType> nameList = dao.getLabTestAttributeTypes("Radiologist Remarks", null, false);
+		assertThat(nameList, Matchers.hasSize(1));
+		
+		List<LabTestAttributeType> nameWithClassNameListRetired = dao.getLabTestAttributeTypes("CAD4TB Score",
+		    "org.openmrs.customdatatype.datatype.FloatDatatype", true);
+		assertThat(nameWithClassNameListRetired, Matchers.hasSize(1));
+		
 	}
 	
 	/**
@@ -221,7 +245,8 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestByUuid() {
-		// TODO
+		LabTest retrivedObject = dao.getLabTestByUuid(harryGxp.getUuid());
+		assertEquals("should be equal !", retrivedObject, harryGxp);
 	}
 	
 	/**
@@ -231,7 +256,8 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTests() {
-		// TODO
+		List<LabTest> allLabTests = dao.getLabTests(null, harry, null, null, null, null, null, null, false);
+		assertThat(allLabTests, Matchers.containsInAnyOrder(harryGxp, harryCxr));
 	}
 	
 	/**
@@ -241,7 +267,8 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestSample() {
-		// TODO
+		LabTestSample retrivedObject = dao.getLabTestSample(harrySample.getId());
+		assertEquals("should be equal !", retrivedObject, harrySample);
 	}
 	
 	/**
@@ -251,7 +278,8 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestSampleByUuid() {
-		// TODO
+		LabTestSample retrivedObject = dao.getLabTestSampleByUuid(harrySample.getUuid());
+		assertEquals("should be equal !", retrivedObject, harrySample);
 	}
 	
 	/**
@@ -261,7 +289,9 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestSamplesByLabTest() {
-		// TODO
+		List<LabTestSample> harryList = dao.getLabTestSamples(harryGxp, false);
+		assertThat(harryList, Matchers.hasSize(1));
+		
 	}
 	
 	/**
@@ -271,7 +301,9 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestSamplesByPatient() {
-		// TODO
+		
+		List<LabTestSample> list = dao.getLabTestSamples(harry, false);
+		assertThat(list, Matchers.hasSize(1));
 	}
 	
 	/**
@@ -282,6 +314,10 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestSamplesByProvider() {
 		// TODO
+		
+		List<LabTestSample> list = dao.getLabTestSamples(owais, false);
+		assertThat(list, Matchers.hasItem(harrySample));
+		
 	}
 	
 	/**
@@ -292,6 +328,8 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestType() {
 		// TODO
+		LabTestType retrivedObject = dao.getLabTestType(geneXpert.getId());
+		assertEquals(geneXpert, retrivedObject);
 	}
 	
 	/**
@@ -302,6 +340,8 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestTypeByUuid() {
 		// TODO
+		LabTestType retrivedObject = dao.getLabTestTypeByUuid(geneXpert.getUuid());
+		assertEquals(geneXpert, retrivedObject);
 	}
 	
 	/**
@@ -312,6 +352,9 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetNLabTests() {
 		// TODO
+		
+		List<LabTest> list = dao.getNLabTests(harry, 2, true, false, false);
+		assertThat(list, Matchers.containsInAnyOrder(harryGxp, harryCxr));
 	}
 	
 	/**
@@ -322,6 +365,15 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetNLabTestSamples() {
 		// TODO
+		List<LabTestSample> samples = dao.getNLabTestSamples(harry, null, 2, true, false, false);
+		assertThat(samples, Matchers.hasItem(harrySample));
+		
+		List<LabTestSample> processedSamples = dao.getNLabTestSamples(harry, LabTestSampleStatus.PROCESSED, 2, true, false,
+		    false);
+		assertThat(processedSamples, Matchers.hasItem(harrySample));
+		assertThat(processedSamples, Matchers.hasSize(1));
+		assertEquals(processedSamples.get(0).getStatus(), LabTestSampleStatus.PROCESSED);
+		
 	}
 	
 	/**
@@ -331,7 +383,17 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testPurgeLabTest() {
-		// TODO
+		// TODO  high-risk operation
+		
+		/*	LabTest test = dao.getLabTestByUuid(harryCxr.getUuid());
+			// Purge object
+			dao.purgeLabTest(test);
+			// Clear cache
+			Context.flushSession();
+			Context.clearSession();
+			// Read again
+			LabTest exists = dao.getLabTestByUuid(test.getUuid());
+			assertNull(exists);*/
 	}
 	
 	/**
@@ -362,6 +424,16 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testPurgeLabTestSample() {
 		// TODO
+		
+		LabTestSample sample = dao.getLabTestSample(2);
+		// Purge object
+		dao.purgeLabTestSample(sample);
+		// Clear cache
+		Context.flushSession();
+		Context.clearSession();
+		// Read again
+		LabTestSample exists = dao.getLabTestSampleByUuid(sample.getUuid());
+		assertNull(exists);
 	}
 	
 	/**
@@ -390,6 +462,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testSaveLabTest() {
 		// TODO
+		
 	}
 	
 	/**
@@ -478,6 +551,29 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testSaveLabTestAttributeType() {
 		// TODO
+		
+		LabTestAttributeType attributeType = new LabTestAttributeType();
+		attributeType.setLabTestType(geneXpert);
+		attributeType.setDatatypeClassname("org.openmrs.customdatatype.datatype.FloatDatatype");
+		attributeType.setDatatypeConfig("");
+		attributeType.setDescription("discriptions");
+		attributeType.setMaxOccurs(2);
+		attributeType.setMinOccurs(1);
+		attributeType.setSortWeight(1.1);
+		attributeType.setUuid("b98b5208-5bbf-11e8-b60d-08dd27ea421d");
+		attributeType.setName("Name");
+		attributeType.setPreferredHandlerClassname("asd");
+		
+		attributeType = dao.saveLabTestAttributeType(attributeType);
+		
+		// Clear cache
+		// Context.flushSession();
+		Context.clearSession();
+		// Read again
+		
+		LabTestAttributeType savedAttributeType = dao.getLabTestAttributeTypeByUuid(attributeType.getUuid());
+		assertThat(savedAttributeType, Matchers.hasProperty("uuid", org.hamcrest.Matchers.is(attributeType.getUuid())));
+		assertThat(savedAttributeType, Matchers.hasProperty("creator", org.hamcrest.Matchers.is(attributeType.getCreator())));
 	}
 	
 	/**
@@ -492,6 +588,21 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		testSample.setSampleIdentifier("TEST-ID-1234");
 		testSample.setCollectionDate(new Date());
 		testSample.setCollector(owais);
+		testSample.setLabTest(hermioneGxp);
+		
+		testSample.setSpecimenType(geneXpert.getReferenceConcept());
+		testSample.setSpecimenSite(geneXpert.getReferenceConcept());
+		testSample.setSampleIdentifier("123");
+		testSample = dao.saveLabTestSample(testSample);
+		// Clear cache
+		// Context.flushSession();
+		Context.clearSession();
+		// Read again
+		LabTestSample savedLabTestSample = dao.getLabTestSample(testSample.getId());
+		
+		assertThat(savedLabTestSample, Matchers.hasProperty("uuid", org.hamcrest.Matchers.is(testSample.getUuid())));
+		assertThat(savedLabTestSample, Matchers.hasProperty("creator", org.hamcrest.Matchers.is(testSample.getCreator())));
+		
 	}
 	
 	/**
