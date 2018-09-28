@@ -136,7 +136,9 @@
 		            <div class="col-md-12 col-md-offset-12 col-sm-12col-sm-offset-12">
 		                <div class="fancy-collapse-panel">
 		                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+		                       
 		                        <div id="panel-container"></div>
+		                    
 		                    </div>
 		                </div>
 		            </div>

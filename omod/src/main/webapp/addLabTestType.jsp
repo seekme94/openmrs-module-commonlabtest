@@ -178,84 +178,6 @@ legend.scheduler-border {
 				<input type="button" onclick="location.href = '${pageContext.request.contextPath}/module/commonlabtest/manageLabTestTypes.form';"  value="Cancel"></input>
 				 </div>
 			 </div>		 
-			
-<%-- 			<table>
-				 <div class="form-group">
-					<tr> 
-					     <form:input path="labTestTypeId"  hidden="true" id="labTestTypeId"></form:input>			
-					     <td><form:label  class="control-label" path="referenceConcept"><spring:message code="general.referenceConcept" /></form:label></td>
-					     <div class="col-md-6">
-						    <td><form:input id="conceptSuggestBox" path="referenceConcept" class="form-control" list="conceptOptions" placeholder="Search Concept..." required="required" ></form:input>
-								<datalist class="lowercase" id="conceptOptions"></datalist>
-						    </td>
-						 </div>   
-						
-						<td><input value="${testType.referenceConcept.conceptId}"  id="reference_concept"></input></td>
-						<td><form:input path="referenceConcept"  hidden="true"  id="referenceConcept"></form:input></td>
-					</tr>
-				 </div>	
-				 <div class="form-group">
-					<tr>
-						<td><form:label  class="control-label" path="name"><spring:message code="general.testName" /></form:label></td>
-						<td><form:input class="form-control" path="name" id="name"  ></form:input></td>
-					</tr>
-				</div>
-				 <div class="form-group">
-					<tr>
-						<td><form:label  class="control-label" path="shortName"><spring:message code="general.shortName" /></form:label></td>
-						<td><form:input  class="form-control"  path="shortName" id="short_name" ></form:input></td>
-					</tr>
-				</div>
-				<div class="form-group">
-					<tr>
-						<td><form:label class="control-label" path="description"><spring:message code="general.description" /></form:label></td>
-						<td><form:textarea class="form-control" path="description" id="description" rows="5"></form:textarea></td>
-					</tr>
-				</div>
-				<div class="form-group">
-					<tr>
-						<td><form:label  class="control-label" path="testGroup"><spring:message code="general.testGroup" /></form:label></td>
-						<td><form:select class="form-control" path="testGroup" id="testGroup" required="required">
-								<form:options items="${LabTestGroup}" />
-								<c:forEach items="${LabTestGroup}">
-									<option value="${LabTestGroup}">${LabTestGroup}</option>
-								</c:forEach>
-							</form:select></td>
-					</tr>
-				</div>
-				<div class="class="form-check"">
-					<tr>
-						<td><form:label  class="form-check-label"  path="requiresSpecimen"><spring:message code="general.requiresSpecimen" /></form:label></td>
-						<td><span style="margin-right: 25px"></span><form:radiobutton class="form-check-input" path="requiresSpecimen" value="true" />Yes <span style="margin-right: 25px"></span>
-							<form:radiobutton class="form-check-input"  path="requiresSpecimen" value="false" />No</td>
-					</tr>
-				</div>
-
-				<c:if test="${not empty testType.shortName}">
-
-					<tr>
-						<td><form:label  class="control-label" path="creator"><spring:message code="general.createdBy" /></form:label></td>
-						<td><c:out value="${testType.creator.personName}" /> - <c:out
-								value="${testType.dateCreated}" /></td>
-					</tr>
-					<tr>
-						<td><font color="#D0D0D0"><sub><spring:message
-										code="general.uuid" /></sub></font></td>
-						<td><font color="#D0D0D0"><sub><c:out
-										value="${testType.uuid}" /></sub></font></td>
-					</tr>
-				</c:if>
-
-				<tr>
-					<td>
-						<div id="saveUpdateButton" style="margin-top: 15px">
-							<input type="submit" value="Save Test Type"></input>
-						</div>
-					</td>
-				</tr>
-
-			</table> --%>
-
 		</form:form>
 
     </fieldset>
@@ -286,34 +208,6 @@ legend.scheduler-border {
 				</form>
         </fieldset>
 	</c:if>
-	<%-- <br>
-    <c:if test="${not empty testType.referenceConcept.conceptId}">
-		 <fieldset  class="scheduler-border">
-      	   <legend  class="scheduler-border"><spring:message code="general.foreverDelete" /></legend>
-			<form  method="post" action ="${pageContext.request.contextPath}/module/commonlabtest/deletelabtesttype.form" onsubmit="return confirmDelete()">
-				
-				 <!-- Delete -->
-				 <div class="row">
-				   <div class="col-md-2" >
-				  		 <input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-				 		 <input type="submit" value="<spring:message code="general.foreverDelete" />" />
-				   </div>
-				 </div>
-				
-				<table>				
-				<tr>
-					<td>
-						<input value="${labTestType.uuid}" hidden="true"  id="uuid" name="uuid"></input>
-						<div id="delete" style="margin-top: 15px">
-							<input type="submit" value="<spring:message code="general.foreverDelete" />" />
-						</div>
-					</td>
-				</tr>
-				</table>
-			</form>
-		 </fieldset>
-	</c:if>
-  --%>
  </div>
 	
 </body>
@@ -336,7 +230,6 @@ legend.scheduler-border {
 
 	jQuery(document).ready(function() {
 		
-		
 		$('#name').on('input', function() {
 			//alert("on is work !");
 			var input=$(this);
@@ -346,17 +239,6 @@ legend.scheduler-border {
 		});
 		
 		local_source = getConcepts();
-	/* 	 console.log(getConcepts());
-	
-	        <c:if test="${not empty concepts}">
-		        <c:forEach var="concept" items="${concepts}" varStatus="status">
-		       /*    var conceptDescriptionContainingNewLine = "'${concept.description}'";
-		          var conceptDescription =conceptDescriptionContainingNewLine.replace(/(\r\n|\n|\r)/gm, "");
-		          alert(conceptDescription); */
-		      /*   local_source.push({id:"${concept.id}",value: '${concept.name}' ,description: '${concept.description}' ,shortName : '${concept.shortName}'});
-		        </c:forEach>
-	        </c:if>      */
-	        
 	        var datalist = document.getElementById("conceptOptions");
 			var dataListLength = datalist.options.length;
 			if(dataListLength > 0 ) {
@@ -390,13 +272,6 @@ legend.scheduler-border {
 				   jQuery("#description").val(concepts.description.toLowerCase()); 
 				}
 			});
-			
-		/* 	jQuery('#drugSetList').change(function() {
-				alert("change is called");
-			}); */
-	        
-	        
-	        
 	});
 	
 	function toTitleCase(str) {
@@ -409,34 +284,6 @@ legend.scheduler-border {
 	 function getConcepts(){
 	    	return JSON.parse(JSON.stringify(${conceptsJson}));
 	    }
-	
-	/* /*autocomplete ...  */
-	/* $(function() {
-		 $("#reference_concept").autocomplete({
-			 source : function(request, response) {
-				response($.map(local_source, function(item) {
-					console.log(item);
-					return {
-						id : item.id,
-						value : item.name,
-						/* shortName: item.shortName,
-						description :item.description  
-					}
-				}))
-			},
-	   	select : function(event, ui) {
-				$(this).val(ui.item.value)
-				//document.getElementById('referenceConcept').value = '';
-				/* $("#referenceConcept").val(ui.item.id);
-				$("#short_name").val(ui.item.shortName);
-				$("#name").val(ui.item.value);
-				$("#description").val(ui.item.description); */
-				/*  event.preventDefault();
-			},
-			minLength : 3,
-			autoFocus : false
-		});	     
-	});   */
 	
 	/*  */
 	function confirmDelete() {

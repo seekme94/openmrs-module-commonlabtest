@@ -117,10 +117,6 @@
 
 
 <script>
-/* function relocate_home()
-{
-     location.href = "addLabTestAttributeType.form";
-}  */
 
 $(document).ready(function() {
 	//console.log("${status}");
@@ -133,20 +129,7 @@ $(document).ready(function() {
 		 "bPaginate": true
 	  });
 	  $('.dataTables_length').addClass('bs-select');
-	  
-	
-	
-	/* 
-	 $('#manageTestAttributeTypeTable td').click(function() {
-    	 //$(this).parents('tr').detach();
-	 	
-    	 var $row = $(this).closest("tr");    // Find the row
-	     var $tds = $row.find("td:first");
-	 	 var uuid =$tds.text();
-		 window.location = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid;
-	     
-	     
-    }); */
+	 
 	 
 	 jQuery(function() {
 
@@ -162,10 +145,6 @@ $(document).ready(function() {
 	
 			 });
 		 });	 
-	 
-	 
-	 
-	
 });
 
 

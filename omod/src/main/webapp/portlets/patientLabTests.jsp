@@ -50,6 +50,11 @@ legend.scheduler-border {
  margin-bottom:15px;
  
  }
+#tb-test-type {
+  table-layout: fixed;
+}
+#tb-test-type td { word-wrap: break-word; }
+
 </style>
 <!--<i class="fa fa-plus hvr-icon"></i>  -->
 <body>
@@ -77,8 +82,8 @@ legend.scheduler-border {
 	            	<th hidden="true"></th>
 					<th>Test Type</th>
 					<th>Lab Reference Number</th>
-					<th>Edit</th>
 					<th>View</th>
+					<th>Edit</th>
 					<th>Manage Test Sample</th>
 					<th>Test Result</th>
 					
@@ -92,8 +97,8 @@ legend.scheduler-border {
 							     <td hidden ="true" class ="rspecimen">${order.labTestType.requiresSpecimen}</td>
 								 <td>${order.labTestType.name}</td>
 								 <td>${order.labReferenceNumber}</td>
+								 <td> <span class="table-view hvr-icon-grow" onclick="viewTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/view.png"></span></td>
 								 <td> <span class="table-edit hvr-icon-grow" onclick="editTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/edit.png"></span></td>
-					             <td> <span class="table-view hvr-icon-grow" onclick="viewTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/view.png"></span></td>
 					             <td> <span class="table-sample hvr-icon-grow" onclick="samplesTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
 					             <td> <span class="table-result hvr-icon-grow" onclick="resultsTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
 					             
@@ -118,7 +123,7 @@ legend.scheduler-border {
             
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.order.detail" /></legend>
-	     			 <div id="orderContainer">
+	     			 <div id="orderContainer" style="overflow: auto">
 	     			 
 	     			 </div>
 	            </fieldset>    
@@ -421,6 +426,6 @@ function autoHide(){
 	   console.log("result Container : "+ resultsItems);
 	   document.getElementById("resultDetailContainer").innerHTML = resultsItems;
 	}
-	  
+
 
 </script>

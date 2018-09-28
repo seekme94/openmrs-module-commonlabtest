@@ -2,6 +2,7 @@ package org.openmrs.module.commonlabtest.web.controller;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,6 +46,8 @@ public class LabTestResultController {
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	private final String SUCCESS_ADD_FORM_VIEW = "/module/commonlabtest/addLabTestResult";
+	
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Autowired
 	CommonLabTestService commonLabTestService;
@@ -161,6 +164,7 @@ public class LabTestResultController {
 			model.addAttribute("testTypeName", "Unknown"); //This lines need to be discuss.
 		}
 		model.addAttribute("patientId", labTest.getOrder().getPatient().getPatientId());
+		model.addAttribute("encounterdate", simpleDateFormat.format(labTest.getOrder().getDateActivated()));
 		
 		return SUCCESS_ADD_FORM_VIEW;
 	}
@@ -280,8 +284,7 @@ public class LabTestResultController {
 		
 		if (dataTypeName.equals("org.openmrs.customdatatype.datatype.BooleanDatatype") || dataTypeName.equals("Boolean")) {
 			return "Boolean";
-		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.LongFreeTextDatatype")
-		        || dataTypeName.equals("org.openmrs.customdatatype.datatype.FreeTextDatatype")
+		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.FreeTextDatatype")
 		        || dataTypeName.equals("Text")) {
 			return "Text";
 		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.ConceptDatatype")
@@ -297,6 +300,8 @@ public class LabTestResultController {
 			return "Numeric";
 		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype")) {
 			return "Regex";
+		} else if (dataTypeName.equals("org.openmrs.customdatatype.datatype.LongFreeTextDatatype")) {
+			return "TextArea";
 		}
 		
 		return "N/A";

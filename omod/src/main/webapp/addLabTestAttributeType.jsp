@@ -80,14 +80,6 @@ legend.scheduler-border {
 		overflow-y:scroll;
 }
  
-/* #testTypeName
-{
-    overflow: hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
-    width:150px;
-    display:inline-block;
-} */
 </style>
 
 <body>
@@ -208,12 +200,20 @@ legend.scheduler-border {
 							   		<font color="#D0D0D0"><span id="datatypeDescription"></span></font>
 							   	</div>
 					 	   </div>
+					 	   <div class ="row" id ="radioOptions">
+					 	     <div class="col-md-2"></div>
+					 	     <div class="col-sm-6 col-md-6 col-lg-6">
+							      <label class="radio-inline"><input type="radio" name="optradio" onclick="showOptions()" id = "regex">Regex</label>
+							      <label class="radio-inline"><input type="radio" name="optradio" onclick="showOptions()" id = "length">Length</label>
+							      <label class="radio-inline"><input type="radio" name="optradio" onclick="showOptions()" id = "range">Range</label>
+					 	     </div>
+					 	   </div>
 					 	   <!-- datatypeConfig -->
 							<div class="row">
-							   <div class="col-md-2">
+							   <div class="col-sm-2 col-md-2 col-lg-2">
 					 	  		   <form:label path="datatypeConfig" class="control-label"><spring:message code="general.datatypeConfiguration" /></form:label>
 								</div>
-							   <div class="col-md-6">
+							   <div class="col-sm-6 col-md-6 col-lg-6">
 								         <c:if test = "${available != true}">
 								         	<form:textarea class="form-control" path="datatypeConfig" id="datatypeConfig" ></form:textarea>
 								            <span id="datatypeconfig" class="text-danger "> </span>
@@ -354,9 +354,10 @@ legend.scheduler-border {
 	var local_source;
 
 	jQuery(document).ready(function() {
+		$("#radioOptions").hide();
 		console.log("Available : "+'${available}');
 		console.log("Data Type : "+document.getElementById('data_type_name').value);
-	   if(document.getElementById('data_type_name').value == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype"){
+	   if(hint()){
 			$("#hint_field").show();
 		}else{
 			$("#hint_field").hide();
@@ -401,10 +402,38 @@ legend.scheduler-border {
 				}
 			});   
 	        
-	        
-   
-	        
 	});
+	
+	function showOptions(){
+			console.log("showOps");
+		    let regex = document.getElementById("regex");
+	        let range = document.getElementById("range");
+	        let length = document.getElementById("length");
+	        document.getElementById('datatypeConfig').innerHTML  = '';	
+			if(regex.checked){
+				 document.getElementById('datatypeConfig').innerHTML  = 'Regex=';	
+			}else if(range.checked){
+				 document.getElementById('datatypeConfig').innerHTML  = 'Range=';	
+			}
+			else if(length.checked){
+				 document.getElementById('datatypeConfig').innerHTML  = 'Length=';	
+			}
+	}
+	
+	function hint(){
+	 	
+	  let dataTypeName = document.getElementById('data_type_name').value;	
+	   if(dataTypeName != "" && dataTypeName != null){
+		   if(dataTypeName == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype" ||
+				   dataTypeName == "org.openmrs.customdatatype.datatype.FreeTextDatatype" ||
+				   dataTypeName == "org.openmrs.customdatatype.datatype.FloatDatatype" ||
+				   dataTypeName == "org.openmrs.customdatatype.datatype.LongFreeTextDatatype"){
+			   return true;
+		   }else{
+			   return false;
+		   }
+	   }
+	}
 	
 	function isNumber(evt) {
 	    evt = (evt) ? evt : window.event;
@@ -427,37 +456,29 @@ legend.scheduler-border {
 		  if(dataType.childElementCount != 0){
 			  	 let dataTypeName =   dataType.options[dataType.selectedIndex].text;
 			  	 console.log("dataTypeName : "+ dataTypeName);
-			     if(dataTypeName === "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype.name"){
+			 	document.getElementById('datatypeConfig').innerHTML = '';
+		  		$('input:radio[name=optradio]').each(function () { $(this).prop('checked', false); });
+			  	 if(dataTypeName == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype.name"
+			  			 || dataTypeName == "org.openmrs.customdatatype.datatype.FloatDatatype.name" 
+			  			 || dataTypeName == "org.openmrs.customdatatype.datatype.LongFreeTextDatatype.name" 
+			  			 || dataTypeName == "org.openmrs.customdatatype.datatype.FreeTextDatatype.name"){
+			  		if(!$('#radioOptions').is(':visible'))
+			  		{  
+			  		     alert('car 2 is hidden'); 
+			  			 $("#radioOptions").show();
+			  		}
+			  	 }else{
+			  		$("#radioOptions").hide();
+			  	 }
+			  	 
+			     if(hint()){
 			    	 $("#hint_field").show();
 			     }else{
 			    	 $("#hint_field").hide();
 			     }
 		  }
 	});
-	
-	
-	/* /*autocomplete ...  */
-	/* $(function() {
-		 $("#lab_test_type").autocomplete({
-			 source : function(request, response) {
-				response($.map(local_source, function(item) {
-					return {
-						value : item.value,
-						id:item.id
-					}
-				}))
-			},
-			select : function(event, ui) {
-				$(this).val(ui.item.value);
-				$("#labTestType").val(ui.item.id);
-			},
-			minLength : 0,
-			autoFocus : true
-		});	     
-	 }); */
-	
-	
-	
+
 	/*Confirmation  Dialog Box  */
 	function confirmRetire() {
 		//onsubmit="return confirmRetire()"
@@ -505,7 +526,7 @@ legend.scheduler-border {
 		var hintVal = document.getElementById('hint').value;
 		var dataType = document.getElementById('data_type_name');
 		
-		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%\\-]*$");
+		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_()?/µ.%\\-]*$");
 		var regInt =new RegExp("^[0-9]+$");
         var regErrorMesssage ="Text contains Invalid characters.Test Attribute name only accepts alphabets with _ -().% special characters";
 		var numericErrorMessage ="Only interger values are allowed";
@@ -650,14 +671,14 @@ legend.scheduler-border {
 				     }else if(dataTypeOp == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype"){
 						 console.log("dataTypeConfig : "+dataTypeConfig);
 				    	 if(dataTypeConfig != "" && dataTypeConfig != null ){
-				    		  if(dataTypeConfig.startsWith("^") || dataTypeConfig.endsWith("$")){
+				    		 /*  if(dataTypeConfig.startsWith("^") || dataTypeConfig.endsWith("$")){
 					    			  document.getElementById("datatypeconfig").style.display= 'block';	
 				      				  document.getElementById('datatypeconfig').innerHTML = "Regex string should not contains ^ $ sign.";
 			      				  isValidate = false; 
 				    		   }
 				    		    else {
 				    		    	 document.getElementById("datatypeconfig").style.display= 'none';
-				    		    }
+				    		    } */
 			    		     //check the hint values
 				    		 if(hintVal == "" || hintVal == null){
 				    			  document.getElementById("hints").style.display= 'block';	
@@ -676,26 +697,6 @@ legend.scheduler-border {
         	     document.getElementById("datatypeconfig").style.display= 'none';
 	          }
 			 
-			 
-			 /* 
-			
-	         if(dataTypeOp != "" && dataTypeOp == "org.openmrs.customdatatype.datatype.ConceptDatatype"){
-	        	 var dataTypeConfig = document.getElementById('datatypeConfig').value;
-	        	 if(dataTypeConfig != "" && dataTypeConfig != null ){
-	        		if(checkConceptExistent(dataTypeConfig)){
-	        			 document.getElementById("datatypeconfig").style.display= 'none';
-	        		 }else{	        			 
-	        			  document.getElementById("datatypeconfig").style.display= 'block';	
-	      				  document.getElementById('datatypeconfig').innerHTML = "Concept Id  does not exist in concept dictionary";
-	      				  isValidate = false;
-	        		 }
-	        	 }
-	          }	else{
-	        	     document.getElementById("datatypeconfig").style.display= 'none';
-	          }
-	          */
-	   
-	         
 			  if(isValidate ==true){
 				document.getElementById("data_type_name").disabled = false;
 				document.getElementById("datatypeConfig").disabled = false;

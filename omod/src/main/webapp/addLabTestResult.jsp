@@ -160,7 +160,7 @@ var testTypeName="";
 var fileExtensions ="";
 var fileExtensionsArr =[];
 var fileExtensionArray = [];
-
+var booleanSubmitted = false;
 //check for the integer 
 function isNumber(event) {
 	 var key = window.event ? event.keyCode : event.which;
@@ -187,10 +187,6 @@ $(document).ready(function () {
     patientId ='${patientId}';
     
     populateResultForm();
-	/* if(local_source.length > 0){
-		
-	}	 */
-	
 
 });
 
@@ -217,14 +213,14 @@ function navigatedToPatientDashboard(){
      resultsItems = resultsItems.concat('<input  hidden="true" id="update" name ="update" value="'+update+'" />'); 
 
      jQuery(local_source).each(function() {
-    	   
-    	    if(this.testAttributeId != 'undefined')
-    	    	{
-                 resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="'+this.testAttributeId+'" />'); 
-    	    	}
-    	    else{
-                 resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="" />'); 
-    	      }
+  	   
+ 	    if(this.testAttributeId != 'undefined')
+ 	    	{
+              resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="'+this.testAttributeId+'" />'); 
+ 	    	}
+ 	    else{
+              resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="" />'); 
+ 	      }
 			 if(this.dataType == 'Coded'){
 				  	 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
@@ -250,26 +246,32 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 					 console.log("values : "+ this.value);
 					 if(this.value === undefined || this.value === 'undefined'){
-							 console.log("Called");
-							 console.log("min : " + this.minOccurs);
-		
-							if(this.minOccurs == 0){
-								 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value=""  data-error-msg="This field cannot be empty" />');<c:choose><c:when test="{this.minOccurs > 0}"> required="required"</c:when></c:choose>
-							 }else{
-								 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value=""  data-error-msg="This field cannot be empty" required />');
-							 } 
+							     resultsItems = resultsItems.concat('<input maxlength="255"  class="form-control" type="text"  id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="" ><span id="error.'+this.id+'" class="text-danger "></span>');
+							     resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+								 resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
 					 }else{
-						     console.log("min : " + this.minOccurs);
-							 /*this condition for required  */
-							 if(this.minOccurs == 0){
-							 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'"  data-error-msg="This field cannot be empty" />'); 
-							 }else{
-								 resultsItems = resultsItems.concat('<input class="form-control" type="text" size="100" id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'"  data-error-msg="This field cannot be empty"  required/>');  
-							 } 
+							     resultsItems = resultsItems.concat('<input maxlength="255"  class="form-control" type="text"  id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'"  ><span id="error.'+this.id+'" class="text-danger "></span>');
+							     resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+								 resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
 						}
-					
-					 //this.minOccurs == 0 ? $(""+id+"").prop('required',false) : $(""+id+"").prop('required',true);
 					 resultsItems =resultsItems.concat('</div></div>');
+			 }
+			 else if(this.dataType == 'TextArea'){
+				 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+				 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
+				 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+				 console.log("values txt erea : "+ this.value);
+				 if(this.value === undefined || this.value === 'undefined'){
+							  resultsItems = resultsItems.concat('<textarea  maxlength="512" class="form-control"  id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="" /><span id="error.'+this.id+'" class="text-danger "></span>');
+                              resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+							  resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
+				 }else{
+							  resultsItems = resultsItems.concat('<textarea   maxlength="512" class="form-control"  id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'" >'+this.value+'</textarea><span id="error.'+this.id+'" class="text-danger "></span>'); 
+                              resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+							  resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
+					
+					}
+				 resultsItems =resultsItems.concat('</div></div>');
 			 }
 			 else if(this.dataType == 'Numeric'){
 				     console.log("Config : "+this.config);
@@ -277,28 +279,15 @@ function navigatedToPatientDashboard(){
 					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 					 console.log("values : "+ this.value);
-					 if(this.value === 'undefined'){
-						  if(this.config === "" || this.config == null ){
-								  if(this.minOccurs == 0){
-									    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)"  />'); 
-								   }else{
-									    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)" required />'); 
-								   }
-							}else{
-								    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid" onkeypress="return isNumber(event)" required />'); 
-						 } 
+					 if(this.value === 'undefined' || this.value == undefined){
+								    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" ><span id="error.'+this.id+'" class="text-danger "></span>'); 
+								    resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+								    resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
 					 }
 					 else{
-							 if(this.config === "" || this.config == null ){
-									 if(this.minOccurs == 0){
-										    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)"  />');
-									  }
-									  else {
-										    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="float.'+this.id+'" name="float.'+this.id+'" onkeypress="return isNumber(event)" required />'); 
-									  }							
-							}else{
-								    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="float.'+this.id+'" name="float.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid" onkeypress="return isNumber(event)" required />'); 
-							 }	 			
+								    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="float.'+this.id+'" name="float.'+this.id+'"  ><span id="error.'+this.id+'" class="text-danger "></span>');
+								    resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+								    resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 			
 					 }
 					 resultsItems =resultsItems.concat('</div></div>');
 		 	}
@@ -324,58 +313,37 @@ function navigatedToPatientDashboard(){
 				 resultsItems =resultsItems.concat('</select></div></div>');
 					
 		   }else if(this.dataType == 'Date'){
+			     var currentDate = $.datepicker.formatDate('yy-mm-dd', new Date()); 
+			     var orderActivatedDate = '${encounterdate}';
+			     console.log("currentDate : "+currentDate);
+			     console.log("orderActivatedDate : "+orderActivatedDate);
 			     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 				 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
 				 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
 				 if(this.value == 'undefined'){
-					  if(this.minOccurs == 0){
-						
-							 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="" >');
-					  }
-					  else{
-							 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="" required >');
-					  }
+							 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'"  class="form-control" name="date.'+this.id+'" type="date" value="" min="'+orderActivatedDate+'" max="'+currentDate+'" ><span id="error.'+this.id+'" class="text-danger "></span>');
 				 }else{
-					  if(this.minOccurs == 0){
-							 resultsItems = resultsItems.concat('<input id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="'+this.value+'" >'); 
-					  }else{
-							 resultsItems = resultsItems.concat('<input id="date.'+this.id+'" name="date.'+this.id+'" type="date" value="'+this.value+'" required>');			
-						}
+						     resultsItems = resultsItems.concat('<input id="date.'+this.id+'"  class="form-control"  name="date.'+this.id+'" type="date" value="'+this.value+'" min="'+orderActivatedDate+'" max="'+currentDate+'" ><span id="error.'+this.id+'" class="text-danger "></span>');			
 				 }
 				 resultsItems =resultsItems.concat('</div></div>');
 		   } 
 		   else if(this.dataType == 'Regex'){
-			    console.log("Config : "+this.config);
 				 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 				 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
 				 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-				 console.log("values : "+ this.value);
 				 if(this.value === 'undefined' || this.value == undefined){
-					      console.log("if condition und");
-					      resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
+					      resultsItems = resultsItems.concat('<input class="form-control" type="text"  id="regex.'+this.id+'" name="regex.'+this.id+'" ><span id="error.'+this.id+'" class="text-danger "></span>'); 
 					      resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-					      resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">Hint:'+this.hint+'</span>'); 
-						/*  if(this.config === "" || this.config == null ){
-							    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="regex.'+this.id+'" name="regex.'+this.id+'"  required />');
-						 }else{
-							    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
-						 } */
+					      resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
 				 }
 				 else{
-					    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
+					    resultsItems = resultsItems.concat('<input class="form-control" type="text" value ="'+this.value+'" id="regex.'+this.id+'" name="regex.'+this.id+'" ><span id="error.'+this.id+'" class="text-danger "></span>'); 
 					    resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-					    resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">Hint:'+this.hint+'</span>'); 
-
-					 /* 
-						 if(this.config === "" || this.config == null ){
-							    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'"  id="regex.'+this.id+'" name="regex.'+this.id+'"  required />');
-						 }else{
-							    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="regex.'+this.id+'" name="regex.'+this.id+'" pattern= "'+this.config+'" title="The input is invalid"  required />'); 
-						 }	 */				
+					    resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 			
 				 }
 				 resultsItems =resultsItems.concat('</div></div>');
 		   }
-	     });            
+	     });             
 				  /* resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 					resultsItems = resultsItems.concat('<label class="control-label">Comments</label>');
 					resultsItems = resultsItems.concat('</div><div class="col-md-4">');
@@ -411,10 +379,10 @@ function navigatedToPatientDashboard(){
 	   			     //end
 				     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-2 col-md-2 col-lg-2">');
 	   			     if(local_source.length > 0){
-					     resultsItems = resultsItems.concat('<input type="submit" value="Save Test Result" id="submitBttn" ></input>');
+					     resultsItems = resultsItems.concat('<input type="submit" class ="btn" value="Save Test Result" id="submitBttn" ></input>');
 					     resultsItems = resultsItems.concat('</div><div class="col-sm-2 col-md-2 col-lg-2">');
    						}
-				     resultsItems = resultsItems.concat('<input type="button" onclick="navigatedToPatientDashboard();" value="Cancel"></input>');
+				     resultsItems = resultsItems.concat('<input type="button" class ="btn" onclick="navigatedToPatientDashboard();" value="Cancel"></input>');
 				     resultsItems = resultsItems.concat('</div></div></form>');
 			         console.log("Resultan String : "+resultsItems);
 				     $("#resultContainer").append(resultsItems);
@@ -422,6 +390,12 @@ function navigatedToPatientDashboard(){
 				
 	   
    }
+
+   function validateBlur(ref) {
+	   console.log("is called ");
+	 booleanSubmitted = true;
+	}
+   
    function setValue(checkboxElem) {
 	   $(checkboxElem).val(checkboxElem.checked ? true : false);
 	 }
@@ -443,29 +417,169 @@ function navigatedToPatientDashboard(){
                  var fileExt = "."+fileName.split('.').pop();
                  console.log("include : " +fileExtensionsArr.includes(fileExt));
                  blnValid = fileExtensionsArr.includes(fileExt);
-                /*  if (!blnValid) {
-                	    console.log("True : "+blnValid);
-         			    document.getElementById("documenttypefile").style.display= 'block';
-         				document.getElementById('documenttypefile').innerHTML = "<b>"+ fileName.split('.').pop().toUpperCase()+"</b> file extension is not allowed.You can only upload files with extensions: ";
-         				document.getElementById('documenttypefileextension').innerHTML = ""+fileExtensionArray.join(", ");
-         			
-         				$("#documentTypeFile" ).val("");
-         				//document.getElementById('submitBttn').disabled = true;
-                 }else if(blnValid){ */
-                	  console.log("False : "+blnValid);
          			   document.getElementById("documenttypefile").style.display= 'none';	
-         			  document.getElementById("documenttypefileextension").style.display= 'none';	
-         			  // document.getElementById('submitBttn').disabled = false;
-                 
+         			    document.getElementById("documenttypefileextension").style.display= 'none';	  
             }
 	     });
 	  });
    
    function validation(){
-	   
-	   
-	   return true;
+	        console.log("is called");
+		    var emptyErrorMessage ="This field cannot be empty";
+    		 let isValid =true;
+		    jQuery(local_source).each(function() {
+		    	 var minOccurs = this.minOccurs; 
+	    		 var config = this.config;
+		    	  if(this.dataType == 'Text'){
+		    		 let id =  "valueText."+this.id;
+		    		 let errorId  = "error."+this.id;
+		    		 let textVal=   document.getElementById(id).value;
+			    		 if(textVal == "" && minOccurs !=0){
+			    				document.getElementById(errorId).style.display= 'block';	
+			    				document.getElementById(errorId).innerHTML =emptyErrorMessage;
+			    			    isValid = false;
+			    			    return false; //break the loop 
+				    	  }else if(textVal != "" && config != "" && config != null){
+			    			  let configArray = configParser(config);
+			    			 // isValid = ;
+			    			  if(!configValidation(errorId,textVal,configArray)){
+			    				  return false; //break the loop 
+			    			   }
+			    	 	 }else{
+				    		   document.getElementById(errorId).style.display= 'none';	
+				    	 }
+			    		 console.log(" text isValid : "+isValid);  
+		    	  }
+		    	  else if(this.dataType == 'Numeric'){
+		    		  let id =  "float."+this.id;
+		    		  let errorId  = "error."+this.id;
+			    	  let textNumericVal=   document.getElementById(id).value;
+			    		  if(textNumericVal == "" && minOccurs !=0){
+			    			     document.getElementById(errorId).style.display= 'block';	
+			    				 document.getElementById(errorId).innerHTML =emptyErrorMessage;
+			    			    isValid = false;
+			    		  }else if(textNumericVal != "" && config != "" && config != null){
+			    			  let configArray = configParser(config);
+			    			  isValid = configValidation(errorId,textNumericVal,configArray);
+			    		  }else{
+				    		   document.getElementById(errorId).style.display= 'none';	  
+			    		  }
+			    		  console.log(" numeric isValid : "+isValid); 
+		    	  }
+		    	  else if(this.dataType == 'TextArea'){
+		    		  let id =  "valueText."+this.id;
+		    		  let errorId  = "error."+this.id;
+			    	  let textAreaVal = document.getElementById(id).value;
+				    		  if(textAreaVal == "" && minOccurs !=0){
+				    			      document.getElementById(errorId).style.display= 'block';	
+				    				  document.getElementById(errorId).innerHTML =emptyErrorMessage;
+				    			     isValid = false;
+				    		  }else if(textAreaVal != "" && config != "" && config != null){
+					    			  let configArray = configParser(config);
+					    			  isValid = configValidation(errorId,textAreaVal,configArray);
+				    		  }else{
+					    		   document.getElementById(errorId).style.display= 'none';	   
+				    		  }
+					    console.log(" textarea isValid : "+isValid);  
+		    	  }
+		    	  else if(this.dataType == 'Regex'){
+		    		  let id =  "regex."+this.id;
+		    		  let errorId  = "error."+this.id;
+			    	  let textRegexVal=   document.getElementById(id).value;
+			    		  if(textRegexVal == "" && minOccurs !=0){
+			    			    console.log(" regex Input field doesn't empty");
+			    				document.getElementById(errorId).style.display= 'block';	
+			    				document.getElementById(errorId).innerHTML ="Invalid pattern";
+			    			    isValid = false;
+			    		  }
+			    		   else if(textRegexVal != "" && config != "" && config != null){
+			    			   console.log("config is not : "+config);
+			    			  let configArray = configParser(config);
+			    			  isValid = configValidation(errorId,textRegexVal,configArray);
+		    		      }
+		    		      else{
+				    		   document.getElementById(errorId).style.display= 'none';	
+		    		      }
+			    	console.log(" regex isValid : "+isValid);  
+		    	  }else if(this.dataType == 'Date'){
+		    		  let id =  "date."+this.id;
+		    		  let errorId  = "error."+this.id;
+		    		  let textRegexVal=   document.getElementById(id).value;
+		    		  if(textRegexVal == "" && minOccurs !=0){
+		    			    console.log(" regex Input field doesn't empty");
+		    				document.getElementById(errorId).style.display= 'block';	
+		    				document.getElementById(errorId).innerHTML = emptyErrorMessage;
+		    			    isValid = false;
+		    		  }else{
+			    		   document.getElementById(errorId).style.display= 'none';	
+	    		      }
+		    		  
+		    	  }
+		    	
+		    });
+		  console.log("isValid : "+isValid);  
+	   return isValid;
    }
+   
+   function configParser(configStr){
+	   var resultConfig = [];
+	   let index = configStr.indexOf("=");  //Split the type (Length ,Regex and range)and value
+	   let type = configStr.substr(0, index); // Type 
+	   let value = configStr.substr(index + 1);   //value 
+	   resultConfig.push(type);
+	   resultConfig.push(value);
+	  return resultConfig; 
+    }
+   
+   function configValidation(errorId,inputVal,configArr){
+	   
+	   let isValidate =true;
+	   let type = configArr[0].trim();
+	   let value =configArr[1];
+	   console.log("Config Type : " +type );
+	   console.log("Value : " +value );
+	   if(value != "" && value != null ){
+		   if(type === 'Length'){
+			   if( inputVal.length > value){
+				    console.log("Length field doesn't empty");
+	   				document.getElementById(errorId).style.display= 'block';	
+	   				document.getElementById(errorId).innerHTML ="Max text length not greater then "+value;
+				    isValidate =false;
+			   }else{
+	    		   document.getElementById(errorId).style.display= 'none';	 
+			   }
+		   }else if(type === 'Regex'){
+			  console.log("Inside Regex : "+value); 
+			 let regex = new RegExp(value);   
+		     if(!regex.test(inputVal)){
+	    	    console.log("Regex field doesn't empty");
+   				document.getElementById(errorId).style.display= 'block';	
+   				document.getElementById(errorId).innerHTML ="Invalide pattern";
+	    	    isValidate =false;
+		     }else{
+	    		   document.getElementById(errorId).style.display= 'none';	 
+			   }
+		   }else if(type == 'Range'){
+			   let index = value.indexOf("-");
+			   let startPoint = value.substr(0, index); 
+			   let endPoint = value.substr(index + 1);
+			   if(!betweenRange(inputVal,startPoint,endPoint)){
+				    console.log("Range field doesn't empty");
+	   				document.getElementById(errorId).style.display= 'block';	
+	   				document.getElementById(errorId).innerHTML ="Input value does not lie in between the range "+value;
+		    	    isValidate =false;
+			   }else{
+				   document.getElementById(errorId).style.display= 'none';	
+			   }
+		   }   
+	   } 
+		   
+     return isValidate;
+   }
+   
+   function betweenRange(x, min, max) {
+	   return x >= min && x <= max;
+	 }
    
    
    

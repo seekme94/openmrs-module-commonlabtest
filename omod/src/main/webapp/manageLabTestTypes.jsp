@@ -111,31 +111,7 @@ table.display tbody tr:nth-child(even):hover td{
 	        </tbody>
 	    </table>
 	 </div>
-		
-	<%-- 
-		
-			<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">
-				<thead>
-					<tr>
-						 <th class="th-lg"><a> Name <i class="fa fa-sort ml-1"></i></a></th>
-						 <th class="th-lg"><a> Short Name <i class="fa fa-sort ml-1"></i></a></th>
-						 <th class="th-lg"><a> Test Group <i class="fa fa-sort ml-1"></i></a></th>
-						 <th class="th-lg"><a> Reference Concept <i class="fa fa-sort ml-1"></i></a></th> 	 
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="tt" items="${labTestTypes}">
-						<tr>
-							<td><a href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid=${tt.uuid}">${tt.name}</a></td>
-							<td>${tt.shortName}</td>
-							<td>${tt.testGroup}</td>
-							<td>${tt.referenceConcept.name}</td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table> --%>
 		<!-- Full Height Modal Right -->
-		
 	<div class="modal fade left modal-scrolling" id="sortWeightModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="false" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-side modal-top-left modal-notify modal-info" role="document">
 	      <div class="modal-content">
@@ -169,17 +145,8 @@ table.display tbody tr:nth-child(even):hover td{
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery.dataTables.min.js"></script>
 <script
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/dataTables.bootstrap4.min.js"></script>
-<%-- <script
-	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/mdb.js"></script>
-<script
-	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/mdb.min.js"></script> --%>
 
 <script>
-function relocate_home()
-{
-     location.href = "addLabTestType.form";
-} 
-
 	function editTestOrder(ele){
 		 var testTypeId = $(ele).closest("tr")  
 							         .find(".testTypeId")   
@@ -193,7 +160,6 @@ function relocate_home()
 	}
 
 $(document).ready(function() {
-
 	//status auto closs..		
 	   $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
             $("#success-alert").slideUp(500);
