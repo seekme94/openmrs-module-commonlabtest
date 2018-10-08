@@ -8,18 +8,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xpath.operations.Bool;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
-import org.openmrs.ConceptNumeric;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestAttribute;
@@ -67,11 +65,23 @@ public class LabTestResultController {
 		
 		List<LabTestAttributeType> attributeTypeList = new ArrayList<LabTestAttributeType>();
 		attributeTypeList = commonLabTestService.getLabTestAttributeTypes(labTest.getLabTestType(), Boolean.FALSE);
+		
+		List<LabTestAttributeType> nonGroupTestAttributeType = new ArrayList<LabTestAttributeType>();
+		List<LabTestAttributeType> groupTestAttributeType = new ArrayList<LabTestAttributeType>();
+		
+		for (LabTestAttributeType labTestAttributeType : attributeTypeList) {
+			if (labTestAttributeType.getGroupId() == null) {
+				nonGroupTestAttributeType.add(labTestAttributeType);
+			} else {
+				groupTestAttributeType.add(labTestAttributeType);
+			}
+		}
+		
 		JsonArray attributeTypeArray = new JsonArray();
 		List<LabTestAttribute> testAttributes = commonLabTestService.getLabTestAttributes(testOrderId);
 		
 		// Context.getService(CommonLabTestService.class).getLabTestAttributes(patient, labTestAttributeType, includeVoided);
-		Collections.sort(attributeTypeList, new Comparator<LabTestAttributeType>() {
+		Collections.sort(nonGroupTestAttributeType, new Comparator<LabTestAttributeType>() {
 			
 			@Override
 			public int compare(LabTestAttributeType o1, LabTestAttributeType o2) {
@@ -79,62 +89,14 @@ public class LabTestResultController {
 			}
 		});
 		
-		for (LabTestAttributeType lta : attributeTypeList) {
-			JsonObject objAttrType = new JsonObject();
-			objAttrType.addProperty("name", lta.getName());
-			objAttrType.addProperty("minOccurs", lta.getMinOccurs());
-			objAttrType.addProperty("maxOccurs", lta.getMaxOccurs());
-			objAttrType.addProperty("sortWeight", lta.getSortWeight());
-			objAttrType.addProperty("config", lta.getDatatypeConfig());
-			objAttrType.addProperty("hint", lta.getHint());
-			
-			if (testAttributes.size() > 0) {
-				for (LabTestAttribute labTestAttribute : testAttributes) {
-					if (!labTestAttribute.getVoided()) {
-						if (labTestAttribute.getAttributeTypeId() == lta.getLabTestAttributeTypeId()) {
-							objAttrType.addProperty("value", labTestAttribute.getValueReference());
-							objAttrType.addProperty("testAttributeId", labTestAttribute.getId());
-						}
-					}
-				}
-			} else {
-				objAttrType.addProperty("value", "");
-				objAttrType.addProperty("testAttributeId", "");
-			}
-			objAttrType.addProperty("id", lta.getId());
-			if (lta.getDatatypeClassname().equalsIgnoreCase("org.openmrs.customdatatype.datatype.ConceptDatatype")) {
-				if (lta.getDatatypeConfig() != null && lta.getDatatypeConfig() != "" && !lta.getDatatypeConfig().isEmpty()) {
-					System.out.println("Data Conf :" + lta.getDatatypeConfig());
-					Concept concept = Context.getConceptService().getConcept(Integer.parseInt(lta.getDatatypeConfig()));
-					
-					if (concept.getDatatype().getName().equals("Coded")) {
-						JsonArray codedArray = new JsonArray();
-						Collection<ConceptAnswer> ans = concept.getAnswers();
-						for (ConceptAnswer ca : ans) {
-							JsonObject jo = new JsonObject();
-							jo.addProperty("conceptName", ca.getAnswerConcept().getName().getName());
-							jo.addProperty("conceptId", ca.getAnswerConcept().getConceptId());
-							codedArray.add(jo);
-						}
-						objAttrType.add("conceptOptions", codedArray);
-						objAttrType.addProperty("dataType", getDataType(lta.getDatatypeClassname()));
-						
-					} else {
-						objAttrType.addProperty("dataType", getDataType(concept.getDatatype().getName()));
-					}
-				}
-			} else {
-				/*	if (lta.getDatatypeClassname().equals("org.openmrs.customdatatype.datatype.FloatDatatype")) {
-						objAttrType.addProperty("dataType", getDataType(lta.getDatatypeClassname()));
-						
-					} else {*/
-				objAttrType.addProperty("dataType", getDataType(lta.getDatatypeClassname()));
-				//}
-			}
-			attributeTypeArray.add(objAttrType);
+		for (LabTestAttributeType labTestAttributeType : nonGroupTestAttributeType) {
+			attributeTypeArray.add(getAttributeTypeJsonObj(labTestAttributeType, testAttributes));
 		}
 		
 		model.addAttribute("attributeTypeList", attributeTypeArray);
+		if (groupTestAttributeType.size() > 0) {
+			model.addAttribute("groupList", getGroupArrayList(groupTestAttributeType, testAttributes));
+		}
 		//check the voided values ..
 		if (testAttributes.size() > 0 && attributeTypeList.size() > 0) {
 			boolean updateMode = false;
@@ -306,4 +268,89 @@ public class LabTestResultController {
 		
 		return "N/A";
 	}
+	
+	public JsonArray getGroupArrayList(List<LabTestAttributeType> listAttributeTypes, List<LabTestAttribute> testAttributes) {
+		JsonArray parentArray = new JsonArray();
+		
+		List<Integer> holderGroupId = new ArrayList<Integer>();
+		if (listAttributeTypes.size() > 0) {
+			List<LabTestAttributeType> childListAttributeTypes = listAttributeTypes;
+			JsonObject labTestGroupObj;
+			for (LabTestAttributeType labTestAttributeType : listAttributeTypes) {
+				labTestGroupObj = new JsonObject();
+				JsonArray jsonChildArray = new JsonArray();
+				Integer groupId = labTestAttributeType.getGroupId();
+				if (holderGroupId.contains(groupId)) {
+					continue;
+				}
+				holderGroupId.add(groupId);
+				labTestGroupObj.addProperty("groupName", labTestAttributeType.getGroupName());
+				labTestGroupObj.addProperty("groupId", labTestAttributeType.getGroupId());
+				for (LabTestAttributeType labTestAttributeTypechld : childListAttributeTypes) {
+					if (labTestAttributeTypechld.getGroupId() == groupId) {
+						jsonChildArray.add(getAttributeTypeJsonObj(labTestAttributeTypechld, testAttributes));
+					}
+				}
+				labTestGroupObj.add("details", jsonChildArray);
+				parentArray.add(labTestGroupObj);
+			}
+		}
+		System.out.println("Result Array : " + parentArray.toString());
+		return parentArray;
+	}
+	
+	public JsonObject getAttributeTypeJsonObj(LabTestAttributeType labTestAttributeType,
+	        List<LabTestAttribute> testAttributes) {
+		JsonObject objAttrType = new JsonObject();
+		objAttrType.addProperty("name", labTestAttributeType.getName());
+		objAttrType.addProperty("minOccurs", labTestAttributeType.getMinOccurs());
+		objAttrType.addProperty("maxOccurs", labTestAttributeType.getMaxOccurs());
+		objAttrType.addProperty("sortWeight", labTestAttributeType.getSortWeight());
+		objAttrType.addProperty("config", labTestAttributeType.getDatatypeConfig());
+		objAttrType.addProperty("hint", labTestAttributeType.getHint());
+		
+		if (testAttributes.size() > 0) {
+			for (LabTestAttribute labTestAttribute : testAttributes) {
+				if (!labTestAttribute.getVoided()) {
+					if (labTestAttribute.getAttributeTypeId() == labTestAttributeType.getLabTestAttributeTypeId()) {
+						objAttrType.addProperty("value", labTestAttribute.getValueReference());
+						objAttrType.addProperty("testAttributeId", labTestAttribute.getId());
+					}
+				}
+			}
+		} else {
+			objAttrType.addProperty("value", "");
+			objAttrType.addProperty("testAttributeId", "");
+		}
+		objAttrType.addProperty("id", labTestAttributeType.getId());
+		if (labTestAttributeType.getDatatypeClassname().equalsIgnoreCase(
+		    "org.openmrs.customdatatype.datatype.ConceptDatatype")) {
+			if (labTestAttributeType.getDatatypeConfig() != null && labTestAttributeType.getDatatypeConfig() != ""
+			        && !labTestAttributeType.getDatatypeConfig().isEmpty()) {
+				System.out.println("Data Conf :" + labTestAttributeType.getDatatypeConfig());
+				Concept concept = Context.getConceptService().getConcept(
+				    Integer.parseInt(labTestAttributeType.getDatatypeConfig()));
+				
+				if (concept.getDatatype().getName().equals("Coded")) {
+					JsonArray codedArray = new JsonArray();
+					Collection<ConceptAnswer> ans = concept.getAnswers();
+					for (ConceptAnswer ca : ans) {
+						JsonObject jo = new JsonObject();
+						jo.addProperty("conceptName", ca.getAnswerConcept().getName().getName());
+						jo.addProperty("conceptId", ca.getAnswerConcept().getConceptId());
+						codedArray.add(jo);
+					}
+					objAttrType.add("conceptOptions", codedArray);
+					objAttrType.addProperty("dataType", getDataType(labTestAttributeType.getDatatypeClassname()));
+					
+				} else {
+					objAttrType.addProperty("dataType", getDataType(concept.getDatatype().getName()));
+				}
+			}
+		} else {
+			objAttrType.addProperty("dataType", getDataType(labTestAttributeType.getDatatypeClassname()));
+		}
+		return objAttrType;
+	}
+	
 }

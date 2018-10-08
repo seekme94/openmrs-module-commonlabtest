@@ -286,7 +286,8 @@ $(document).ready(function () {
 
 
 function setSpecimenTypeVal(id){
-	   var testType = specimentTypeArray.find(o => o.id == id);
+	     document.getElementById('sample_identifier').value = (new Date).toISOString().replace(/z|t/gi,' ').trim();	
+	  /*  var testType = specimentTypeArray.find(o => o.id == id);
 	   let testName = "" ;
 	   testName = testType.name;
 	   console.log("change : "+testName);
@@ -294,7 +295,7 @@ function setSpecimenTypeVal(id){
 			document.getElementById('sample_identifier').value = id+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
 		}else{
 			document.getElementById('sample_identifier').value = testName.toLowerCase().trim()+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();
-		}	
+		}	 */
 	}
 
 

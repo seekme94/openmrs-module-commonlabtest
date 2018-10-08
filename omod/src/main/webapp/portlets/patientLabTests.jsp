@@ -149,16 +149,16 @@ legend.scheduler-border {
 </body>
 
 <!--JAVA SCRIPT  -->
-<script
+ <%--<script
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/jquery-3.3.1.min.js"></script>
 <script
-	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/popper.min.js"></script>
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/popper.min.js"></script> --%>
 <script
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/bootstrap/js/bootstrap.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery-ui.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery.dataTables.min.js"></script>
+ <%--<script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery-ui.min.js"></script> --%>
+ <script
+	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery.dataTables.min.js"></script> 
 <script
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/dataTables.bootstrap4.min.js"></script>
 
@@ -166,13 +166,13 @@ legend.scheduler-border {
 <script type="text/javascript">	
  var testOrderArray ;
  var isStatusAccepted = false;
-$(document).ready(function () {
+jQuery(document).ready(function () {
 	console.log('');
 	
-	$('#testOrderTable').dataTable({
+	jQuery('#testOrderTable').dataTable({
 		 "bPaginate": true
 	  });
-	  $('.dataTables_length').addClass('bs-select');
+	  jQuery('.dataTables_length').addClass('bs-select');
 	  
 	  fillTestOrder();
 	  console.log("Array: "+ testOrderArray);
@@ -180,7 +180,7 @@ $(document).ready(function () {
 });
 	function showalert(message,alerttype) {
 		//alertType : .alert-success, .alert-info, .alert-warning & .alert-danger
-	    $('#alert_placeholder').append('<div id="alertdiv" class="alert ' +  alerttype + '"><a class="close" data-dismiss="alert">×</a><span>'+message+'</span></div>')
+	    jQuery('#alert_placeholder').append('<div id="alertdiv" class="alert ' +  alerttype + '"><a class="close" data-dismiss="alert">×</a><span>'+message+'</span></div>')
 	     autoHide();
 	  } 
 
@@ -199,15 +199,15 @@ function getTestOrderList(){
    }
 
 function autoHide(){
-	   $("#alertdiv").fadeTo(5000, 500).slideUp(500, function(){
-	           $("#alertdiv").slideUp(500);
-	           $("#alertdiv").remove();
+	   jQuery("#alertdiv").fadeTo(5000, 500).slideUp(500, function(){
+	           jQuery("#alertdiv").slideUp(500);
+	           jQuery("#alertdiv").remove();
             }); 	
 }
 
 	/*Edit Test Order  */
 	function editTestOrder(editEle){
-		var testOrderId = $(editEle).closest("tr")
+		var testOrderId = jQuery(editEle).closest("tr")
 							          .find(".orderId") 
 						          .text(); 
 		if(testOrderId == ""){		  
@@ -220,7 +220,7 @@ function autoHide(){
 	/* View Test Order  */
 	function viewTestOrder(viewEl){
 
-		 var testOrderId = $(viewEl).closest("tr")
+		 var testOrderId = jQuery(viewEl).closest("tr")
 							        .find(".orderId") 
 						            .text(); 
 		 var newArray = testOrderArray.find(o => o.id == testOrderId);
@@ -231,11 +231,11 @@ function autoHide(){
 	}
 	/* samples Test Order */
 	function samplesTestOrder(sampleEl){
-		  var requiresSpecimen = $(sampleEl).closest("tr")  
+		  var requiresSpecimen = jQuery(sampleEl).closest("tr")  
 									          .find(".rspecimen")   
 									          .text(); 
 
-		var testOrderId = $(sampleEl).closest("tr")
+		var testOrderId = jQuery(sampleEl).closest("tr")
 							      .find(".orderId") 
 							      .text(); 
 		if(requiresSpecimen == 'false'){
@@ -247,10 +247,10 @@ function autoHide(){
 	}
 	/* results Test Order */
 	function resultsTestOrder(resultEl){
-		var testOrderId = $(resultEl).closest("tr")
+		var testOrderId = jQuery(resultEl).closest("tr")
 						        .find(".orderId") 
 						        .text(); 
-		 var requiresSpecimen = $(resultEl).closest("tr")  
+		 var requiresSpecimen = jQuery(resultEl).closest("tr")  
 									         .find(".rspecimen")   
 									         .text();
 		 
@@ -272,7 +272,7 @@ function autoHide(){
 	}
 	
 	function checkTestSampleStatus(testOrderId){
-		 $.ajax({
+		 jQuery.ajax({
 				type : "GET",
 				contentType : "application/json",
 				url : '${pageContext.request.contextPath}/module/commonlabtest/getTestSampleStatus.form?testOrderId='+testOrderId,
@@ -346,7 +346,7 @@ function autoHide(){
 	
 	function populateTest(testOrderId){
 		
-		 $.ajax({
+		 jQuery.ajax({
 					type : "GET",
 					contentType : "application/json",
 					url : '${pageContext.request.contextPath}/module/commonlabtest/getTestResults.form?testOrderId='+testOrderId,
@@ -369,7 +369,7 @@ function autoHide(){
 		 // resultArray =data.result;
 		  renderTestSample(data.sample);
 		  renderTestResult(data.result)
-		  $('#viewModal').modal('show'); 
+		  jQuery('#viewModal').modal('show'); 
 	}
 	
 	

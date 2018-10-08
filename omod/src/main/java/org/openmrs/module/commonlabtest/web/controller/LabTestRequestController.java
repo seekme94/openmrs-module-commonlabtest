@@ -1,6 +1,7 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -55,7 +56,17 @@ public class LabTestRequestController {
 	        @RequestParam(required = false) Integer patientId, ModelMap model) {
 		
 		JsonArray testParentArray = new JsonArray();
-		for (LabTestGroup labTestGroup : LabTestGroup.values()) {
+		List<LabTestGroup> labTestGroupList = Arrays.asList(LabTestGroup.values());
+		
+		Collections.sort(labTestGroupList, new Comparator<LabTestGroup>() {
+			
+			@Override
+			public int compare(LabTestGroup o1, LabTestGroup o2) {
+				return o1.toString().compareTo(o2.toString());
+			}
+		});
+		
+		for (LabTestGroup labTestGroup : labTestGroupList) {
 			JsonObject labTestGroupObj = new JsonObject();
 			JsonArray jsonChildArray = new JsonArray();
 			if (labTestGroup.equals(LabTestGroup.OTHER)) {
@@ -63,8 +74,17 @@ public class LabTestRequestController {
 			}
 			List<LabTestType> labTestTypeList = commonLabTestService.getLabTestTypes(null, null, labTestGroup, null, null,
 			    Boolean.FALSE);
-			if (labTestTypeList.equals("") || labTestTypeList.isEmpty()) {
+			if (!(labTestTypeList.size() > 0) || labTestTypeList.equals("") || labTestTypeList.isEmpty()) {
 				continue; //skip the current iteration.
+			}
+			if (labTestTypeList.size() > 0) {
+				Collections.sort(labTestTypeList, new Comparator<LabTestType>() {
+					
+					@Override
+					public int compare(LabTestType s1, LabTestType s2) {
+						return s1.getName().compareToIgnoreCase(s2.getName());
+					}
+				});
 			}
 			labTestGroupObj.addProperty("testGroup", labTestGroup.name());
 			for (LabTestType labTestType : labTestTypeList) {

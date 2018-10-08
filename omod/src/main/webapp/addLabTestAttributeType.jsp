@@ -136,6 +136,26 @@ legend.scheduler-border {
 							    <span id="atrdescription" class="text-danger "> </span>
 						   	</div>
 					  </div>
+					  <!-- Group Id -->
+					    <div class="row">
+						   <div class="col-md-2">
+								<form:label path="groupId" class="control-label"><spring:message code="commonlabtest.labtestattributetype.groupId" /></form:label>
+							</div>
+						   <div class="col-md-6">
+								<form:input class="form-control" maxlength="3"   path="groupId" id="group_id" onkeypress="return isNumber(event)"></form:input></td>
+							    <span id="groupid" class="text-danger "> </span>
+						   	</div>
+					 	 </div>
+					 	 <!-- Group Name-->
+					    <div class="row">
+						   <div class="col-md-2">
+								<form:label path="groupName" class="control-label"><spring:message code="commonlabtest.labtestattributetype.groupName" /></form:label>
+							</div>
+						   <div class="col-md-6">
+								<form:input class="form-control" maxlength="255"  path="groupName" id="group_name" ></form:input></td>
+							    <span id="groupname" class="text-danger "> </span>
+						   	</div>
+					 	 </div>
 					  <!-- Min Ocurance -->
 					    <div class="row">
 						   <div class="col-md-2">
@@ -203,9 +223,17 @@ legend.scheduler-border {
 					 	   <div class ="row" id ="radioOptions">
 					 	     <div class="col-md-2"></div>
 					 	     <div class="col-sm-6 col-md-6 col-lg-6">
+					 	      <c:if test = "${available != true}">
 							      <label class="radio-inline"><input type="radio" name="optradio" onclick="showOptions()" id = "regex">Regex</label>
 							      <label class="radio-inline"><input type="radio" name="optradio" onclick="showOptions()" id = "length">Length</label>
 							      <label class="radio-inline"><input type="radio" name="optradio" onclick="showOptions()" id = "range">Range</label>
+					 	      </c:if>
+					 	      <c:if test = "${available == true}">
+					 	         <label class="radio-inline"><input disabled type="radio" name="optradio" onclick="showOptions()" id = "regex">Regex</label>
+							      <label class="radio-inline"><input disabled type="radio" name="optradio" onclick="showOptions()" id = "length">Length</label>
+							      <label class="radio-inline"><input disabled type="radio" name="optradio" onclick="showOptions()" id = "range">Range</label>
+					 	      </c:if>
+					 	      
 					 	     </div>
 					 	   </div>
 					 	   <!-- datatypeConfig -->
@@ -349,20 +377,11 @@ legend.scheduler-border {
 <script
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery-ui.min.js"></script>
 
-
 <script>
 	var local_source;
 
 	jQuery(document).ready(function() {
-		$("#radioOptions").hide();
-		console.log("Available : "+'${available}');
-		console.log("Data Type : "+document.getElementById('data_type_name').value);
-	   if(hint()){
-			$("#hint_field").show();
-		}else{
-			$("#hint_field").hide();
-		}
-	   
+	
 		local_source = new Array();
 	        <c:if test="${not empty listTestType}">
 		        <c:forEach var="testType" items="${listTestType}" varStatus="status">
@@ -400,28 +419,54 @@ legend.scheduler-border {
 					document.getElementById('testTypeName').innerHTML = testTypeObject[val]; 
 	
 				}
-			});   
+			});  
+			
+      let av = '${available}';
+      console.log("available : "+av);
+      if(!av){   	  
+    	  let dataType = document.getElementById('data_type_name');
+          if(dataType.childElementCount != 0){
+   		  	 let dataTypeName =   dataType.options[dataType.selectedIndex].text;
+         		 if( dataTypeName == "org.openmrs.customdatatype.datatype.LongFreeTextDatatype.name" 
+   			     || dataTypeName == "org.openmrs.customdatatype.datatype.FreeTextDatatype.name"){
+   	  		        document.getElementById("range").disabled=true;
+   	         }else{
+   	        	   document.getElementById("range").disabled=false; 
+   	         } 
+          } 
+      }
+      
+	   if(hint()){
+			$("#hint_field").show();
+			$("#radioOptions").show();
+		}else{
+			$("#hint_field").hide();
+			$("#radioOptions").hide();
+		}		
 	        
 	});
 	
 	function showOptions(){
-			console.log("showOps");
+		 	console.log("showOps");
 		    let regex = document.getElementById("regex");
 	        let range = document.getElementById("range");
-	        let length = document.getElementById("length");
-	        document.getElementById('datatypeConfig').innerHTML  = '';	
-			if(regex.checked){
-				 document.getElementById('datatypeConfig').innerHTML  = 'Regex=';	
+	        let length = document.getElementById("length");	
+	       // $('datatypeConfig').val('');
+	    if(regex.checked){
+	    	document.getElementById('datatypeConfig').value  = '';
+				 //document.getElementById('datatypeConfig').value  = 'Regex=';	
 			}else if(range.checked){
-				 document.getElementById('datatypeConfig').innerHTML  = 'Range=';	
+				document.getElementById('datatypeConfig').value  = '';
+				//document.getElementById('datatypeConfig').value  = 'Range=';	
 			}
 			else if(length.checked){
-				 document.getElementById('datatypeConfig').innerHTML  = 'Length=';	
-			}
+				document.getElementById('datatypeConfig').value  = '';
+				// document.getElementById('datatypeConfig').value  = 'Length=';	
+			} 
 	}
 	
-	function hint(){
-	 	
+	function hint(){	
+		console.log("HInt called ");
 	  let dataTypeName = document.getElementById('data_type_name').value;	
 	   if(dataTypeName != "" && dataTypeName != null){
 		   if(dataTypeName == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype" ||
@@ -429,8 +474,10 @@ legend.scheduler-border {
 				   dataTypeName == "org.openmrs.customdatatype.datatype.FloatDatatype" ||
 				   dataTypeName == "org.openmrs.customdatatype.datatype.LongFreeTextDatatype"){
 			   return true;
+			   console.log("HInt called  true");
 		   }else{
 			   return false;
+				console.log("HInt called  false");
 		   }
 	   }
 	}
@@ -456,21 +503,27 @@ legend.scheduler-border {
 		  if(dataType.childElementCount != 0){
 			  	 let dataTypeName =   dataType.options[dataType.selectedIndex].text;
 			  	 console.log("dataTypeName : "+ dataTypeName);
-			 	document.getElementById('datatypeConfig').innerHTML = '';
 		  		$('input:radio[name=optradio]').each(function () { $(this).prop('checked', false); });
+		  		 document.getElementById('datatypeConfig').value  = '';	
 			  	 if(dataTypeName == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype.name"
 			  			 || dataTypeName == "org.openmrs.customdatatype.datatype.FloatDatatype.name" 
 			  			 || dataTypeName == "org.openmrs.customdatatype.datatype.LongFreeTextDatatype.name" 
 			  			 || dataTypeName == "org.openmrs.customdatatype.datatype.FreeTextDatatype.name"){
 			  		if(!$('#radioOptions').is(':visible'))
 			  		{  
-			  		     alert('car 2 is hidden'); 
 			  			 $("#radioOptions").show();
 			  		}
 			  	 }else{
-			  		$("#radioOptions").hide();
+			  		     $("#radioOptions").hide();
 			  	 }
-			  	 
+			  	 //range show and hide 
+			  	 if( dataTypeName == "org.openmrs.customdatatype.datatype.LongFreeTextDatatype.name" 
+		  			 || dataTypeName == "org.openmrs.customdatatype.datatype.FreeTextDatatype.name"){
+			  		    document.getElementById("range").disabled=true;
+		  	         }else{
+		  	        	 document.getElementById("range").disabled=false; 
+		  	         }
+
 			     if(hint()){
 			    	 $("#hint_field").show();
 			     }else{
@@ -524,8 +577,10 @@ legend.scheduler-border {
 		var maxOccurs = document.getElementById('max_occurs').value;
 		var sortWeight = document.getElementById('sortWeight').value;
 		var hintVal = document.getElementById('hint').value;
+		var datatypeConfigVal = document.getElementById('datatypeConfig').value;
 		var dataType = document.getElementById('data_type_name');
 		
+		///error message and regex
 		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_()?/µ.%\\-]*$");
 		var regInt =new RegExp("^[0-9]+$");
         var regErrorMesssage ="Text contains Invalid characters.Test Attribute name only accepts alphabets with _ -().% special characters";
@@ -552,7 +607,7 @@ legend.scheduler-border {
 			document.getElementById("labtesttypeid").style.display= 'none';	
 		} 
 		
-		 if(testAttributeName == ""){
+		if(testAttributeName == ""){
 			    document.getElementById("testatrname").style.display= 'block';
 				document.getElementById('testatrname').innerHTML =emptyErrorMessage;
 				isValidate = false;
@@ -645,11 +700,11 @@ legend.scheduler-border {
 				isValidate = false;
 
 			}
-			 else if (!regInt.test(sortWeight)){
+			 /* else if (!regInt.test(sortWeight)){
 				 	document.getElementById("sortweight").style.display= 'block';	
 					document.getElementById('sortweight').innerHTML = integerErrorMessage;
 					isValidate = false;
-			 }
+			 } */
 			 else {
 					document.getElementById("sortweight").style.display= 'none';	
 				}
@@ -680,13 +735,8 @@ legend.scheduler-border {
 				    		    	 document.getElementById("datatypeconfig").style.display= 'none';
 				    		    } */
 			    		     //check the hint values
-				    		 if(hintVal == "" || hintVal == null){
-				    			  document.getElementById("hints").style.display= 'block';	
-			      				  document.getElementById('hints').innerHTML = emptyErrorMessage;
-		      				      isValidate = false; 
-				    		 }else{
-			    		    	 document.getElementById("hints").style.display= 'none';
-				    		 }
+				    		  document.getElementById("datatypeconfig").style.display= 'none';
+				    		
 				    	 }else{
 				    		  document.getElementById("datatypeconfig").style.display= 'block';	
 		      				  document.getElementById('datatypeconfig').innerHTML = "Please enter your regex for this attribute type.";
@@ -696,15 +746,191 @@ legend.scheduler-border {
 			 }else{
         	     document.getElementById("datatypeconfig").style.display= 'none';
 	          }
+			 console.log("datatype : "+isValidate);
+			 if(hint()){
+				   if(!checkOptions()){
+					   isValidate = false;  
+				   } //this check the 
+			      console.log(" config Values : "+getConfigVal(datatypeConfigVal)); 
+			 	  if(getConfigVal(datatypeConfigVal) != "" && getConfigVal(datatypeConfigVal) != null){ ///user type anthing the hint is mandatory 
+	
+					  if(hintVal == "" || hintVal == null){
+		    			  document.getElementById("hints").style.display= 'block';	
+	     				  document.getElementById('hints').innerHTML = emptyErrorMessage;
+	     				  isValidate = false; 
+		    		 }else{
+	   		    	     document.getElementById("hints").style.display= 'none';
+		    		 } 
+				 }	   
+			 }
+			 
+			 console.log("hint : "+isValidate);
 			 
 			  if(isValidate ==true){
 				document.getElementById("data_type_name").disabled = false;
 				document.getElementById("datatypeConfig").disabled = false;
+				 document.getElementById("range").disabled=false;
 			}
 
-	
+		console.log("isValidate : "+isValidate);	  
 		return isValidate;
 	}
+	
+	function checkOptionAlreadyAppend(value,parentType){
+			   var resultConfig = [];
+			   let index = value.indexOf("=");  //Split the type (Length ,Regex and range)and value
+			   let type = value.substr(0, index); // Type 
+			   console.log("Confi Append : "+ type);
+			   if(parentType === type){
+				   return true;
+			   }else if(type != "" && type != null ){
+				    if(type != parentType){
+	     				 document.getElementById("datatypeconfig").style.display= 'block';	
+	     				 document.getElementById('datatypeconfig').innerHTML = "The first part of string should be equal to '"+parentType+"='";
+	     				return false; 
+	     		  }else{
+	     				document.getElementById('datatypeConfig').value = parentType+'='+value;
+	     				document.getElementById("datatypeconfig").style.display= 'none';
+	     				return true;
+	     		  } 
+			   }else{
+					document.getElementById('datatypeConfig').value = parentType+'='+value;
+     				document.getElementById("datatypeconfig").style.display= 'none';
+     				return true;
+			   } 
+			   
+			 /*   if(type === "Regex" || type === "Length" || type === "Range"){
+				   console.log("Append Val :true " );
+				   return true;
+			   }else{
+				   console.log("Append Val :false " );
+				   return false;
+			   } */
+	}
+	
+	function checkOptions(){
+
+	    let regex = document.getElementById("regex");
+        let range = document.getElementById("range");
+        let length = document.getElementById("length");	
+        let dataTypeConfig = document.getElementById('datatypeConfig').value;
+    	let integerErrorMessage ="Length should be in interger";
+    	let regInt =new RegExp("^[0-9]+$");
+    	let regRange =new RegExp("^[\\d.]+-[\\d.]+$");
+    
+        let isValidate =true;
+        if(regex.checked){
+        	if(dataTypeConfig !="" && dataTypeConfig != null){
+        		if(getConfigVal(dataTypeConfig) == "" || getConfigVal(dataTypeConfig) == null ){
+        			  document.getElementById("datatypeconfig").style.display= 'block';	
+     				  document.getElementById('datatypeconfig').innerHTML = "Regex expression required.";
+     				  isValidate = false; 
+        		}else{	
+        			if(!checkOptionAlreadyAppend(dataTypeConfig,'Regex')){
+        				 isValidate = false; 
+        				//document.getElementById('datatypeConfig').value = 'Regex='+dataTypeConfig;
+        			 }else{
+         				document.getElementById("datatypeconfig").style.display= 'none';
+        			 }
+        			
+        			/* else if(getConfigType(dataTypeConfig) != "Regex"){
+        				 document.getElementById("datatypeconfig").style.display= 'block';	
+        				 document.getElementById('datatypeconfig').innerHTML = "The first part of string should be equal to 'Regex ='";
+        				 isValidate = false; 
+        			 } */
+
+        		}
+			}else{
+				  document.getElementById("datatypeconfig").style.display= 'block';	
+ 				  document.getElementById('datatypeconfig').innerHTML = "Regex expression required.";
+ 				  isValidate = false;  
+			}
+		}else if(range.checked){
+			if(dataTypeConfig !="" && dataTypeConfig != null){
+					
+				 if(getConfigVal(dataTypeConfig) == "" || getConfigVal(dataTypeConfig) == null ){
+	      			  document.getElementById("datatypeconfig").style.display= 'block';	
+	   				  document.getElementById('datatypeconfig').innerHTML = "Range required.";
+	   				  isValidate = false; 
+					}
+	      		else{
+	      			 //check the given range in proper formate or not 
+	      			let rangVal =  getConfigVal(dataTypeConfig).trim();
+	      			let index = rangVal.indexOf("-");
+	  			    let startPoint = rangVal.substr(0, index); 
+	  			    let endPoint = rangVal.substr(index + 1);
+	  			      console.log("rangVal : "+regRange.test(rangVal));
+	  			    if(!checkOptionAlreadyAppend(dataTypeConfig ,'Range')){
+						/* document.getElementById('datatypeConfig').value = 'Range='+dataTypeConfig;
+						document.getElementById("datatypeconfig").style.display= 'none'; */
+	  			    	isValidate = false; 
+					} 
+		  			/* else if(getConfigType(dataTypeConfig) != "Range"){
+	     				 document.getElementById("datatypeconfig").style.display= 'block';	
+	     				 document.getElementById('datatypeconfig').innerHTML = "The first part of string should be equal to 'Range ='";
+	     				 isValidate = false; 
+	     			 } */
+	  			    
+		  			 if(!regRange.test(rangVal)){
+	      				  document.getElementById("datatypeconfig").style.display= 'block';	
+	      				  document.getElementById('datatypeconfig').innerHTML = "Invalide range pattern (startDigit - endDigit)";
+	      				  isValidate = false; 
+	      			 } else if(parseInt(startPoint, 10) > parseInt(endPoint, 10)){
+	      				  document.getElementById("datatypeconfig").style.display= 'block';	
+	    				  document.getElementById('datatypeconfig').innerHTML = "In range startNumber should be greater then endNumber";
+	    				  isValidate = false;  
+	      			 }else{
+	       				document.getElementById("datatypeconfig").style.display= 'none';
+	      			 }
+	      		}	 
+			}else{
+				  document.getElementById("datatypeconfig").style.display= 'block';	
+  				  document.getElementById('datatypeconfig').innerHTML = "Range required.";
+  				  isValidate = false; 
+			}
+		}
+		else if(length.checked){
+			if(dataTypeConfig !="" && dataTypeConfig != null){
+				if(getConfigVal(dataTypeConfig) == "" || getConfigVal(dataTypeConfig) == null ){
+	      			  document.getElementById("datatypeconfig").style.display= 'block';	
+	   				  document.getElementById('datatypeconfig').innerHTML = "Length required.";
+	   				  isValidate = false; 
+	      		}
+				else if (!regInt.test(getConfigVal(dataTypeConfig))){
+				 	document.getElementById("datatypeconfig").style.display= 'block';	
+					document.getElementById('datatypeconfig').innerHTML = integerErrorMessage;
+					isValidate = false;
+			   }else{
+				    if(!checkOptionAlreadyAppend(dataTypeConfig ,'Length')){
+				    	isValidate = false;
+				    	/* 
+							document.getElementById('datatypeConfig').value = 'Length='+dataTypeConfig;	
+							document.getElementById("datatypeconfig").style.display= 'none'; */
+					   }else{
+	     				document.getElementById("datatypeconfig").style.display= 'none'; 
+	     			 }
+		
+			   }
+			}else{
+				  document.getElementById("datatypeconfig").style.display= 'block';	
+  				  document.getElementById('datatypeconfig').innerHTML = "Length required.";
+  				  isValidate = false; 
+			}
+        }
+        return isValidate;
+     }
+	
+	function getConfigVal(dataTypeConfig){		
+		 let index = dataTypeConfig.indexOf("=");  //Split the type blc we need to 
+		  let valueConfig = dataTypeConfig.substr(index + 1); 
+		 return valueConfig;
+	}
+	function getConfigType(dataTypeConfig){		
+		 let index = dataTypeConfig.indexOf("=");  //Split the type blc we need to 
+		 let type = dataTypeConfig.substr(0,index); 
+		 return type;
+	}
+	
 	
 	function checkConceptExistent(concepId){
 		console.log("Concept ID : "+concepId);

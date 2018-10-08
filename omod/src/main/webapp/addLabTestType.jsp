@@ -302,7 +302,7 @@ legend.scheduler-border {
 		var testName = document.getElementById('name').value;
 		var testShortName =document.getElementById('short_name').value;
 		var referenceConcept = document.getElementById('conceptSuggestBox').value;
-		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_().%\\-]*$");
+		var  reText = new RegExp("^[A-Za-z][ A-Za-z0-9_() .%\\-]*$");
 		var isValidate =true; 
         var regErrorMesssage ="Text contains Invalid characters.Test name only accepts alphabets with _().% - special charaters";
         var regShortNameErrorMesssage ="Text contains Invalid characters.Short name only accepts alphabets with _().% - special characters";

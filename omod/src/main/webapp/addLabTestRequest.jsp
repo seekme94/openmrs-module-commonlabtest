@@ -16,6 +16,8 @@
 		<link
 			href="/openmrs/moduleResources/commonlabtest/css/style.css"
 			rel="stylesheet" />	
+		<link href="/openmrs/moduleResources/commonlabtest/css/dataTables.bootstrap4.min.css"
+	         rel="stylesheet" />	
 
 </head>
 <style>
@@ -65,6 +67,10 @@
 		 margin-bottom:15px;
 		 
 		 }
+/* #testRequestTable {
+  table-layout: fixed;
+}
+#testRequestTable td { word-wrap: break-word; } */
 
 /*Collapse  */
 /* FANCY COLLAPSE PANEL STYLES */
@@ -175,6 +181,8 @@
     var localTestRequest;
 	var patiendId;
    $(document).ready(function(){
+	   
+
 	   $( function() {
 		    $( "#accordion" ).accordion({
 		    	header: "h3",
@@ -208,7 +216,12 @@
 					
 			    }
 		 });
-	
+		 
+		/*    $('#testRequestTable').dataTable({
+				 "bPaginate": true
+			  });
+			 $('.dataTables_length').addClass('bs-select');
+			   */
    });
    
    function getTestRequestList(){
@@ -246,7 +259,7 @@
    function getTestTypes(){
 	    var TableData = new Array();
 	    let encounter =  document.getElementById('encounter_id').value;
- 		$('#testOrderTable tr').each(function(row, tr){
+ 		$('#testRequestTable tr').each(function(row, tr){
 		   console.log("Check : "+$(tr).find('td:eq(0) input').is(':checked'));
 		   var isTestTypeChecket =$(tr).find('td:eq(0) input').is(':checked');
 		   if(isTestTypeChecket){
@@ -276,7 +289,7 @@
 		}else {
 			document.getElementById("encounters").style.display= 'none';	
 		}  
-		$('#testOrderTable tr').each(function(row, tr){
+		$('#testRequestTable tr').each(function(row, tr){
 			   var isTestTypeChecket =$(tr).find('td:eq(0) input').is(':checked');
 			   if(isTestTypeChecket){
 					   let valueReference =$(tr).find('td:eq(3) input').val();
@@ -294,7 +307,7 @@
 	   return isValidate;
    }
    function save(data){
-		  var isTure =true;
+		   var isTure =true;
 			 $.ajax({
 						type : "POST",
 						url : "${pageContext.request.contextPath}/module/commonlabtest/addLabTestRequest.form?patientId="+patiendId,
@@ -316,8 +329,8 @@
 							console.log("DONE");
 						}
 				});
-			 
-			return   isTure;	
+			
+			return   isTure;
    }
    
    /*Generate panel  */
@@ -331,7 +344,7 @@
 		      requestItems = requestItems.concat('</h4></div>');
 				       requestItems = requestItems.concat('<div id="collapse'+this.testGroup+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+this.testGroup+'">');
 				       requestItems = requestItems.concat('<div class="panel-body">');
-				         requestItems = requestItems.concat('<table id="testOrderTable" class="table table-striped table-bordered" style="width:100%"> ');
+				         requestItems = requestItems.concat('<table id="testRequestTable" class="table table-striped table-bordered" style="width:100%"> ');
 								         requestItems = requestItems.concat('<thead><tr>');
 									         requestItems = requestItems.concat('<th></th>');
 									         requestItems = requestItems.concat('<th hidden="true"></th>');

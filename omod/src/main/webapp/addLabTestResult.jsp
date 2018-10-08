@@ -18,7 +18,9 @@
 	href="/openmrs/moduleResources/commonlabtest/css/hover.css" />
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/hover-min.css" />
-
+	<link
+			href="/openmrs/moduleResources/commonlabtest/css/style.css"
+			rel="stylesheet" />	
 	
 
  <style>
@@ -84,7 +86,107 @@ legend.scheduler-border {
      margin-bottom:15px;
  
  }
+/*Collapse  */
+/* FANCY COLLAPSE PANEL STYLES */
+	.fancy-collapse-panel .panel-default > .panel-heading {
+	padding: 0;
+	size: 12px;
+	
+	}
+	.fancy-collapse-panel .panel-heading a {
+		padding: 10px 35px 10px 15px;
+		display: inline-block;
+		width: 100%;
+		background-color: #1aac9b;
+		color: white !important;
+		position: relative;
+		text-decoration: none;
+		font-size: 16px;
+	}
+	
+	.fancy-collapse-panel .panel-heading a:hover {
+         color: white !important;
+		}
+	.fancy-collapse-panel .panel-heading a:after {
+		font-family: "FontAwesome";
+		content: "\f147";
+		position: absolute;
+		right: 20px;
+		font-size: 20px;
+		font-weight: 400;
+		top: 50%;
+		line-height: 1;
+		color: white;
+		margin-top: -10px;
+	}
 
+
+
+/* The container */
+.container-box {
+    display: block;
+    position: relative;
+    margin-bottom: 12px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container-box input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container-box:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a #1aac9b background */
+.container-box input:checked ~ .checkmark {
+    background-color: #1aac9b;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.container-box input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.container-box .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}	
 
 </style>
 
@@ -102,8 +204,13 @@ legend.scheduler-border {
 	            <legend  class="scheduler-border"><spring:message code="commonlabtest.result.edit" /></legend>
 	         </c:otherwise>
         </c:choose>
-		   <div id="resultContainer">
-		   </div> 
+             <div class="row">
+                <div class="col-md-12 col-md-offset-12 col-sm-12col-sm-offset-12">
+			  	 <div id="resultContainer">
+			   </div>
+			   </div> 
+		     </div>
+		   
 	</fieldset>
 	<br>
 	  <c:if test="${update == true}">
@@ -161,6 +268,7 @@ var fileExtensions ="";
 var fileExtensionsArr =[];
 var fileExtensionArray = [];
 var booleanSubmitted = false;
+var localTestGroups;
 //check for the integer 
 function isNumber(event) {
 	 var key = window.event ? event.keyCode : event.which;
@@ -173,12 +281,16 @@ function isNumber(event) {
 	    }
 }
 
+function getTestGrouptList(){
+   	return JSON.parse(JSON.stringify(${groupList}));
+   }
 
 $(document).ready(function () {
 	fileExtensions = '${fileExtensions}';
 	fileExtensionsArr =  JSON.stringify(fileExtensions).split(",");
 	fileExtensionArray = JSON.stringify(fileExtensions).split(",");
 	local_source = getAttributeTypes();
+	localTestGroups = getTestGrouptList();
 	testOrder = ${testOrderId};
 	testTypeName = '${testTypeName}';
 	filepath = '${filepath}';
@@ -221,139 +333,37 @@ function navigatedToPatientDashboard(){
  	    else{
               resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="" />'); 
  	      }
-			 if(this.dataType == 'Coded'){
-				  	 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
-					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-					 resultsItems = resultsItems.concat('<select class="form-control" id="concept.'+this.id+'" name="concept.'+this.id+'" ><options />');
-					 let values = this.value;
-					 jQuery(this.conceptOptions).each(function() {
-						  if(values === undefined || values === 'undefined'){
-							  resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
-						  }else{
-							  if(values == this.conceptId)
-							  	 resultsItems =resultsItems.concat( '<option  value="'+this.conceptId+'" selected >'+this.conceptName+'</option>'); 
-							  else
-							  	 resultsItems =resultsItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>');  
-						  }
-					  });
-					 resultsItems =resultsItems.concat('</select></div></div>');
+		   if(this.dataType == 'Coded'){
+			 resultsItems = resultsItems.concat(codedTags(this.conceptOptions,this.value,this.id,this.name));
 			 }
 			 else if(this.dataType == 'Text'){
-				 
-					 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
-					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-					 console.log("values : "+ this.value);
-					 if(this.value === undefined || this.value === 'undefined'){
-							     resultsItems = resultsItems.concat('<input maxlength="255"  class="form-control" type="text"  id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="" ><span id="error.'+this.id+'" class="text-danger "></span>');
-							     resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-								 resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
-					 }else{
-							     resultsItems = resultsItems.concat('<input maxlength="255"  class="form-control" type="text"  id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'"  ><span id="error.'+this.id+'" class="text-danger "></span>');
-							     resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-								 resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
-						}
-					 resultsItems =resultsItems.concat('</div></div>');
+				 resultsItems = resultsItems.concat(textTags(this.value,this.id,this.name,this.hint));
 			 }
 			 else if(this.dataType == 'TextArea'){
-				 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
-				 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-				 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-				 console.log("values txt erea : "+ this.value);
-				 if(this.value === undefined || this.value === 'undefined'){
-							  resultsItems = resultsItems.concat('<textarea  maxlength="512" class="form-control"  id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="" /><span id="error.'+this.id+'" class="text-danger "></span>');
-                              resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-							  resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
-				 }else{
-							  resultsItems = resultsItems.concat('<textarea   maxlength="512" class="form-control"  id="valueText.'+this.id+'" name="valueText.'+this.id+'" value="'+this.value+'" >'+this.value+'</textarea><span id="error.'+this.id+'" class="text-danger "></span>'); 
-                              resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-							  resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
-					
-					}
-				 resultsItems =resultsItems.concat('</div></div>');
+				 
+				 resultsItems =resultsItems.concat( textAreaTags(this.value,this.id,this.name,this.hint));
 			 }
 			 else if(this.dataType == 'Numeric'){
-				     console.log("Config : "+this.config);
-					 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
-					 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-					 console.log("values : "+ this.value);
-					 if(this.value === 'undefined' || this.value == undefined){
-								    resultsItems = resultsItems.concat('<input class="form-control" type="input"  id="float.'+this.id+'" name="float.'+this.id+'" ><span id="error.'+this.id+'" class="text-danger "></span>'); 
-								    resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-								    resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
-					 }
-					 else{
-								    resultsItems = resultsItems.concat('<input class="form-control" type="input" value ="'+this.value+'" id="float.'+this.id+'" name="float.'+this.id+'"  ><span id="error.'+this.id+'" class="text-danger "></span>');
-								    resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-								    resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 			
-					 }
-					 resultsItems =resultsItems.concat('</div></div>');
+				 resultsItems =resultsItems.concat( numericTags(this.value,this.name,this.id,this.hint));
 		 	}
 			 else if(this.dataType == 'Boolean'){
-				 
-					 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
-					 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
-					 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-					 resultsItems = resultsItems.concat('<select class="form-control" id="bool.'+this.id+'" name="bool.'+this.id+'">');
-					 if(this.value == 'undefined'){
-							 resultsItems = resultsItems.concat('<option value="true" selected>Yes</option>');
-							 resultsItems = resultsItems.concat('<option value="false" >No</option>');
-					 }else{
-						 
-						 if(this.value == "true"){
-							  resultsItems = resultsItems.concat('<option value="true" selected>Yes</option>');
-							  resultsItems = resultsItems.concat('<option value="false" >No</option>'); 
-						 }else{
-						      resultsItems = resultsItems.concat('<option value="true" >Yes</option>');
-							  resultsItems = resultsItems.concat('<option value="false" selected >No</option>'); 
-						 }	 
-					 }
-				 resultsItems =resultsItems.concat('</select></div></div>');
+				 resultsItems = resultsItems.concat(booleanTags(this.value,this.name,this.id));
 					
 		   }else if(this.dataType == 'Date'){
-			     var currentDate = $.datepicker.formatDate('yy-mm-dd', new Date()); 
-			     var orderActivatedDate = '${encounterdate}';
-			     console.log("currentDate : "+currentDate);
-			     console.log("orderActivatedDate : "+orderActivatedDate);
-			     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
-				 resultsItems = resultsItems.concat('<label class="control-label">'+this.name+'</label>');
-				 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-				 if(this.value == 'undefined'){
-							 resultsItems = resultsItems.concat('<input  id="date.'+this.id+'"  class="form-control" name="date.'+this.id+'" type="date" value="" min="'+orderActivatedDate+'" max="'+currentDate+'" ><span id="error.'+this.id+'" class="text-danger "></span>');
-				 }else{
-						     resultsItems = resultsItems.concat('<input id="date.'+this.id+'"  class="form-control"  name="date.'+this.id+'" type="date" value="'+this.value+'" min="'+orderActivatedDate+'" max="'+currentDate+'" ><span id="error.'+this.id+'" class="text-danger "></span>');			
-				 }
-				 resultsItems =resultsItems.concat('</div></div>');
+			   resultsItems = resultsItems.concat(dateTags(this.value,this.name,this.id));			  
 		   } 
 		   else if(this.dataType == 'Regex'){
-				 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
-				 resultsItems = resultsItems.concat(' <label class="control-label">'+this.name+'</label>');
-				 resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-				 if(this.value === 'undefined' || this.value == undefined){
-					      resultsItems = resultsItems.concat('<input class="form-control" type="text"  id="regex.'+this.id+'" name="regex.'+this.id+'" ><span id="error.'+this.id+'" class="text-danger "></span>'); 
-					      resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-					      resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 
-				 }
-				 else{
-					    resultsItems = resultsItems.concat('<input class="form-control" type="text" value ="'+this.value+'" id="regex.'+this.id+'" name="regex.'+this.id+'" ><span id="error.'+this.id+'" class="text-danger "></span>'); 
-					    resultsItems = resultsItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
-					    resultsItems = resultsItems.concat('<span id="hint.'+this.id+'" class="text-info">'+this.hint+'</span>'); 			
-				 }
-				 resultsItems =resultsItems.concat('</div></div>');
+			   resultsItems = resultsItems.concat(regexTags(this.value,this.name,this.id,this.hint));
 		   }
-	     });             
-				  /* resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
-					resultsItems = resultsItems.concat('<label class="control-label">Comments</label>');
-					resultsItems = resultsItems.concat('</div><div class="col-md-4">');
-					  if(resultComments != ""){
-						  resultsItems = resultsItems.concat('<textarea class="form-control"  maxlength="512"  name="resultComments" id="resultComments" value ="'+resultComments+'" >'+resultComments+'</textarea>');
-					  }else {
-						  resultsItems = resultsItems.concat('<textarea  class="form-control"  maxlength="512"  name="resultComments" id="resultComments" value ="" />'); 
-					  }
-					 resultsItems = resultsItems.concat('</div></div>'); */
-					 if(local_source.length > 0){
+	     });          
+
+				  	resultsItems = resultsItems.concat('<div class="row">');
+					resultsItems = resultsItems.concat('<div class="col-md-12 col-md-offset-12 col-sm-12 col-sm-offset-12">');
+					resultsItems = resultsItems.concat('<div class="fancy-collapse-panel">');
+					resultsItems = resultsItems.concat('<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">'); 
+					resultsItems = resultsItems.concat('<div id="panel-container"></div>'); 
+					resultsItems = resultsItems.concat('</div></div></div></div>'); 
+					 if(local_source.length > 0 || localTestGroups.length > 0){
 		   				 resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
 		   				 resultsItems = resultsItems.concat('<label class="control-label">Attachment</label>');
 		   				 resultsItems = resultsItems.concat('</div><div class="col-sm-4 col-md-4 col-lg-4">');
@@ -378,7 +388,7 @@ function navigatedToPatientDashboard(){
 					 }
 	   			     //end
 				     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-2 col-md-2 col-lg-2">');
-	   			     if(local_source.length > 0){
+	   			     if(local_source.length > 0 || localTestGroups.length > 0){
 					     resultsItems = resultsItems.concat('<input type="submit" class ="btn" value="Save Test Result" id="submitBttn" ></input>');
 					     resultsItems = resultsItems.concat('</div><div class="col-sm-2 col-md-2 col-lg-2">');
    						}
@@ -386,8 +396,8 @@ function navigatedToPatientDashboard(){
 				     resultsItems = resultsItems.concat('</div></div></form>');
 			         console.log("Resultan String : "+resultsItems);
 				     $("#resultContainer").append(resultsItems);
-		  
-				
+		   			 //Generate all teh groups;	
+				     generateTestGroup();
 	   
    }
 
@@ -427,6 +437,8 @@ function navigatedToPatientDashboard(){
 	        console.log("is called");
 		    var emptyErrorMessage ="This field cannot be empty";
     		 let isValid =true;
+    		 let txtBool=true,numBool=true,regexBool=true,txtAreaBool =true,dateBool =true;
+    		 
 		    jQuery(local_source).each(function() {
 		    	 var minOccurs = this.minOccurs; 
 	    		 var config = this.config;
@@ -437,18 +449,19 @@ function navigatedToPatientDashboard(){
 			    		 if(textVal == "" && minOccurs !=0){
 			    				document.getElementById(errorId).style.display= 'block';	
 			    				document.getElementById(errorId).innerHTML =emptyErrorMessage;
-			    			    isValid = false;
-			    			    return false; //break the loop 
+			    				txtBool = false;
+			    			    //return false; //break the loop 
 				    	  }else if(textVal != "" && config != "" && config != null){
 			    			  let configArray = configParser(config);
 			    			 // isValid = ;
-			    			  if(!configValidation(errorId,textVal,configArray)){
-			    				  return false; //break the loop 
+			    			  if(!configValidation(id,errorId,textVal,configArray)){
+			    				  txtBool = false;
+			    				 // return false; //break the loop 
 			    			   }
 			    	 	 }else{
 				    		   document.getElementById(errorId).style.display= 'none';	
 				    	 }
-			    		 console.log(" text isValid : "+isValid);  
+			    		 console.log(" text isValid : "+txtBool);  
 		    	  }
 		    	  else if(this.dataType == 'Numeric'){
 		    		  let id =  "float."+this.id;
@@ -457,14 +470,18 @@ function navigatedToPatientDashboard(){
 			    		  if(textNumericVal == "" && minOccurs !=0){
 			    			     document.getElementById(errorId).style.display= 'block';	
 			    				 document.getElementById(errorId).innerHTML =emptyErrorMessage;
-			    			    isValid = false;
+			    				 numBool =false;
+			    				 // isValid = false;
 			    		  }else if(textNumericVal != "" && config != "" && config != null){
 			    			  let configArray = configParser(config);
-			    			  isValid = configValidation(errorId,textNumericVal,configArray);
+			    			    if(!configValidation(id,errorId,textNumericVal,configArray)){
+			    			    	 numBool =false;
+			    			    }
 			    		  }else{
-				    		   document.getElementById(errorId).style.display= 'none';	  
+				    		   document.getElementById(errorId).style.display= 'none';
+				    		  
 			    		  }
-			    		  console.log(" numeric isValid : "+isValid); 
+			    		  console.log(" numeric isValid : "+numBool); 
 		    	  }
 		    	  else if(this.dataType == 'TextArea'){
 		    		  let id =  "valueText."+this.id;
@@ -473,14 +490,17 @@ function navigatedToPatientDashboard(){
 				    		  if(textAreaVal == "" && minOccurs !=0){
 				    			      document.getElementById(errorId).style.display= 'block';	
 				    				  document.getElementById(errorId).innerHTML =emptyErrorMessage;
-				    			     isValid = false;
+				    				  txtAreaBool =false;
 				    		  }else if(textAreaVal != "" && config != "" && config != null){
 					    			  let configArray = configParser(config);
-					    			  isValid = configValidation(errorId,textAreaVal,configArray);
+					    			  if(!configValidation(id,errorId,textAreaVal,configArray)){
+					    				  txtAreaBool =false;
+					    			  }
 				    		  }else{
-					    		   document.getElementById(errorId).style.display= 'none';	   
+					    		   document.getElementById(errorId).style.display= 'none';
+					  
 				    		  }
-					    console.log(" textarea isValid : "+isValid);  
+					    console.log(" textarea isValid : "+txtAreaBool);  
 		    	  }
 		    	  else if(this.dataType == 'Regex'){
 		    		  let id =  "regex."+this.id;
@@ -490,17 +510,20 @@ function navigatedToPatientDashboard(){
 			    			    console.log(" regex Input field doesn't empty");
 			    				document.getElementById(errorId).style.display= 'block';	
 			    				document.getElementById(errorId).innerHTML ="Invalid pattern";
-			    			    isValid = false;
+			    				regexBool =false;
 			    		  }
 			    		   else if(textRegexVal != "" && config != "" && config != null){
 			    			   console.log("config is not : "+config);
 			    			  let configArray = configParser(config);
-			    			  isValid = configValidation(errorId,textRegexVal,configArray);
+			    			  if(!configValidation(id,errorId,textRegexVal,configArray)){
+			    				  regexBool =false;
+			    			  }
 		    		      }
 		    		      else{
 				    		   document.getElementById(errorId).style.display= 'none';	
+				    
 		    		      }
-			    	console.log(" regex isValid : "+isValid);  
+			    	console.log(" regex isValid : "+regexBool);  
 		    	  }else if(this.dataType == 'Date'){
 		    		  let id =  "date."+this.id;
 		    		  let errorId  = "error."+this.id;
@@ -509,7 +532,7 @@ function navigatedToPatientDashboard(){
 		    			    console.log(" regex Input field doesn't empty");
 		    				document.getElementById(errorId).style.display= 'block';	
 		    				document.getElementById(errorId).innerHTML = emptyErrorMessage;
-		    			    isValid = false;
+		    				dateBool =false;
 		    		  }else{
 			    		   document.getElementById(errorId).style.display= 'none';	
 	    		      }
@@ -517,8 +540,13 @@ function navigatedToPatientDashboard(){
 		    	  }
 		    	
 		    });
-		  console.log("isValid : "+isValid);  
-	   return isValid;
+		   if(txtBool  && numBool && regexBool && txtAreaBool && dateBool){
+			   return true;
+		   }else{
+			   return false;
+		   }     
+		 // console.log("isValid : "+isValid);  
+	   //return false;
    }
    
    function configParser(configStr){
@@ -531,7 +559,7 @@ function navigatedToPatientDashboard(){
 	  return resultConfig; 
     }
    
-   function configValidation(errorId,inputVal,configArr){
+   function configValidation(id,errorId,inputVal,configArr){
 	   
 	   let isValidate =true;
 	   let type = configArr[0].trim();
@@ -563,7 +591,9 @@ function navigatedToPatientDashboard(){
 			   let index = value.indexOf("-");
 			   let startPoint = value.substr(0, index); 
 			   let endPoint = value.substr(index + 1);
-			   if(!betweenRange(inputVal,startPoint,endPoint)){
+			   let setFixedVal = parseFloat(inputVal).toFixed(3);
+			   document.getElementById(id).value = setFixedVal;
+			   if(!betweenRange(setFixedVal,startPoint,endPoint)){
 				    console.log("Range field doesn't empty");
 	   				document.getElementById(errorId).style.display= 'block';	
 	   				document.getElementById(errorId).innerHTML ="Input value does not lie in between the range "+value;
@@ -571,15 +601,245 @@ function navigatedToPatientDashboard(){
 			   }else{
 				   document.getElementById(errorId).style.display= 'none';	
 			   }
-		   }   
+		   } else{
+				document.getElementById(errorId).style.display= 'block';	
+   				document.getElementById(errorId).innerHTML ="Data Type configuration invalide.Please select one pattern.";
+	    	    isValidate =false;  
+		   }  
 	   } 
 		   
      return isValidate;
    }
    
    function betweenRange(x, min, max) {
-	   return x >= min && x <= max;
+	   //return x >= min && x <= max;
+	   return ((x-min)*(x-max) <= 0);
 	 }
+   
+   /*Generate Group List  */
+   function generateTestGroup(){
+ 	  var requestItems ="";
+ 	  jQuery(this.localTestGroups).each(function() {
+ 		 requestItems = requestItems.concat('<div class="panel panel-default">');
+	      requestItems = requestItems.concat('<div class="panel-heading" role="tab" id="heading'+this.groupName+'">');
+	      requestItems = requestItems.concat('<h4 class="panel-title">');
+	      requestItems = requestItems.concat('<a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse'+this.groupId+'" aria-expanded="false" aria-controls="collapse'+this.groupId+'">'+this.groupName+'</a>');
+	      requestItems = requestItems.concat('</h4></div>');
+			       requestItems = requestItems.concat('<div id="collapse'+this.groupId+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+this.groupName+'">');
+			       requestItems = requestItems.concat('<div class="panel-body">');
+			       jQuery(this.details).each(function() {
+			      	   
+				    	    if(this.testAttributeId != 'undefined')
+				    	    	{
+				    	    	requestItems = requestItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="'+this.testAttributeId+'" />'); 
+				    	    	}
+				    	    else{
+				    	    	requestItems = requestItems.concat('<input  hidden="true" id="testAttributeId.'+this.id+'" name ="testAttributeId.'+this.id+'" value="" />'); 
+				    	      }
+				   		 if(this.dataType == 'Coded'){
+				   			requestItems = requestItems.concat(codedTags(this.conceptOptions,this.value,this.id,this.name));
+				   		 }
+				   		 else if(this.dataType == 'Text'){
+				   			requestItems = requestItems.concat(textTags(this.value,this.id,this.name,this.hint));
+				   		 }
+				   		 else if(this.dataType == 'TextArea'){
+				   			requestItems =requestItems.concat( textAreaTags(this.value,this.id,this.name,this.hint));
+				   		 }
+				   		 else if(this.dataType == 'Numeric'){
+				   			requestItems =requestItems.concat( numericTags(this.value,this.name,this.id,this.hint));
+				   		 }
+				   		 else if(this.dataType == 'Boolean'){
+				   			requestItems = requestItems.concat(booleanTags(this.value,this.name,this.id));
+				   		 }
+				   		 else if(this.dataType == 'Date'){
+				   			requestItems = requestItems.concat(dateTags(this.value,this.name,this.id));
+				   		 }
+				   		 else if(this.dataType == 'Regex'){
+				   			requestItems = requestItems.concat(regexTags(this.value,this.name,this.id,this.hint));
+				   		 }
+			   		 });
+			       requestItems = requestItems.concat('</div></div>');
+    requestItems = requestItems.concat('</div>');
+ 	  });
+    
+ 	  console.log("Result items group : " +requestItems);
+ 	  $("#panel-container").append(requestItems); 
+ 	  // document.getElementById("sortweightList").innerHTML = resultsItems;
+    }	
+   
+   
+   
+   ///Htmle tags
+   
+   function codedTags(options,value,id,question){
+	   let codedTagItems ="";
+	   codedTagItems = codedTagItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+	   codedTagItems = codedTagItems.concat(' <label class="control-label">'+question+'</label>');
+	   codedTagItems = codedTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+	   codedTagItems = codedTagItems.concat('<select class="form-control" id="concept.'+id+'" name="concept.'+id+'" ><options />');
+		 jQuery(options).each(function() {
+			  if(value === undefined || value === 'undefined'){
+				  codedTagItems =codedTagItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>'); 
+			  }else{
+				  if(values == this.conceptId)
+					  codedTagItems =codedTagItems.concat( '<option  value="'+this.conceptId+'" selected >'+this.conceptName+'</option>'); 
+				  else
+					  codedTagItems =codedTagItems.concat( '<option value="'+this.conceptId+'">'+this.conceptName+'</option>');  
+			  }
+		  });
+		 codedTagItems =codedTagItems.concat('</select></div></div>'); 
+		 
+	 return codedTagItems;  
+   }
+   function textTags(value,id,question,hint){
+	   let txtTagItems ="";
+	   txtTagItems = txtTagItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+	   txtTagItems = txtTagItems.concat(' <label class="control-label">'+question+'</label>');
+	   txtTagItems = txtTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+		 console.log("values : "+ value);
+		 if(value === undefined || value === 'undefined'){
+			 txtTagItems = txtTagItems.concat('<input maxlength="255"  class="form-control" type="text"  id="valueText.'+id+'" name="valueText.'+id+'" value="" ><span id="error.'+id+'" class="text-danger "></span>');
+			 txtTagItems = txtTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+			 txtTagItems = txtTagItems.concat('<span id="hint.'+id+'" class="text-info">'+hint+'</span>'); 
+		 }else{
+			 txtTagItems = txtTagItems.concat('<input maxlength="255"  class="form-control" type="text"  id="valueText.'+id+'" name="valueText.'+id+'" value="'+value+'"  ><span id="error.'+id+'" class="text-danger "></span>');
+			 txtTagItems = txtTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+			 txtTagItems = txtTagItems.concat('<span id="hint.'+id+'" class="text-info">'+hint+'</span>'); 
+			}
+		 txtTagItems =txtTagItems.concat('</div></div>');
+		 
+	return 	 txtTagItems;
+   }
+   
+   function textAreaTags(value,id,question,hint){
+	   let txtAreaTagItems ="";
+	   txtAreaTagItems = txtAreaTagItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+	   txtAreaTagItems = txtAreaTagItems.concat(' <label class="control-label">'+question+'</label>');
+	   txtAreaTagItems = txtAreaTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+		 console.log("values txt erea : "+ value);
+		 if(value === undefined || value === 'undefined'){
+			 txtAreaTagItems = txtAreaTagItems.concat('<textarea  maxlength="512" class="form-control"  id="valueText.'+id+'" name="valueText.'+id+'" value="" /><span id="error.'+id+'" class="text-danger "></span>');
+			 txtAreaTagItems = txtAreaTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+			 txtAreaTagItems = txtAreaTagItems.concat('<span id="hint.'+id+'" class="text-info">'+hint+'</span>'); 
+		 }else{
+			 txtAreaTagItems = txtAreaTagItems.concat('<textarea   maxlength="512" class="form-control"  id="valueText.'+id+'" name="valueText.'+id+'" value="'+value+'" >'+value+'</textarea><span id="error.'+id+'" class="text-danger "></span>'); 
+			 txtAreaTagItems = txtAreaTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+			 txtAreaTagItems = txtAreaTagItems.concat('<span id="hint.'+id+'" class="text-info">'+hint+'</span>'); 
+			
+			}
+		 txtAreaTagItems =txtAreaTagItems.concat('</div></div>');
+		 
+	return txtAreaTagItems;	 
+   }
+   
+   function numericTags(value,question,id,hint){
+	   let numericTagItems ="";
+	   numericTagItems = numericTagItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+	   numericTagItems = numericTagItems.concat(' <label class="control-label">'+question+'</label>');
+	   numericTagItems = numericTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+		 console.log("values : "+ value);
+		 if(value === 'undefined' || value == undefined){
+			 numericTagItems = numericTagItems.concat('<input class="form-control" type="input"  id="float.'+id+'" name="float.'+id+'" ><span id="error.'+id+'" class="text-danger "></span>'); 
+					    numericTagItems = numericTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+					    numericTagItems = numericTagItems.concat('<span id="hint.'+id+'" class="text-info">'+hint+'</span>'); 
+		 }
+		 else{
+			 numericTagItems = numericTagItems.concat('<input class="form-control" type="input" value ="'+value+'" id="float.'+id+'" name="float.'+id+'"  ><span id="error.'+id+'" class="text-danger "></span>');
+			 numericTagItems = numericTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+			 numericTagItems = numericTagItems.concat('<span id="hint.'+id+'" class="text-info">'+hint+'</span>'); 			
+		 }
+		 numericTagItems =numericTagItems.concat('</div></div>');  
+		 
+	return 	numericTagItems;	 
+   }
+   
+   function booleanTags(value,question,id){
+ 		let booleanTagItems ="";
+ 		booleanTagItems = booleanTagItems.concat('<label class="container-box">');
+ 		booleanTagItems = booleanTagItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+ 		booleanTagItems = booleanTagItems.concat('<span>'+question+'</span>');
+ 		booleanTagItems = booleanTagItems.concat('</div><div class="col-sm-1 col-md-1 col-lg-1"></div><div class ="col-sm-4 col-md-4 col-lg-4 centered">');
+ 		 if(this.value == 'undefined'){
+ 	 		booleanTagItems = booleanTagItems.concat('<input type="checkbox" value="false" id="bool.'+id+'" name="bool.'+id+'" onchange="handleChange(this);">');
+ 			 }else{
+ 				 if(value == "true"){
+ 			 		booleanTagItems = booleanTagItems.concat('<input type="checkbox" value="false" id="bool.'+id+'" name="bool.'+id+'" checked="checked" onchange="handleChange(this);">');
+ 				 }else{
+ 			 		booleanTagItems = booleanTagItems.concat('<input type="checkbox" value="false" id="bool.'+id+'" name="bool.'+id+'" onchange="handleChange(this);">');
+ 				 }
+ 		 }
+ 		booleanTagItems = booleanTagItems.concat('<span class="checkmark"></span>');
+ 		booleanTagItems = booleanTagItems.concat('</div></div></label>');
+ 		
+ 		/* 	booleanTagItems = booleanTagItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+ 		booleanTagItems = booleanTagItems.concat('<label class="control-label container-checkbox">'+question+'</label>');
+ 		booleanTagItems = booleanTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+ 		booleanTagItems = booleanTagItems.concat('<input class="form-control" type="checkbox"  id="bool.'+id+'" name="bool.'+id+'"  value="true" ><span id="error.'+id+'" class="text-danger">'); 
+ 		booleanTagItems =booleanTagItems.concat('</div></div>'); 
+ 			booleanTagItems = booleanTagItems.concat('<select class="form-control" id="bool.'+id+'" name="bool.'+id+'">');
+		 if(this.value == 'undefined'){
+			 booleanTagItems = booleanTagItems.concat('<option value="true" selected>Yes</option>');
+			 booleanTagItems = booleanTagItems.concat('<option value="false" >No</option>');
+		 }else{
+			 
+			 if(value == "true"){
+				 booleanTagItems = booleanTagItems.concat('<option value="true" selected>Yes</option>');
+				 booleanTagItems = booleanTagItems.concat('<option value="false" >No</option>'); 
+			 }else{
+				 booleanTagItems = booleanTagItems.concat('<option value="true" >Yes</option>');
+				 booleanTagItems = booleanTagItems.concat('<option value="false" selected >No</option>'); 
+			 }	 
+		 }
+		 booleanTagItems =booleanTagItems.concat('</select></div></div>'); */
+	   
+	  return booleanTagItems; 	   
+   }  
+   function handleChange(checkbox) {
+	   $(checkbox).val(checkbox.checked ? true : false);
+	   /*  if(checkbox.checked == true){
+	    	
+	    }else{
+	   } */
+	}
+   
+   function dateTags(value,question,id){ 
+	   let dateTagItems ="";
+	     var currentDate = $.datepicker.formatDate('yy-mm-dd', new Date()); 
+	     var orderActivatedDate = '${encounterdate}';
+	     console.log("currentDate : "+currentDate);
+	     console.log("orderActivatedDate : "+orderActivatedDate);
+	     dateTagItems = dateTagItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+	     dateTagItems = dateTagItems.concat('<label class="control-label">'+question+'</label>');
+		 dateTagItems = dateTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+		 if(value == 'undefined'){
+			 dateTagItems = dateTagItems.concat('<input  id="date.'+id+'"  class="form-control" name="date.'+id+'" type="date" value="" min="'+orderActivatedDate+'" max="'+currentDate+'" ><span id="error.'+id+'" class="text-danger "></span>');
+		 }else{
+			 dateTagItems = dateTagItems.concat('<input id="date.'+id+'"  class="form-control"  name="date.'+id+'" type="date" value="'+value+'" min="'+orderActivatedDate+'" max="'+currentDate+'" ><span id="error.'+id+'" class="text-danger "></span>');			
+		 }
+		 dateTagItems =dateTagItems.concat('</div></div>');
+	   return dateTagItems;
+   }
+   
+   function regexTags(value,question,id,hint){
+	   let regexTagItems =""; 
+	   regexTagItems = regexTagItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
+	   regexTagItems = regexTagItems.concat(' <label class="control-label">'+question+'</label>');
+	   regexTagItems = regexTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+		 if(value === 'undefined' || value == undefined){
+			 regexTagItems = regexTagItems.concat('<input class="form-control" type="text"  id="regex.'+id+'" name="regex.'+id+'" ><span id="error.'+id+'" class="text-danger "></span>'); 
+			 regexTagItems = regexTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+			 regexTagItems = regexTagItems.concat('<span id="hint.'+id+'" class="text-info">'+hint+'</span>'); 
+		 }
+		 else{
+			 regexTagItems = regexTagItems.concat('<input class="form-control" type="text" value ="'+value+'" id="regex.'+id+'" name="regex.'+id+'" ><span id="error.'+id+'" class="text-danger "></span>'); 
+			 regexTagItems = regexTagItems.concat('</div><div class ="col-sm-4 col-md-4 col-lg-4">');
+			 regexTagItems = regexTagItems.concat('<span id="hint.'+id+'" class="text-info">'+hint+'</span>'); 			
+		 }
+		 regexTagItems =regexTagItems.concat('</div></div>');
+	   
+	   
+	   return regexTagItems;
+   }
    
    
    

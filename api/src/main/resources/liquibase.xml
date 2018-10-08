@@ -561,5 +561,27 @@
 			<column name="hint" type="varchar(1024)"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="commonlabtest-2018-2018-10-2-7" author="shujaat.ali">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="commonlabtest_attribute_type" columnName="group_id"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="commonlabtest_attribute_type">
+			<column name="group_id" type="INT(11)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="commonlabtest-2018-10-2-8" author="shujaat.ali">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="commonlabtest_attribute_type" columnName="group_name"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="commonlabtest_attribute_type">
+			<column name="group_name" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
+	
 
 </databaseChangeLog>

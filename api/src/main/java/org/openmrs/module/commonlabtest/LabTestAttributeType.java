@@ -55,6 +55,14 @@ public class LabTestAttributeType extends BaseAttributeType<LabTest> implements 
 	@Column(name = "hint")
 	private String hint;
 	
+	@Field
+	@Column(name = "group_id")
+	private Integer groupId;
+	
+	@Field
+	@Column(name = "group_name")
+	private String groupName;
+	
 	public LabTestAttributeType() {
 	}
 	
@@ -102,6 +110,22 @@ public class LabTestAttributeType extends BaseAttributeType<LabTest> implements 
 	
 	public void setHint(String hint) {
 		this.hint = hint;
+	}
+	
+	public Integer getGroupId() {
+		return groupId;
+	}
+	
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
+	
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 	
 }

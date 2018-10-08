@@ -201,11 +201,15 @@ function renderSortWeight(array){
 					resultsItems = resultsItems.concat('<th><a>Test Type</a></th>');
 					resultsItems = resultsItems.concat('<th><a>Attribute Type Name</a></th>');
 					resultsItems = resultsItems.concat('<th><a>Sort Weight</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Group Id</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Group Name</a></th>');
 					jQuery(array).each(function() {
 						resultsItems = resultsItems.concat('<tbody><tr>'); 
 						resultsItems = resultsItems.concat('<td>'+this.testTypeId+'</td>');
 						resultsItems = resultsItems.concat('<td>'+this.attributeTypeName+'</td>');
 						resultsItems = resultsItems.concat('<td>'+this.sortWeight+'</td>');
+						resultsItems = resultsItems.concat('<td>'+this.groupId+'</td>');
+						resultsItems = resultsItems.concat('<td>'+this.groupName+'</td>');
 						resultsItems = resultsItems.concat('</tr></tbody>'); 
 					 });
 				resultsItems = resultsItems.concat('</tr></thead>');
