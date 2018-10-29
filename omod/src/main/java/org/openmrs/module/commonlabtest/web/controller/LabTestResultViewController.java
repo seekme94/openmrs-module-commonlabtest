@@ -77,6 +77,7 @@ public class LabTestResultViewController {
 								if (conceptConfig.getDatatype().getName().equals("Coded")) {
 									Concept concept = Context.getConceptService().getConcept(
 									    Integer.parseInt(labTestResult.getValueReference()));
+									String names = concept.getName().getName();
 									objTestResult.addProperty("valuesReference", concept.getName().getName());
 								} else {
 									objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
@@ -100,11 +101,13 @@ public class LabTestResultViewController {
 				testResultArray.add(objTestResult);
 			}*/
 		}
+		
 		catch (Exception e) {
 			e.printStackTrace();
 			testResultList.add("sample", testSampleArray);
 			testResultList.add("result", testResultArray);
 		}
+		System.out.println("Result : " + testResultArray.toString());
 		testResultList.add("sample", testSampleArray);
 		testResultList.add("result", testResultArray);
 		
@@ -161,6 +164,8 @@ public class LabTestResultViewController {
 			objTestSample.addProperty("testTypeId", testTypeId);
 			objTestSample.addProperty("attributeTypeName", labTestAttributeTypeObj.getName());
 			objTestSample.addProperty("sortWeight", labTestAttributeTypeObj.getSortWeight());
+			objTestSample.addProperty("groupId", labTestAttributeTypeObj.getGroupId());
+			objTestSample.addProperty("groupName", labTestAttributeTypeObj.getGroupName());
 			testAttributeArray.add(objTestSample);
 		}
 		testAttributeList.add("sortweightlist", testAttributeArray);

@@ -1,4 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
@@ -16,6 +19,9 @@
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/hover-min.css" />
 <style>
+
+
+
 body {
 	font-size: 12px;
 }
@@ -50,6 +56,7 @@ legend.scheduler-border {
  margin-bottom:15px;
  
  }
+ /*Patient Lab Tests  */
 #tb-test-type {
   table-layout: fixed;
 }
@@ -61,12 +68,14 @@ legend.scheduler-border {
 	<br>
 	<c:set var="testOrder" scope="session" value="${model.testOrder}" />
 	<div class="row">
-	  <div class="col-sm-4 col-md-2">
-	 	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/plus.png"> <span> </span> <spring:message code="commonlabtest.order.add" /> </a>
-	  </div>
-	   <div class="col-sm-4 col-md-2">
-	   	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestRequest.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/plus.png"> <span> </span>  <spring:message code="commonlabtest.request.add" /> </a>
-	  </div>
+	<openmrs:hasPrivilege privilege="Add CommonLabTest Orders">
+		  <div class="col-sm-4 col-md-2">
+		 	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestOrder.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/plus.png"> <span> </span> <spring:message code="commonlabtest.order.add" /> </a>
+		  </div>
+		   <div class="col-sm-4 col-md-2">
+		   	 <a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestRequest.form?patientId=${model.patient.patientId}" class="hvr-icon-grow"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/plus.png"> <span> </span>  <spring:message code="commonlabtest.request.add" /> </a>
+		  </div>
+	  </openmrs:hasPrivilege>
 	</div>
    	<div id="alert_placeholder"></div>
 	<br>
@@ -83,9 +92,15 @@ legend.scheduler-border {
 					<th>Test Type</th>
 					<th>Lab Reference Number</th>
 					<th>View</th>
-					<th>Edit</th>
-					<th>Manage Test Sample</th>
-					<th>Test Result</th>
+					<openmrs:hasPrivilege privilege="Edit CommonLabTest Orders">
+					  <th>Edit</th>
+					</openmrs:hasPrivilege>
+					<openmrs:hasPrivilege privilege="View CommonLabTest Samples">
+					  <th>Manage Test Sample</th>
+					</openmrs:hasPrivilege>
+					 <openmrs:hasPrivilege privilege="View CommonLabTest results">
+					 <th>Test Result</th>
+					</openmrs:hasPrivilege>
 					
 				</tr>
 	        </thead>
@@ -98,10 +113,15 @@ legend.scheduler-border {
 								 <td>${order.labTestType.name}</td>
 								 <td>${order.labReferenceNumber}</td>
 								 <td> <span class="table-view hvr-icon-grow" onclick="viewTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/view.png"></span></td>
-								 <td> <span class="table-edit hvr-icon-grow" onclick="editTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/edit.png"></span></td>
-					             <td> <span class="table-sample hvr-icon-grow" onclick="samplesTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
-					             <td> <span class="table-result hvr-icon-grow" onclick="resultsTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
-					             
+								 <openmrs:hasPrivilege privilege="Edit CommonLabTest Orders">
+								   <td> <span class="table-edit hvr-icon-grow" onclick="editTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/edit.png"></span></td>
+					             </openmrs:hasPrivilege>
+					             <openmrs:hasPrivilege privilege="View CommonLabTest Samples">
+					               <td> <span class="table-sample hvr-icon-grow" onclick="samplesTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testSample.png"></img></span></span></td>
+					             </openmrs:hasPrivilege>
+					              <openmrs:hasPrivilege privilege="View CommonLabTest results">
+					                 <td> <span class="table-result hvr-icon-grow" onclick="resultsTestOrder(this)"><img class="manImg hvr-icon" src="/openmrs/moduleResources/commonlabtest/img/testResult.png"></img></span></span></td>
+					             </openmrs:hasPrivilege>
 							</tr>
 					</c:if>		
 				 </c:forEach>
@@ -127,7 +147,7 @@ legend.scheduler-border {
 	     			 
 	     			 </div>
 	            </fieldset>    
-
+  			 <openmrs:hasPrivilege privilege="View CommonLabTest Samples">
                <!--Test Sample Details -->
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.labtestsample.detail" /></legend>
@@ -135,11 +155,14 @@ legend.scheduler-border {
 			       
 			       </div>
        			 </fieldset>
-       			  <!--Test Sample Details -->
+       		</openmrs:hasPrivilege>	
+       		<openmrs:hasPrivilege privilege="View CommonLabTest results">	 
+       			  <!--Test Result Details -->
                <fieldset  class="scheduler-border">
       	 		  <legend  class="scheduler-border"><spring:message code="commonlabtest.result.detail" /></legend>
        			  	 <div id ="resultDetailContainer"></div>	
        			 </fieldset>
+          	</openmrs:hasPrivilege>	 
                 
             </div>
         </div>
@@ -239,7 +262,7 @@ function autoHide(){
 							      .find(".orderId") 
 							      .text(); 
 		if(requiresSpecimen == 'false'){
-			showalert("This test order is not required test sample...","alert-info");
+			showalert("This test order is does not required test sample...","alert-info");
 		}
 		else{
 			window.location = "${pageContext.request.contextPath}/module/commonlabtest/manageLabTestSamples.form?patientId="+${model.patient.patientId}+"&testOrderId="+testOrderId; 
@@ -302,37 +325,37 @@ function autoHide(){
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="commonlabtest.order.id" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.id+'</sub></font></label>');			 
-			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.testGroup" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.testGroup+'</sub></font></label>');
-			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.testType" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.name+'</sub></font></label>');
-			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="commonlabtest.order.labReferenceNo" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.labReferenceNumber+'</sub></font></label>');
-			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.requiresSpecimen" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.requiresSpecimen+'</sub></font></label>');
-			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.createdBy" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.createdBy+'</sub></font></label>');
-			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.changedBy" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.changedBy+'</sub></font></label>');
-			 resultsItems =resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.uuid" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-8">');
@@ -347,12 +370,12 @@ function autoHide(){
 	function populateTest(testOrderId){
 		
 		 jQuery.ajax({
-					type : "GET",
-					contentType : "application/json",
-					url : '${pageContext.request.contextPath}/module/commonlabtest/getTestResults.form?testOrderId='+testOrderId,
-					dataType : "json",
+				  type : "GET",
+				  contentType: "application/json;charset=ISO-8859-1",
+				  url : '${pageContext.request.contextPath}/module/commonlabtest/getTestResults.form?testOrderId='+testOrderId,
 					success : function(data) {
-					   console.log("success  : " + data);
+						console.log("testing");
+					    console.log(data);
 					    parsData(data);
 					},
 					error : function(data) {
@@ -365,30 +388,33 @@ function autoHide(){
 	 } 
 	
 	function parsData(data){
-		  console.log(JSON.stringify(data));
-		 // resultArray =data.result;
-		  renderTestSample(data.sample);
-		  renderTestResult(data.result)
+		  var parseData = JSON.parse(data)
+			  <openmrs:hasPrivilege privilege="View CommonLabTest Samples">
+			  		renderTestSample(parseData['sample']);
+			  </openmrs:hasPrivilege>
+			<openmrs:hasPrivilege privilege="View CommonLabTest results">
+		        renderTestResult(parseData['result'])
+		    </openmrs:hasPrivilege>
 		  jQuery('#viewModal').modal('show'); 
 	}
 	
 	
 	function renderTestSample(sampleArray){
 	       var resultsItems = "";
-				resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">');
+				resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md table-hover mb-0" id= "tb-test-type">');
 				resultsItems = resultsItems.concat('<thead><tr>');
 					resultsItems = resultsItems.concat('<th><a>Test Order</a></th>');
-					resultsItems = resultsItems.concat('<th><a>Spacimen Type</a></th>');
-					resultsItems = resultsItems.concat('<th><a>Spacimen Site</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Specimen Type</a></th>');
+					resultsItems = resultsItems.concat('<th><a>Specimen Site</a></th>');
 					resultsItems = resultsItems.concat('<th><a>Status</a></th>');
 					jQuery(sampleArray).each(function() {
 						console.log("testOrderId : "+this.testOrderId);
 					   	
 						resultsItems = resultsItems.concat('<tbody><tr>'); 
-						resultsItems = resultsItems.concat('<td>'+this.testOrderId+'</td>');
-						resultsItems = resultsItems.concat('<td>'+this.specimenType+'</td>');
-						resultsItems = resultsItems.concat('<td>'+this.specimenSite+'</td>');
-						resultsItems = resultsItems.concat('<td>'+this.status+'</td>');
+						resultsItems = resultsItems.concat('<td><label>'+this.testOrderId+'</label></td>');
+						resultsItems = resultsItems.concat('<td><label>'+this.specimenType+'</label></td>');
+						resultsItems = resultsItems.concat('<td><label>'+this.specimenSite+'</label></td>');
+						resultsItems = resultsItems.concat('<td><label>'+this.status+'</label></td>');
 						resultsItems = resultsItems.concat('</tr></tbody>'); 
 						 
 					 });
@@ -401,7 +427,7 @@ function autoHide(){
 	
 	function renderTestResult(resultArray){
 	      var resultsItems = "";
-			resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md btn-table table-hover mb-0" id="tb-test-type">');
+			resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md table-hover mb-0" id="tb-test-type">');
 			resultsItems = resultsItems.concat('<thead><tr>');
 				resultsItems = resultsItems.concat('<th><a>Question</a></th>');
 				resultsItems = resultsItems.concat('<th><a>Value</a></th>');
@@ -409,13 +435,13 @@ function autoHide(){
 					console.log("testOrderId : "+this.testOrderId);
 					 if(this.void === true){
 							resultsItems = resultsItems.concat('<tbody><tr>'); 
-							resultsItems = resultsItems.concat('<td><font color="#FF0000">'+this.question+'</font></td>');
-							resultsItems = resultsItems.concat('<td><font color="#FF0000">'+this.valuesReference+'</font></td>');
+							resultsItems = resultsItems.concat('<td><font color="#FF0000"><label>'+this.question+'</label></font></td>');
+							resultsItems = resultsItems.concat('<td><font color="#FF0000"><label>'+this.valuesReference+'</label></font></td>');
 							resultsItems = resultsItems.concat('</tr></tbody>'); 
 					 }else {
 							resultsItems = resultsItems.concat('<tbody><tr>'); 
-							resultsItems = resultsItems.concat('<td>'+this.question+'</td>');
-							resultsItems = resultsItems.concat('<td>'+this.valuesReference+'</td>');
+							resultsItems = resultsItems.concat('<td><label>'+this.question+'</label></td>');
+							resultsItems = resultsItems.concat('<td><label>'+this.valuesReference+'</label></td>');
 							resultsItems = resultsItems.concat('</tr></tbody>'); 
 					 }
 				

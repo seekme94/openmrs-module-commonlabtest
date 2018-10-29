@@ -66,12 +66,11 @@ public class LabTestSampleController {
 			orderDate = simpleDateFormat.format(labTest.getOrder().getEncounter().getEncounterDatetime());
 		}
 		
-		LabTestSample test;
+		LabTestSample labTestSample;
 		if (testSampleId == null) {
-			test = new LabTestSample();
+			labTestSample = new LabTestSample();
 		} else {
-			
-			test = commonLabTestService.getLabTestSample(testSampleId);
+			labTestSample = commonLabTestService.getLabTestSample(testSampleId);
 		}
 		
 		//get Specimen Type .
@@ -111,7 +110,7 @@ public class LabTestSampleController {
 			model.put("testUnits", testUnitsConceptlist);
 		}
 		
-		model.addAttribute("testSample", test);
+		model.addAttribute("testSample", labTestSample);
 		model.addAttribute("patientId", patientId);
 		model.addAttribute("orderEncDate", orderDate);
 		model.addAttribute("orderId", orderId);
@@ -128,6 +127,9 @@ public class LabTestSampleController {
 	        @ModelAttribute("testSample") LabTestSample labTestSample, BindingResult result) {
 		
 		String status = "";
+		if (Context.getAuthenticatedUser() == null) {
+			return "redirect:../../login.htm";
+		}
 		try {
 			if (result.hasErrors()) {
 				///If we get any exception while binding it should be redirected to same page with binding error		
@@ -179,6 +181,9 @@ public class LabTestSampleController {
 	        @RequestParam("uuid") String uuid, @RequestParam("voidReason") String voidReason) {
 		LabTestSample labTestSample = commonLabTestService.getLabTestSampleByUuid(uuid);
 		String status;
+		if (Context.getAuthenticatedUser() == null) {
+			return "redirect:../../login.htm";
+		}
 		try {
 			commonLabTestService.voidLabTestSample(labTestSample, voidReason);
 			StringBuilder sb = new StringBuilder();
@@ -188,7 +193,7 @@ public class LabTestSampleController {
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = "Error! could not save Lab Test Sample";
+			status = "could not void Lab Test Sample";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestSample.getLabTestSampleId() == null) {

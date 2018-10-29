@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -132,88 +131,101 @@ public class LabTestResultController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/addLabTestResult.form")
-	public String onSubmit(HttpServletRequest request, @RequestParam(required = true) Integer testOrderId,
+	public String onSubmit(ModelMap model, HttpServletRequest request, @RequestParam(required = true) Integer testOrderId,
 	        @RequestParam(required = false) Integer testAttributeId,
 	        @RequestParam(required = false) MultipartFile documentTypeFile, @RequestParam(required = false) Boolean update) {
 		
+		if (Context.getAuthenticatedUser() == null) {
+			return "redirect:../../login.htm";
+		}
 		LabTest labTest = commonLabTestService.getLabTest(testOrderId);
 		List<LabTestAttributeType> attributeTypeList = Context.getService(CommonLabTestService.class)
 		        .getLabTestAttributeTypes(labTest.getLabTestType(), false);
 		String conceptValue = "", textValue = "", boolValue = "", floatValue, testAtrrId, regexValue, dateValue;
-		
-		List<LabTestAttribute> labTestAttributes = new ArrayList<LabTestAttribute>();
-		
-		for (LabTestAttributeType labTestAttributeType : attributeTypeList) {
-			LabTestAttribute testAttribute = new LabTestAttribute();
+		String status;
+		try {
+			List<LabTestAttribute> labTestAttributes = new ArrayList<LabTestAttribute>();
 			
-			conceptValue = request.getParameter("concept." + labTestAttributeType.getId());
-			textValue = request.getParameter("valueText." + labTestAttributeType.getId());
-			boolValue = request.getParameter("bool." + labTestAttributeType.getId());
-			floatValue = request.getParameter("float." + labTestAttributeType.getId());
-			dateValue = request.getParameter("date." + labTestAttributeType.getId());
-			regexValue = request.getParameter("regex." + labTestAttributeType.getId());
-			testAtrrId = request.getParameter("testAttributeId." + labTestAttributeType.getId());
-			if (update && (!testAtrrId.equals("undefined") && !testAtrrId.equals(""))) {
-				testAttribute = commonLabTestService.getLabTestAttribute(Integer.parseInt(testAtrrId));
-			} else {
-				testAttribute.setLabTest(labTest);
-				testAttribute.setAttributeTypeId(labTestAttributeType);
+			for (LabTestAttributeType labTestAttributeType : attributeTypeList) {
+				LabTestAttribute testAttribute = new LabTestAttribute();
+				
+				conceptValue = request.getParameter("concept." + labTestAttributeType.getId());
+				textValue = request.getParameter("valueText." + labTestAttributeType.getId());
+				boolValue = (request.getParameter("bool." + labTestAttributeType.getId()) == null) ? "false" : request
+				        .getParameter("bool." + labTestAttributeType.getId());
+				floatValue = request.getParameter("float." + labTestAttributeType.getId());
+				dateValue = request.getParameter("date." + labTestAttributeType.getId());
+				regexValue = request.getParameter("regex." + labTestAttributeType.getId());
+				testAtrrId = request.getParameter("testAttributeId." + labTestAttributeType.getId());
+				if (update && (!testAtrrId.equals("undefined") && !testAtrrId.equals(""))) {
+					testAttribute = commonLabTestService.getLabTestAttribute(Integer.parseInt(testAtrrId));
+				} else {
+					testAttribute.setLabTest(labTest);
+					testAttribute.setAttributeTypeId(labTestAttributeType);
+				}
+				//set the value reference 
+				if (conceptValue != null && !conceptValue.equals("") && !conceptValue.isEmpty()) {
+					testAttribute.setValueReference(conceptValue);
+					labTestAttributes.add(testAttribute);
+				} else if (textValue != null && !textValue.equals("") && !textValue.isEmpty()) {
+					testAttribute.setValueReference(textValue);
+					labTestAttributes.add(testAttribute);
+				} else if (floatValue != null && !floatValue.equals("") && !floatValue.isEmpty()) {
+					testAttribute.setValueReference(floatValue);
+					labTestAttributes.add(testAttribute);
+				} else if (dateValue != null && !dateValue.equals("") && !dateValue.isEmpty()) {
+					testAttribute.setValueReference(dateValue);
+					labTestAttributes.add(testAttribute);
+				} else if (regexValue != null && !regexValue.equals("") && !regexValue.isEmpty()) {
+					testAttribute.setValueReference(regexValue);
+					labTestAttributes.add(testAttribute);
+				} else if (boolValue != null && !boolValue.equals("") && !boolValue.isEmpty()) {
+					testAttribute.setValueReference(boolValue);
+					labTestAttributes.add(testAttribute);
+				}
+				
 			}
-			//set the value reference 
-			if (conceptValue != null && !conceptValue.equals("") && !conceptValue.isEmpty()) {
-				testAttribute.setValueReference(conceptValue);
-				labTestAttributes.add(testAttribute);
-			} else if (textValue != null && !textValue.equals("") && !textValue.isEmpty()) {
-				testAttribute.setValueReference(textValue);
-				labTestAttributes.add(testAttribute);
-			} else if (boolValue != null && !boolValue.equals("") && !boolValue.isEmpty()) {
-				testAttribute.setValueReference(boolValue);
-				labTestAttributes.add(testAttribute);
-			} else if (floatValue != null && !floatValue.equals("") && !floatValue.isEmpty()) {
-				testAttribute.setValueReference(floatValue);
-				labTestAttributes.add(testAttribute);
-			} else if (dateValue != null && !dateValue.equals("") && !dateValue.isEmpty()) {
-				testAttribute.setValueReference(dateValue);
-				labTestAttributes.add(testAttribute);
-			} else if (regexValue != null && !regexValue.equals("") && !regexValue.isEmpty()) {
-				testAttribute.setValueReference(regexValue);
-				labTestAttributes.add(testAttribute);
+			//save the file
+			if (documentTypeFile.isEmpty()) {} else {
+				
+				try {
+					String fileDirectory = Context.getAdministrationService().getGlobalProperty(
+					    "commonlabtest.fileDirectory");
+					
+					FileCopyUtils.copy(documentTypeFile.getBytes(), new FileOutputStream(fileDirectory + "/"
+					        + documentTypeFile.getOriginalFilename().replace(" ", "-")));
+					String name = documentTypeFile.getOriginalFilename().replace(" ", "-");
+					labTest.setFilePath(fileDirectory + "/" + name);
+					Context.getService(CommonLabTestService.class).saveLabTest(labTest); //need to review this lines
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-		//save the file
-		if (documentTypeFile.isEmpty()) {} else {
+			//change the sample status ... 
+			List<LabTestSample> labTestSampleList = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);
+			for (LabTestSample labTestSample : labTestSampleList) {
+				if (labTestSample.getStatus().equals(LabTestSampleStatus.ACCEPTED)) {
+					labTestSample.setStatus(LabTestSampleStatus.PROCESSED);
+					labTestSample.setProcessedDate(new Date());
+					Context.getService(CommonLabTestService.class).saveLabTestSample(labTestSample);
+				}
+			}
 			
-			try {
-				String fileDirectory = Context.getAdministrationService().getGlobalProperty("commonlabtest.fileDirectory");
-				
-				FileCopyUtils.copy(documentTypeFile.getBytes(), new FileOutputStream(fileDirectory + "/"
-				        + documentTypeFile.getOriginalFilename().replace(" ", "-")));
-				
-				String name = documentTypeFile.getOriginalFilename().replace(" ", "-");
-				labTest.setFilePath(fileDirectory + "/" + name);
-				Context.getService(CommonLabTestService.class).saveLabTest(labTest); //need to review this lines
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+			/*String resultComments = request.getParameter("resultComments");
+			if (!resultComments.equals("") && resultComments != null) {
+				labTest.setResultComments(resultComments);
+				 Context.getService(CommonLabTestService.class).saveLabTest(labTest);//need to review this lines
+			}*/
+			
+			commonLabTestService.saveLabTestAttributes(labTestAttributes);
 		}
-		//change the sample status ... 
-		List<LabTestSample> labTestSampleList = commonLabTestService.getLabTestSamples(labTest, Boolean.FALSE);
-		for (LabTestSample labTestSample : labTestSampleList) {
-			if (labTestSample.getStatus().equals(LabTestSampleStatus.ACCEPTED)) {
-				labTestSample.setStatus(LabTestSampleStatus.PROCESSED);
-				labTestSample.setProcessedDate(new Date());
-				Context.getService(CommonLabTestService.class).saveLabTestSample(labTestSample);
-			}
+		catch (Exception e) {
+			status = "Could not save Lab Test Result";
+			e.printStackTrace();
+			model.addAttribute("error", status);
 		}
 		
-		/*String resultComments = request.getParameter("resultComments");
-		if (!resultComments.equals("") && resultComments != null) {
-			labTest.setResultComments(resultComments);
-			 Context.getService(CommonLabTestService.class).saveLabTest(labTest);//need to review this lines
-		}*/
-		
-		commonLabTestService.saveLabTestAttributes(labTestAttributes);
 		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Test Result saved successfully");
 		return "redirect:../../patientDashboard.form?patientId=" + labTest.getOrder().getPatient().getPatientId();
 	}
@@ -224,6 +236,9 @@ public class LabTestResultController {
 	        @RequestParam("voidReason") String voidReason) {
 		//List<LabTestAttribute> labTestAttributes =  Context.getService(CommonLabTestService.class).getLabTestAttributes(testOrderId);
 		String status;
+		if (Context.getAuthenticatedUser() == null) {
+			return "redirect:../../login.htm";
+		}
 		try {
 			LabTest labTest = commonLabTestService.getLabTest(testOrderId);
 			commonLabTestService.voidLabTestAttributes(labTest, voidReason);
@@ -233,7 +248,7 @@ public class LabTestResultController {
 			status = sb.toString();
 		}
 		catch (Exception e) {
-			status = "Could not save Lab Test Result";
+			status = "Could not void Lab Test Result";
 			e.printStackTrace();
 			model.addAttribute("error", status);
 		}
@@ -307,7 +322,7 @@ public class LabTestResultController {
 		objAttrType.addProperty("maxOccurs", labTestAttributeType.getMaxOccurs());
 		objAttrType.addProperty("sortWeight", labTestAttributeType.getSortWeight());
 		objAttrType.addProperty("config", labTestAttributeType.getDatatypeConfig());
-		objAttrType.addProperty("hint", labTestAttributeType.getHint());
+		objAttrType.addProperty("hint", (labTestAttributeType.getHint() == null) ? "" : labTestAttributeType.getHint());
 		
 		if (testAttributes.size() > 0) {
 			for (LabTestAttribute labTestAttribute : testAttributes) {

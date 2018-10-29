@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 <%@ include file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
-<openmrs:require privilege="View labTestType" otherwise="/login.htm" redirect="/module/commonlabtest/manageLabTestTypes.form" />
+<openmrs:require privilege="View CommonLabTest Metadata" redirect="/module/commonlabtest/manageLabTestTypes.form" otherwise="/login.htm" />
 
 <link type="text/css" rel="stylesheet" href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
 <link   href="/openmrs/moduleResources/commonlabtest/font-awesome/css/font-awesome.min.css" rel="stylesheet" /> 
@@ -76,7 +76,9 @@ table.display tbody tr:nth-child(even):hover td{
 		</div>
 	</c:if>
 	<div>
-	 <a style="text-decoration:none" href="addLabTestType.form" class="hvr-icon-grow" ><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.labtesttype.add" /> </a>
+	<openmrs:hasPrivilege privilege="Add CommonLabTest Metadata">
+	   <a style="text-decoration:none" href="addLabTestType.form" class="hvr-icon-grow" ><i class="fa fa-plus hvr-icon"></i> <spring:message code="commonlabtest.labtesttype.add" /> </a>
+	</openmrs:hasPrivilege>
 	</div>
 	<br>
 	<div class="boxHeader" style="background-color: #1aac9b">
@@ -88,7 +90,9 @@ table.display tbody tr:nth-child(even):hover td{
 	            <tr>
 	            	<th hidden="true"></th>
 	            	<th hidden="true"></th>
-					<th>Name</th>
+	            	<openmrs:hasPrivilege privilege="Edit CommonLabTest Metadata">
+					  <th>Name</th>
+					</openmrs:hasPrivilege>
 					<th>Short Name</th>
 					<th>Test Group</th>
 					<th>Reference Concept</th>
@@ -100,12 +104,13 @@ table.display tbody tr:nth-child(even):hover td{
 						<tr>
 							<td hidden="true" class="uuid">${tt.uuid}</td>
 							<td hidden="true" class="testTypeId">${tt.labTestTypeId}</td>
-							<td><a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid=${tt.uuid}" class="hvr-icon-grow"><span><i class="fa fa-edit hvr-icon"></i></span> ${tt.name}</a></td>
+							<openmrs:hasPrivilege privilege="Edit CommonLabTest Metadata">
+							   <td><a style="text-decoration:none" href="${pageContext.request.contextPath}/module/commonlabtest/addLabTestType.form?uuid=${tt.uuid}" class="hvr-icon-grow"><span><i class="fa fa-edit hvr-icon"></i></span> ${tt.name}</a></td>
+							</openmrs:hasPrivilege>
 							<td>${tt.shortName}</td>
 							<td>${tt.testGroup}</td>
 							<td>${tt.referenceConcept.name}</td>
 						    <td> <span class="table-edit hvr-icon-grow" onclick="editTestOrder(this)"><i class="fa fa-eye fa-2x hvr-icon"></i></span></td>
-							
 						</tr>
 					</c:forEach>
 	        </tbody>

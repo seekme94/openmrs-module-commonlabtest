@@ -7,7 +7,6 @@ import org.openmrs.ConceptClass;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTestType;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
-import org.openmrs.module.commonlabtest.api.impl.CommonLabTestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,12 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import groovy.json.JsonOutput;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -38,18 +33,6 @@ public class LabTestTypeController {
 	
 	private final String SUCCESS_ADD_FORM_VIEW = "/module/commonlabtest/addLabTestType";
 	
-	/*@Autowired
-	@Qualifier("labTestTypeValidator")
-	private Validator validator;
-	*/
-	/*@Autowired
-	 Context.getService(CommonLabTestService.class)  Context.getService(CommonLabTestService.class);*/
-	//private  Context.getService(CommonLabTestService.class)  Context.getService(CommonLabTestService.class) = Context.getService( Context.getService(CommonLabTestService.class).class);
-	
-	/*@InitBinder
-	private void initBinder(WebDataBinder binder) {
-		binder.setValidator(validator);
-	}*/
 	@Autowired
 	CommonLabTestService commonLabTestService;
 	
@@ -91,6 +74,9 @@ public class LabTestTypeController {
 	        @ModelAttribute("anyRequestObject") Object anyRequestObject, HttpServletRequest request,
 	        @ModelAttribute("labTestType") LabTestType labTestType, BindingResult result) {
 		String status = "";
+		if (Context.getAuthenticatedUser() == null) {
+			return "redirect:../../login.htm";
+		}
 		if (result.hasErrors()) {
 			status = "Invalid Reference concept Id entered";
 			model.addAttribute("error", status);
@@ -109,7 +95,7 @@ public class LabTestTypeController {
 				status = sb.toString();
 			}
 			catch (Exception e) {
-				status = "Error! could not save Lab Test Type.";
+				status = "could not save Lab Test Type.";
 				e.printStackTrace();
 				model.addAttribute("error", status);
 				if (labTestType.getLabTestTypeId() == null) {
@@ -127,11 +113,14 @@ public class LabTestTypeController {
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtesttype.form")
 	public String onRetire(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid, @RequestParam("retireReason") String retireReason) {
-		CommonLabTestService service = Context.getService(CommonLabTestService.class);
-		
+		/*	CommonLabTestService service = Context.getService(CommonLabTestService.class);
+		*/
 		LabTestType labTestType = commonLabTestService.getLabTestTypeByUuid(uuid);
 		
 		String status;
+		if (Context.getAuthenticatedUser() == null) {
+			return "redirect:../../login.htm";
+		}
 		try {
 			commonLabTestService.retireLabTestType(labTestType, retireReason);
 			StringBuilder sb = new StringBuilder();
@@ -141,7 +130,7 @@ public class LabTestTypeController {
 			status = sb.toString();
 		}
 		catch (Exception exception) {
-			status = "could not save Lab Test Type.";
+			status = "could not retire Lab Test Type.";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestType.getLabTestTypeId() == null) {
@@ -170,7 +159,7 @@ public class LabTestTypeController {
 			status = sb.toString();
 		}
 		catch (Exception exception) {
-			status = "Error! could not save Lab Test Type.";
+			status = "could not delete Lab Test Type.";
 			exception.printStackTrace();
 			model.addAttribute("error", status);
 			if (labTestType.getLabTestTypeId() == null) {

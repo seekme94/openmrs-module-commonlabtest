@@ -1,16 +1,9 @@
-<%-- <%@ page import="org.openmrs.web.WebConstants" %>
-<%
-pageContext.setAttribute("redirect", session.getAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR));
-session.removeAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR); 
-%> --%>
-
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 <%@ include
 	file="/WEB-INF/view/module/commonlabtest/include/localHeader.jsp"%>
-
-<openmrs:require privilege="View labTestAttributeType" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestAttributeType.form" />
-
+<!-- <openmrs:require anyPrivilege ="Add CommonLabTest Metadata , Edit CommonLabTest Metadata" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestAttributeType.form" />
+ -->
 
 <link type="text/css" rel="stylesheet"
 	href="/openmrs/moduleResources/commonlabtest/css/commonlabtest.css" />
@@ -96,9 +89,11 @@ legend.scheduler-border {
 	<c:set var="testAttributeType" scope="session" value="${attributeType}" />
 	<fieldset  class="scheduler-border">
 	   <c:if test="${empty testAttributeType.name}">
+	    <openmrs:require privilege="Add CommonLabTest Metadata" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestAttributeType.form" />
 		 <legend  class="scheduler-border"><spring:message code="commonlabtest.labtestattributetype.add" /></legend>
 	   </c:if>
 	   <c:if test="${not empty testAttributeType.name}">
+	    <openmrs:require privilege="Edit CommonLabTest Metadata" otherwise="/login.htm" redirect="/module/commonlabtest/addLabTestAttributeType.form" />
 		 <legend  class="scheduler-border">	<spring:message code="commonlabtest.labtestattributetype.edit" /></legend>
 	   </c:if>
  	   <form:form commandName="attributeType" onsubmit='return validate(this);'>
@@ -317,10 +312,10 @@ legend.scheduler-border {
 									<input type="button" onclick="location.href = '${pageContext.request.contextPath}/module/commonlabtest/manageLabTestAttributeTypes.form';"  value="Cancel"></input>
 								</div>
 							 </div>	
- 	   
 		 </form:form>
     </fieldset>
 	<br>
+	<openmrs:hasPrivilege privilege="Delete CommonLabTest Metadata">
 	<c:if test="${not empty testAttributeType.name}">
 		 <fieldset  class="scheduler-border">
       	   <legend  class="scheduler-border"><spring:message code="general.test.retire" /></legend>
@@ -346,9 +341,8 @@ legend.scheduler-border {
 				</form>
         </fieldset>
 	</c:if>
+	</openmrs:hasPrivilege>
  </div>
- 
- 
 	<div class="modal fade right modal-scrolling" id="sortWeightModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="false" style="display: none;" aria-hidden="true">
 	    <div class="modal-dialog modal-side modal-top-right modal-notify modal-info" role="document">
 		      <div class="modal-content">
@@ -402,7 +396,6 @@ legend.scheduler-border {
 			            testTypeOption = "<option value=\"" + this.id + "\">" +testTypeName+ "</option>";
 			            jQuery('#testTypeOptions').append(testTypeOption);
 			            testTypeId = this.id; 
-			            //testTypeObject = {testTypeId,name: testTypeName};
 			            testTypeObject[testTypeId] = testTypeName;
 				});
 			}
@@ -454,14 +447,11 @@ legend.scheduler-border {
 	       // $('datatypeConfig').val('');
 	    if(regex.checked){
 	    	document.getElementById('datatypeConfig').value  = '';
-				 //document.getElementById('datatypeConfig').value  = 'Regex=';	
 			}else if(range.checked){
 				document.getElementById('datatypeConfig').value  = '';
-				//document.getElementById('datatypeConfig').value  = 'Range=';	
 			}
 			else if(length.checked){
 				document.getElementById('datatypeConfig').value  = '';
-				// document.getElementById('datatypeConfig').value  = 'Length=';	
 			} 
 	}
 	
@@ -700,11 +690,6 @@ legend.scheduler-border {
 				isValidate = false;
 
 			}
-			 /* else if (!regInt.test(sortWeight)){
-				 	document.getElementById("sortweight").style.display= 'block';	
-					document.getElementById('sortweight').innerHTML = integerErrorMessage;
-					isValidate = false;
-			 } */
 			 else {
 					document.getElementById("sortweight").style.display= 'none';	
 				}
@@ -726,15 +711,6 @@ legend.scheduler-border {
 				     }else if(dataTypeOp == "org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype"){
 						 console.log("dataTypeConfig : "+dataTypeConfig);
 				    	 if(dataTypeConfig != "" && dataTypeConfig != null ){
-				    		 /*  if(dataTypeConfig.startsWith("^") || dataTypeConfig.endsWith("$")){
-					    			  document.getElementById("datatypeconfig").style.display= 'block';	
-				      				  document.getElementById('datatypeconfig').innerHTML = "Regex string should not contains ^ $ sign.";
-			      				  isValidate = false; 
-				    		   }
-				    		    else {
-				    		    	 document.getElementById("datatypeconfig").style.display= 'none';
-				    		    } */
-			    		     //check the hint values
 				    		  document.getElementById("datatypeconfig").style.display= 'none';
 				    		
 				    	 }else{
@@ -798,14 +774,6 @@ legend.scheduler-border {
      				document.getElementById("datatypeconfig").style.display= 'none';
      				return true;
 			   } 
-			   
-			 /*   if(type === "Regex" || type === "Length" || type === "Range"){
-				   console.log("Append Val :true " );
-				   return true;
-			   }else{
-				   console.log("Append Val :false " );
-				   return false;
-			   } */
 	}
 	
 	function checkOptions(){
@@ -828,17 +796,9 @@ legend.scheduler-border {
         		}else{	
         			if(!checkOptionAlreadyAppend(dataTypeConfig,'Regex')){
         				 isValidate = false; 
-        				//document.getElementById('datatypeConfig').value = 'Regex='+dataTypeConfig;
         			 }else{
          				document.getElementById("datatypeconfig").style.display= 'none';
         			 }
-        			
-        			/* else if(getConfigType(dataTypeConfig) != "Regex"){
-        				 document.getElementById("datatypeconfig").style.display= 'block';	
-        				 document.getElementById('datatypeconfig').innerHTML = "The first part of string should be equal to 'Regex ='";
-        				 isValidate = false; 
-        			 } */
-
         		}
 			}else{
 				  document.getElementById("datatypeconfig").style.display= 'block';	
@@ -848,69 +808,58 @@ legend.scheduler-border {
 		}else if(range.checked){
 			if(dataTypeConfig !="" && dataTypeConfig != null){
 					
-				 if(getConfigVal(dataTypeConfig) == "" || getConfigVal(dataTypeConfig) == null ){
-	      			  document.getElementById("datatypeconfig").style.display= 'block';	
-	   				  document.getElementById('datatypeconfig').innerHTML = "Range required.";
-	   				  isValidate = false; 
-					}
-	      		else{
-	      			 //check the given range in proper formate or not 
-	      			let rangVal =  getConfigVal(dataTypeConfig).trim();
-	      			let index = rangVal.indexOf("-");
-	  			    let startPoint = rangVal.substr(0, index); 
-	  			    let endPoint = rangVal.substr(index + 1);
-	  			      console.log("rangVal : "+regRange.test(rangVal));
-	  			    if(!checkOptionAlreadyAppend(dataTypeConfig ,'Range')){
-						/* document.getElementById('datatypeConfig').value = 'Range='+dataTypeConfig;
-						document.getElementById("datatypeconfig").style.display= 'none'; */
-	  			    	isValidate = false; 
-					} 
-		  			/* else if(getConfigType(dataTypeConfig) != "Range"){
-	     				 document.getElementById("datatypeconfig").style.display= 'block';	
-	     				 document.getElementById('datatypeconfig').innerHTML = "The first part of string should be equal to 'Range ='";
-	     				 isValidate = false; 
-	     			 } */
-	  			    
-		  			 if(!regRange.test(rangVal)){
-	      				  document.getElementById("datatypeconfig").style.display= 'block';	
-	      				  document.getElementById('datatypeconfig').innerHTML = "Invalide range pattern (startDigit - endDigit)";
-	      				  isValidate = false; 
-	      			 } else if(parseInt(startPoint, 10) > parseInt(endPoint, 10)){
-	      				  document.getElementById("datatypeconfig").style.display= 'block';	
-	    				  document.getElementById('datatypeconfig').innerHTML = "In range startNumber should be greater then endNumber";
-	    				  isValidate = false;  
-	      			 }else{
-	       				document.getElementById("datatypeconfig").style.display= 'none';
-	      			 }
-	      		}	 
-			}else{
-				  document.getElementById("datatypeconfig").style.display= 'block';	
-  				  document.getElementById('datatypeconfig').innerHTML = "Range required.";
-  				  isValidate = false; 
-			}
+					 if(getConfigVal(dataTypeConfig) == "" || getConfigVal(dataTypeConfig) == null ){
+		      			  document.getElementById("datatypeconfig").style.display= 'block';	
+		   				  document.getElementById('datatypeconfig').innerHTML = "Range required.";
+		   				  isValidate = false; 
+						}
+		      		 else{
+			      			 //check the given range in proper formate or not 
+			      			let rangVal =  getConfigVal(dataTypeConfig).trim();
+			      			let index = rangVal.indexOf("-");
+			  			    let startPoint = rangVal.substr(0, index); 
+			  			    let endPoint = rangVal.substr(index + 1);
+			  			      console.log("rangVal : "+regRange.test(rangVal));
+			  			    if(!checkOptionAlreadyAppend(dataTypeConfig ,'Range')){
+			  			    	isValidate = false; 
+							} 
+				  			 if(!regRange.test(rangVal)){
+			      				  document.getElementById("datatypeconfig").style.display= 'block';	
+			      				  document.getElementById('datatypeconfig').innerHTML = "Invalide range pattern (startDigit - endDigit)";
+			      				  isValidate = false; 
+			      			 } else if(parseInt(startPoint, 10) > parseInt(endPoint, 10)){
+			      				  document.getElementById("datatypeconfig").style.display= 'block';	
+			    				  document.getElementById('datatypeconfig').innerHTML = "In range startNumber should be greater then endNumber";
+			    				  isValidate = false;  
+			      			 }else{
+			       				document.getElementById("datatypeconfig").style.display= 'none';
+			      			 }
+	      	    	}	 
+				}else{
+					  document.getElementById("datatypeconfig").style.display= 'block';	
+	  				  document.getElementById('datatypeconfig').innerHTML = "Range required.";
+	  				  isValidate = false; 
+				}
 		}
 		else if(length.checked){
 			if(dataTypeConfig !="" && dataTypeConfig != null){
-				if(getConfigVal(dataTypeConfig) == "" || getConfigVal(dataTypeConfig) == null ){
-	      			  document.getElementById("datatypeconfig").style.display= 'block';	
-	   				  document.getElementById('datatypeconfig').innerHTML = "Length required.";
-	   				  isValidate = false; 
-	      		}
-				else if (!regInt.test(getConfigVal(dataTypeConfig))){
-				 	document.getElementById("datatypeconfig").style.display= 'block';	
-					document.getElementById('datatypeconfig').innerHTML = integerErrorMessage;
-					isValidate = false;
-			   }else{
-				    if(!checkOptionAlreadyAppend(dataTypeConfig ,'Length')){
-				    	isValidate = false;
-				    	/* 
-							document.getElementById('datatypeConfig').value = 'Length='+dataTypeConfig;	
-							document.getElementById("datatypeconfig").style.display= 'none'; */
-					   }else{
-	     				document.getElementById("datatypeconfig").style.display= 'none'; 
-	     			 }
-		
-			   }
+					if(getConfigVal(dataTypeConfig) == "" || getConfigVal(dataTypeConfig) == null ){
+		      			  document.getElementById("datatypeconfig").style.display= 'block';	
+		   				  document.getElementById('datatypeconfig').innerHTML = "Length required.";
+		   				  isValidate = false; 
+		      		}
+					else if (!regInt.test(getConfigVal(dataTypeConfig))){
+					 	document.getElementById("datatypeconfig").style.display= 'block';	
+						document.getElementById('datatypeconfig').innerHTML = integerErrorMessage;
+						isValidate = false;
+				   }else{
+					    if(!checkOptionAlreadyAppend(dataTypeConfig ,'Length')){
+					    	isValidate = false;
+						   }else{
+		     				document.getElementById("datatypeconfig").style.display= 'none'; 
+		     			 }
+			
+				   }
 			}else{
 				  document.getElementById("datatypeconfig").style.display= 'block';	
   				  document.getElementById('datatypeconfig').innerHTML = "Length required.";
@@ -943,7 +892,6 @@ legend.scheduler-border {
 		}
 	}
 	
-	
 	//Retire Validate
 	function retireValidate(){
 		var retireReason = document.getElementById('retireReason').value;
@@ -956,8 +904,6 @@ legend.scheduler-border {
 			document.getElementById('retirereason').innerHTML = numericErrorMessage;
 			isValidate = false;
 		}
-
-	
 		return isValidate;
 	}
 	//check for integer..
@@ -976,7 +922,6 @@ legend.scheduler-border {
 					 window.location.href = "${pageContext.request.contextPath}/module/commonlabtest/addLabTestAttributeType.form?uuid="+uuid; 
 				 }
 			}
-
 		 jQuery("body").keydown(function(e){
 
 		 if(e.which==116){
@@ -992,7 +937,6 @@ legend.scheduler-border {
 	 });
 	
 	///Sort Weight Modal 
-	
 	function showSortWeightList(sortweight){
 		var testTypeId = document.getElementById("testTypeSuggestBox").value;
 		 if(testTypeId != "" && isInt(testTypeId)){
@@ -1028,11 +972,15 @@ legend.scheduler-border {
 						resultsItems = resultsItems.concat('<th><a>Test Type</a></th>');
 						resultsItems = resultsItems.concat('<th><a>Attribute Type Name</a></th>');
 						resultsItems = resultsItems.concat('<th><a>Sort Weight</a></th>');
+						resultsItems = resultsItems.concat('<th><a>Group Id</a></th>');
+						resultsItems = resultsItems.concat('<th><a>Group Name</a></th>');
 						jQuery(array).each(function() {
 							resultsItems = resultsItems.concat('<tbody><tr>'); 
 							resultsItems = resultsItems.concat('<td>'+this.testTypeId+'</td>');
 							resultsItems = resultsItems.concat('<td>'+this.attributeTypeName+'</td>');
 							resultsItems = resultsItems.concat('<td>'+this.sortWeight+'</td>');
+							resultsItems = resultsItems.concat('<td>'+this.groupId+'</td>');
+							resultsItems = resultsItems.concat('<td>'+this.groupName+'</td>');
 							resultsItems = resultsItems.concat('</tr></tbody>'); 
 						 });
 					resultsItems = resultsItems.concat('</tr></thead>');

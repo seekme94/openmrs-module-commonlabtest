@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +11,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.CareSetting;
-import org.openmrs.CareSetting.CareSettingType;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
@@ -55,9 +52,11 @@ public class LabTestRequestController {
 	public String showForm(HttpServletRequest request, @RequestParam(required = false) String error,
 	        @RequestParam(required = false) Integer patientId, ModelMap model) {
 		
+		if (Context.getAuthenticatedUser() == null) {
+			return "redirect:../../login.htm";
+		}
 		JsonArray testParentArray = new JsonArray();
 		List<LabTestGroup> labTestGroupList = Arrays.asList(LabTestGroup.values());
-		
 		Collections.sort(labTestGroupList, new Comparator<LabTestGroup>() {
 			
 			@Override
@@ -69,13 +68,12 @@ public class LabTestRequestController {
 		for (LabTestGroup labTestGroup : labTestGroupList) {
 			JsonObject labTestGroupObj = new JsonObject();
 			JsonArray jsonChildArray = new JsonArray();
-			if (labTestGroup.equals(LabTestGroup.OTHER)) {
-				continue;
-			}
 			List<LabTestType> labTestTypeList = commonLabTestService.getLabTestTypes(null, null, labTestGroup, null, null,
 			    Boolean.FALSE);
 			if (!(labTestTypeList.size() > 0) || labTestTypeList.equals("") || labTestTypeList.isEmpty()) {
-				continue; //skip the current iteration.
+				continue; // skip the current iteration.
+			} else if (labTestTypeList.size() == 1 && labTestGroup.equals(LabTestGroup.OTHER)) {
+				continue;
 			}
 			if (labTestTypeList.size() > 0) {
 				Collections.sort(labTestTypeList, new Comparator<LabTestType>() {
@@ -86,8 +84,12 @@ public class LabTestRequestController {
 					}
 				});
 			}
+			
 			labTestGroupObj.addProperty("testGroup", labTestGroup.name());
 			for (LabTestType labTestType : labTestTypeList) {
+				if (labTestType.getShortName().equals("UNKNOWN")) {
+					continue;
+				}
 				JsonObject labTestTyeChild = new JsonObject();
 				labTestTyeChild.addProperty("testTypeId", labTestType.getId());
 				labTestTyeChild.addProperty("testTypeName", labTestType.getName());
@@ -140,7 +142,7 @@ public class LabTestRequestController {
 				order.setOrderer(Context.getProviderService()
 				        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next());
 				order.setOrderType(Context.getOrderService().getOrderType(3));
-				order.setDateActivated(new Date());
+				order.setDateActivated(encounter.getEncounterDatetime());
 				order.setPatient(Context.getPatientService().getPatient(patientId));
 				Concept concept = Context.getConceptService().getConcept(jsonObject.get("testTypeId").getAsInt());
 				order.setConcept(concept);
@@ -154,10 +156,6 @@ public class LabTestRequestController {
 			for (LabTest labTest : labTestArray) {
 				commonLabTestService.saveLabTest(labTest);
 			}
-			StringBuilder sb = new StringBuilder();
-			sb.append("Lab Test Order with Uuid :");
-			sb.append(" is  saved!");
-			status = sb.toString();
 		}
 		catch (Exception e) {
 			status = "could not save Lab Test Request";
@@ -168,8 +166,8 @@ public class LabTestRequestController {
 		if (boolStatus) {
 			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Test Request saved successfully");
 		}
-		//model.addAttribute("status", status);
-		return boolStatus; //"redirect:../../patientDashboard.form?patientId=" + patientId;
+		return boolStatus; // "redirect:../../patientDashboard.form?patientId="
+		                   // + patientId;
 	}
 	
 }

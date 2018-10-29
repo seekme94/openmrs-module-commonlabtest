@@ -507,6 +507,27 @@
 			<column name="description">Access to view LabTest objects</column>
 			<column name="uuid">44828a9c-9a3f-11e8-a296-40b034c3cfee</column>
 		</insert>
+		
+	   <insert tableName="privilege">
+			<column name="privilege">Add CommonLabTest results</column>
+			<column name="description">Access to add LabResult objects</column>
+			<column name="uuid">f8eaa25f-033a-4b2b-b23a-55295b7890bf</column>
+		</insert>
+		<insert tableName="privilege">
+			<column name="privilege">Edit CommonLabTest results</column>
+			<column name="description">Access to edit LabResult objects</column>
+			<column name="uuid">3a0d03bb-6649-4a51-fbe9-689edd3499c7</column>
+		</insert>
+		<insert tableName="privilege">
+			<column name="privilege">View CommonLabTest results</column>
+			<column name="description">Access to view LabResult objects</column>
+			<column name="uuid">55ef129a-6439-44c4-f3b6-466c19732433</column>
+		</insert>
+		<insert tableName="privilege">
+			<column name="privilege">Delete CommonLabTest results</column>
+			<column name="description">Access to delete LabResult objects</column>
+			<column name="uuid">de85c1fa-ab3c-4141-b381-45d90b5f7634</column>
+		</insert>
 	</changeSet>
 
 	<changeSet id="commonlabtest-2018-08-16-2" author="tahira.niazi">
@@ -582,6 +603,5 @@
 			<column name="group_name" type="varchar(255)"/>
 		</addColumn>
 	</changeSet>
-	
 
 </databaseChangeLog>
