@@ -211,10 +211,10 @@ jQuery(document).ready(function () {
 	 testOrderArray = new Array();
      <c:if test="${not empty model.testOrder}">
 	        <c:forEach var="testOrder" items="${model.testOrder}" varStatus="status">
-	       			 testOrderArray.push({requiresSpecimen:"${testOrder.labTestType.requiresSpecimen}",id:"${testOrder.testOrderId}", name :"${testOrder.labTestType.name}" ,testGroup:"${testOrder.labTestType.testGroup}",labReferenceNumber:"${testOrder.labReferenceNumber}",dateCreated:"${testOrder.labTestType.dateCreated}",createdBy:"${testOrder.creator.username}",changedBy:"${testOrder.changedBy}",uuid:"${testOrder.uuid}"});
+	       			 testOrderArray.push({requiresSpecimen:"${testOrder.labTestType.requiresSpecimen}",id:"${testOrder.testOrderId}", name :"${testOrder.labTestType.name}" ,testGroup:"${testOrder.labTestType.testGroup}",labReferenceNumber:"${testOrder.labReferenceNumber}",dateCreated:"${testOrder.labTestType.dateCreated}",createdBy:"${testOrder.creator.username}",dateCreated:"${testOrder.dateCreated}",encounterType:"${testOrder.getOrder().getEncounter().getEncounterType().getName()}",changedBy:"${testOrder.changedBy}",uuid:"${testOrder.uuid}"});
 	        </c:forEach>
      </c:if>   
-	 
+	 console.log("Order Array new add : "+JSON.stringify(testOrderArray));
 	 return testOrderArray;
  }
 function getTestOrderList(){
@@ -337,6 +337,11 @@ function autoHide(){
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.name+'</sub></font></label>');
 			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.encounterType" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.encounterType+'</sub></font></label>');
+			 resultsItems = resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="commonlabtest.order.labReferenceNo" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
 			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.labReferenceNumber+'</sub></font></label>');
@@ -354,7 +359,12 @@ function autoHide(){
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.changedBy" /></sub></font></label>');
 			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
-			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.changedBy+'</sub></font></label>');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.createdBy+'</sub></font></label>');
+			 resultsItems = resultsItems.concat('</div></div>');
+			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
+			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.dateCreated" /></sub></font></label>');
+			 resultsItems = resultsItems.concat('</div><div class ="col-md-4">');
+			 resultsItems = resultsItems.concat('<label ><font color="#5D6D7E"><sub>'+testOrderArr.dateCreated+'</sub></font></label>');
 			 resultsItems = resultsItems.concat('</div></div>');
 			 resultsItems = resultsItems.concat('<div class="row"><div class="col-md-3">');
 			 resultsItems = resultsItems.concat('<label ><font color="#17202A"><sub><spring:message code="general.uuid" /></sub></font></label>');
@@ -426,6 +436,7 @@ function autoHide(){
 	}
 	
 	function renderTestResult(resultArray){
+		console.log("result Array :: "+resultArray);
 	      var resultsItems = "";
 			resultsItems = resultsItems.concat('<table  class="table table-striped table-responsive-md table-hover mb-0" id="tb-test-type">');
 			resultsItems = resultsItems.concat('<thead><tr>');

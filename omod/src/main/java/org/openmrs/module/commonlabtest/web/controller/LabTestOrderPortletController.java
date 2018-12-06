@@ -3,6 +3,7 @@ package org.openmrs.module.commonlabtest.web.controller;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
+import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
 import org.openmrs.web.controller.PortletController;
 import org.springframework.stereotype.Controller;
@@ -100,6 +101,7 @@ public class LabTestOrderPortletController extends PortletController {
 				System.out.println("in test order portlet");
 				System.out.println("===========================================================");
 				List<LabTest> testList = Context.getService(CommonLabTestService.class).getLabTests(patient, false);
+				
 				//List<LabTest> testList = commonLabTestService.getLabTests(patient, false);
 				System.out.println("TestOrder Size ::: " + testList.size());
 				System.out.println("Order ::: " + (testList.size() > 0 ? testList.get(0).getOrder() : "zero"));

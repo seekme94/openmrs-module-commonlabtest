@@ -1,7 +1,9 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -77,7 +79,7 @@ public class LabTestResultViewController {
 								if (conceptConfig.getDatatype().getName().equals("Coded")) {
 									Concept concept = Context.getConceptService().getConcept(
 									    Integer.parseInt(labTestResult.getValueReference()));
-									String names = concept.getName().getName();
+									byte[] byteArray = Base64.decodeBase64(concept.getName().getName().getBytes());
 									objTestResult.addProperty("valuesReference", concept.getName().getName());
 								} else {
 									objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
@@ -93,7 +95,7 @@ public class LabTestResultViewController {
 				}
 			}
 			
-			/*		String comments = labTest.getResultComments();
+			/*String comments = labTest.getResultComments();
 			if (!comments.equals("")) {
 				JsonObject objTestResult = new JsonObject();
 				objTestResult.addProperty("question", "Comments");
@@ -165,6 +167,7 @@ public class LabTestResultViewController {
 			objTestSample.addProperty("attributeTypeName", labTestAttributeTypeObj.getName());
 			objTestSample.addProperty("sortWeight", labTestAttributeTypeObj.getSortWeight());
 			objTestSample.addProperty("groupId", labTestAttributeTypeObj.getGroupId());
+			objTestSample.addProperty("multisetName", labTestAttributeTypeObj.getMultisetName());
 			objTestSample.addProperty("groupName", labTestAttributeTypeObj.getGroupName());
 			testAttributeArray.add(objTestSample);
 		}

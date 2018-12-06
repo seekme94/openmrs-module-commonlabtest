@@ -74,7 +74,7 @@ legend.scheduler-border {
 }
  
 </style>
-
+  
 <body>
 	
 
@@ -132,13 +132,22 @@ legend.scheduler-border {
 						   	</div>
 					  </div>
 					  <!-- Group Id -->
-					    <div class="row">
+					  <!--   <div class="row">
 						   <div class="col-md-2">
 								<form:label path="groupId" class="control-label"><spring:message code="commonlabtest.labtestattributetype.groupId" /></form:label>
 							</div>
 						   <div class="col-md-6">
 								<form:input class="form-control" maxlength="3"   path="groupId" id="group_id" onkeypress="return isNumber(event)"></form:input></td>
 							    <span id="groupid" class="text-danger "> </span>
+						   	</div>
+					 	 </div> -->
+					 	  <div class="row">
+						   <div class="col-md-2">
+								<form:label path="multisetName" class="control-label"><spring:message code="commonlabtest.labtestattributetype.multisetName" /></form:label>
+							</div>
+						   <div class="col-md-6">
+								<form:input class="form-control"  maxlength="255" path="multisetName" id="multisetName" ></form:input></td>
+							    <span id="multisetname" class="text-danger "> </span>
 						   	</div>
 					 	 </div>
 					 	 <!-- Group Name-->
@@ -372,14 +381,14 @@ legend.scheduler-border {
 	src="${pageContext.request.contextPath}/moduleResources/commonlabtest/js/jquery-ui.min.js"></script>
 
 <script>
-	var local_source;
+	var localSource;
 
 	jQuery(document).ready(function() {
 	
-		local_source = new Array();
+		localSource = new Array();
 	        <c:if test="${not empty listTestType}">
 		        <c:forEach var="testType" items="${listTestType}" varStatus="status">
-		        	local_source.push({name:"${testType.name}",id:"${testType.labTestTypeId}"});
+		        localSource.push({name:"${testType.name}",id:"${testType.labTestTypeId}"});
 		        </c:forEach>
 	        </c:if>     
 	      
@@ -389,9 +398,9 @@ legend.scheduler-border {
 				jQuery("#testTypeOptions option").remove();
 			}
 			
-			if(local_source.length > 0) {
+			if(localSource.length > 0) {
 				testTypeObject = {};
-				jQuery(local_source).each(function() {
+				jQuery(localSource).each(function() {
 					var testTypeName = toTitleCase(this.name.toLowerCase());
 			            testTypeOption = "<option value=\"" + this.id + "\">" +testTypeName+ "</option>";
 			            jQuery('#testTypeOptions').append(testTypeOption);
@@ -414,9 +423,8 @@ legend.scheduler-border {
 				}
 			});  
 			
-      let av = '${available}';
-      console.log("available : "+av);
-      if(!av){   	  
+      let available = '${available}';
+      if(!available){   	  
     	  let dataType = document.getElementById('data_type_name');
           if(dataType.childElementCount != 0){
    		  	 let dataTypeName =   dataType.options[dataType.selectedIndex].text;
@@ -972,14 +980,14 @@ legend.scheduler-border {
 						resultsItems = resultsItems.concat('<th><a>Test Type</a></th>');
 						resultsItems = resultsItems.concat('<th><a>Attribute Type Name</a></th>');
 						resultsItems = resultsItems.concat('<th><a>Sort Weight</a></th>');
-						resultsItems = resultsItems.concat('<th><a>Group Id</a></th>');
+						resultsItems = resultsItems.concat('<th><a>Multiset Name</a></th>');
 						resultsItems = resultsItems.concat('<th><a>Group Name</a></th>');
 						jQuery(array).each(function() {
 							resultsItems = resultsItems.concat('<tbody><tr>'); 
 							resultsItems = resultsItems.concat('<td>'+this.testTypeId+'</td>');
 							resultsItems = resultsItems.concat('<td>'+this.attributeTypeName+'</td>');
 							resultsItems = resultsItems.concat('<td>'+this.sortWeight+'</td>');
-							resultsItems = resultsItems.concat('<td>'+this.groupId+'</td>');
+							resultsItems = resultsItems.concat('<td>'+this.multisetName+'</td>');
 							resultsItems = resultsItems.concat('<td>'+this.groupName+'</td>');
 							resultsItems = resultsItems.concat('</tr></tbody>'); 
 						 });

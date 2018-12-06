@@ -64,42 +64,19 @@ public class LabTestResultController {
 		
 		List<LabTestAttributeType> attributeTypeList = new ArrayList<LabTestAttributeType>();
 		attributeTypeList = commonLabTestService.getLabTestAttributeTypes(labTest.getLabTestType(), Boolean.FALSE);
-		
-		List<LabTestAttributeType> nonGroupTestAttributeType = new ArrayList<LabTestAttributeType>();
-		List<LabTestAttributeType> groupTestAttributeType = new ArrayList<LabTestAttributeType>();
-		
-		for (LabTestAttributeType labTestAttributeType : attributeTypeList) {
-			if (labTestAttributeType.getGroupId() == null) {
-				nonGroupTestAttributeType.add(labTestAttributeType);
-			} else {
-				groupTestAttributeType.add(labTestAttributeType);
-			}
-		}
-		
-		JsonArray attributeTypeArray = new JsonArray();
-		List<LabTestAttribute> testAttributes = commonLabTestService.getLabTestAttributes(testOrderId);
-		
-		// Context.getService(CommonLabTestService.class).getLabTestAttributes(patient, labTestAttributeType, includeVoided);
-		Collections.sort(nonGroupTestAttributeType, new Comparator<LabTestAttributeType>() {
+		Collections.sort(attributeTypeList, new Comparator<LabTestAttributeType>() {
 			
 			@Override
 			public int compare(LabTestAttributeType o1, LabTestAttributeType o2) {
 				return o1.getSortWeight().compareTo(o2.getSortWeight());
 			}
 		});
+		List<LabTestAttribute> labTestAttributes = commonLabTestService.getLabTestAttributes(testOrderId);
+		JsonArray resultantAttributeTypeList = getAttributeTypeList(attributeTypeList, testOrderId, labTestAttributes);
 		
-		for (LabTestAttributeType labTestAttributeType : nonGroupTestAttributeType) {
-			attributeTypeArray.add(getAttributeTypeJsonObj(labTestAttributeType, testAttributes));
-		}
-		
-		model.addAttribute("attributeTypeList", attributeTypeArray);
-		if (groupTestAttributeType.size() > 0) {
-			model.addAttribute("groupList", getGroupArrayList(groupTestAttributeType, testAttributes));
-		}
-		//check the voided values ..
-		if (testAttributes.size() > 0 && attributeTypeList.size() > 0) {
+		if (!labTestAttributes.isEmpty() && !attributeTypeList.isEmpty()) {
 			boolean updateMode = false;
-			for (LabTestAttribute labTestAttribute : testAttributes) {
+			for (LabTestAttribute labTestAttribute : labTestAttributes) {
 				if (!labTestAttribute.getVoided()) {
 					updateMode = true;
 					break;
@@ -117,13 +94,10 @@ public class LabTestResultController {
 			model.addAttribute("filepath", "");
 		}
 		String fileExtensions = Context.getAdministrationService().getGlobalProperty("commonlabtest.fileExtensions");
+		
+		model.addAttribute("attributeTypeList", resultantAttributeTypeList);
 		model.addAttribute("fileExtensions", fileExtensions);
 		model.addAttribute("testOrderId", testOrderId);
-		if (attributeTypeList.size() > 0) {
-			model.addAttribute("testTypeName", attributeTypeList.get(0).getLabTestType().getName());
-		} else {
-			model.addAttribute("testTypeName", "Unknown"); //This lines need to be discuss.
-		}
 		model.addAttribute("patientId", labTest.getOrder().getPatient().getPatientId());
 		model.addAttribute("encounterdate", simpleDateFormat.format(labTest.getOrder().getDateActivated()));
 		
@@ -157,6 +131,7 @@ public class LabTestResultController {
 				dateValue = request.getParameter("date." + labTestAttributeType.getId());
 				regexValue = request.getParameter("regex." + labTestAttributeType.getId());
 				testAtrrId = request.getParameter("testAttributeId." + labTestAttributeType.getId());
+				
 				if (update && (!testAtrrId.equals("undefined") && !testAtrrId.equals(""))) {
 					testAttribute = commonLabTestService.getLabTestAttribute(Integer.parseInt(testAtrrId));
 				} else {
@@ -284,36 +259,6 @@ public class LabTestResultController {
 		return "N/A";
 	}
 	
-	public JsonArray getGroupArrayList(List<LabTestAttributeType> listAttributeTypes, List<LabTestAttribute> testAttributes) {
-		JsonArray parentArray = new JsonArray();
-		
-		List<Integer> holderGroupId = new ArrayList<Integer>();
-		if (listAttributeTypes.size() > 0) {
-			List<LabTestAttributeType> childListAttributeTypes = listAttributeTypes;
-			JsonObject labTestGroupObj;
-			for (LabTestAttributeType labTestAttributeType : listAttributeTypes) {
-				labTestGroupObj = new JsonObject();
-				JsonArray jsonChildArray = new JsonArray();
-				Integer groupId = labTestAttributeType.getGroupId();
-				if (holderGroupId.contains(groupId)) {
-					continue;
-				}
-				holderGroupId.add(groupId);
-				labTestGroupObj.addProperty("groupName", labTestAttributeType.getGroupName());
-				labTestGroupObj.addProperty("groupId", labTestAttributeType.getGroupId());
-				for (LabTestAttributeType labTestAttributeTypechld : childListAttributeTypes) {
-					if (labTestAttributeTypechld.getGroupId() == groupId) {
-						jsonChildArray.add(getAttributeTypeJsonObj(labTestAttributeTypechld, testAttributes));
-					}
-				}
-				labTestGroupObj.add("details", jsonChildArray);
-				parentArray.add(labTestGroupObj);
-			}
-		}
-		System.out.println("Result Array : " + parentArray.toString());
-		return parentArray;
-	}
-	
 	public JsonObject getAttributeTypeJsonObj(LabTestAttributeType labTestAttributeType,
 	        List<LabTestAttribute> testAttributes) {
 		JsonObject objAttrType = new JsonObject();
@@ -366,6 +311,89 @@ public class LabTestResultController {
 			objAttrType.addProperty("dataType", getDataType(labTestAttributeType.getDatatypeClassname()));
 		}
 		return objAttrType;
+	}
+	
+	public JsonArray getAttributeTypeList(List<LabTestAttributeType> labTestAttributeTypeList, int testOrderId,
+	        List<LabTestAttribute> labTestAttributes) {
+		
+		List<String> holderGroupIdList = new ArrayList<String>();
+		JsonArray parentJsonArray = new JsonArray();
+		JsonObject labTestGroupObj;
+		for (LabTestAttributeType labTestAttributeType : labTestAttributeTypeList) {
+			labTestGroupObj = new JsonObject();
+			JsonArray jsonChildArray = new JsonArray();
+			String groupName = labTestAttributeType.getGroupName();
+			if (!labTestAttributeType.getGroupName().isEmpty()) {
+				if (holderGroupIdList.contains(groupName)) {
+					continue;
+				}
+				holderGroupIdList.add(labTestAttributeType.getGroupName());
+				labTestGroupObj.addProperty("groupName", labTestAttributeType.getGroupName());
+				List<LabTestAttributeType> childLabTestATList = getFilterAttributeTypes(labTestAttributeType,
+				    labTestAttributeTypeList);
+				JsonObject labTestSubGroupObj;
+				List<String> holderSubGroupIdList = new ArrayList<String>();
+				for (LabTestAttributeType labTestAttributeTypechld : childLabTestATList) {
+					labTestSubGroupObj = new JsonObject();
+					JsonArray jsonSubGroupArray = new JsonArray();
+					if (labTestAttributeTypechld.getMultisetName() != null
+					        && !labTestAttributeTypechld.getMultisetName().isEmpty()) {
+						String subGroupName = labTestAttributeTypechld.getMultisetName(); //groupName should be change with multisetName
+						if (holderSubGroupIdList.contains(subGroupName)) {
+							continue;
+						}
+						holderSubGroupIdList.add(subGroupName);
+						labTestSubGroupObj.addProperty("subGroupName", subGroupName);
+						List<LabTestAttributeType> subGroupLabTestATList = getFilterSubGroupAttributeTypes(subGroupName,
+						    childLabTestATList);
+						for (LabTestAttributeType labTestAttributeTypeSb : subGroupLabTestATList) {
+							jsonSubGroupArray.add(getAttributeTypeJsonObj(labTestAttributeTypeSb, labTestAttributes));
+						}
+						labTestSubGroupObj.add("subDetails", jsonSubGroupArray);
+						jsonChildArray.add(labTestSubGroupObj);
+					} else {
+						jsonChildArray.add(getAttributeTypeJsonObj(labTestAttributeTypechld, labTestAttributes));
+					}
+				}
+				labTestGroupObj.add("details", jsonChildArray);
+				parentJsonArray.add(labTestGroupObj);
+				
+			} else {
+				parentJsonArray.add(getAttributeTypeJsonObj(labTestAttributeType, labTestAttributes));
+			}
+		}
+		System.out.println("Array Result : " + parentJsonArray.toString());
+		return parentJsonArray;
+	}
+	
+	private List<LabTestAttributeType> getFilterAttributeTypes(LabTestAttributeType labTestAttributeType,
+	        List<LabTestAttributeType> listLabTestAttributeType) {
+		List<LabTestAttributeType> filterLabTestAttributeTypes = new ArrayList<LabTestAttributeType>();
+		
+		if (!listLabTestAttributeType.isEmpty()) {
+			for (LabTestAttributeType filterLabTestAttributeType : listLabTestAttributeType) {
+				if (filterLabTestAttributeType.getGroupName().equals(labTestAttributeType.getGroupName())) {
+					filterLabTestAttributeTypes.add(filterLabTestAttributeType);
+				}
+			}
+			
+		}
+		
+		return filterLabTestAttributeTypes;
+	}
+	
+	private List<LabTestAttributeType> getFilterSubGroupAttributeTypes(String multisetName,
+	        List<LabTestAttributeType> listLabTestAttributeType) {
+		List<LabTestAttributeType> filterLabTestAttributeTypes = new ArrayList<LabTestAttributeType>();
+		
+		if (!listLabTestAttributeType.isEmpty()) {
+			for (LabTestAttributeType filterLabTestAttributeType : listLabTestAttributeType) {
+				if (filterLabTestAttributeType.getMultisetName().equals(multisetName)) {
+					filterLabTestAttributeTypes.add(filterLabTestAttributeType);
+				}
+			}
+		}
+		return filterLabTestAttributeTypes;
 	}
 	
 }

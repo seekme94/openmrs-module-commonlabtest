@@ -266,10 +266,10 @@ legend.scheduler-border {
 
 
 <script type="text/javascript">
-var local_source;
+var localSource;
 var testOrder;
 var update;
-var filepath = "";
+var filePath = "";
 var resultComments = "";
 var patientId;
 var testTypeName = "";
@@ -303,11 +303,11 @@ $(document).ready(function () {
     fileExtensions = '${fileExtensions}';
     fileExtensionsArr = JSON.stringify(fileExtensions).split(",");
     fileExtensionArray = JSON.stringify(fileExtensions).split(",");
-    local_source = getAttributeTypes();
+    localSource = getAttributeTypes();
     localTestGroups = getTestGrouptList();
     testOrder = ${ testOrderId };
     testTypeName = '${testTypeName}';
-    filepath = '${filepath}';
+    filePath = '${filepath}';
     resultComments = '${resultComments}';
     update = '${update}';
     patientId = '${patientId}';
@@ -318,7 +318,7 @@ $(document).ready(function () {
 
 //get all concepts
 function getAttributeTypes() {
-    return JSON.parse(JSON.stringify(${ attributeTypeList }));
+    return JSON.parse(JSON.stringify(${attributeTypeList}));
 }
 //get all concepts
 function getTestOrderId() {
@@ -338,15 +338,22 @@ function populateResultForm() {
     resultsItems = resultsItems.concat('<center><h4>' + testTypeName + '</h4></center><hr class="style-three">');
     resultsItems = resultsItems.concat('<input  hidden="true" id="update" name ="update" value="' + update + '" />');
 
-    jQuery(local_source).each(function () {
-
+    console.log("Loc : " +JSON.stringify(localSource));
+    
+    jQuery(localSource).each(function () {
+		
         if (this.testAttributeId != 'undefined') {
             resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.' + this.id + '" name ="testAttributeId.' + this.id + '" value="' + this.testAttributeId + '" />');
         }
         else {
             resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.' + this.id + '" name ="testAttributeId.' + this.id + '" value="" />');
         }
-        if (this.dataType == 'Coded') {
+       // console.log("value details : : "+this.details.length);
+        if(this.details != undefined && this.details.length > 0){
+        	    resultsItems = resultsItems.concat(generateTestGroup(this.details ,this.groupName)); //generate all the groups 
+        }
+        
+        else if (this.dataType == 'Coded') {
             resultsItems = resultsItems.concat(codedTags(this.conceptOptions, this.value, this.id, this.name));
         }
         else if (this.dataType == 'Text') {
@@ -370,20 +377,14 @@ function populateResultForm() {
         }
     });
 
-    resultsItems = resultsItems.concat('<div class="row">');
-    resultsItems = resultsItems.concat('<div class="col-md-12 col-md-offset-12 col-sm-12 col-sm-offset-12">');
-    resultsItems = resultsItems.concat('<div class="fancy-collapse-panel">');
-    resultsItems = resultsItems.concat('<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">');
-    resultsItems = resultsItems.concat('<div id="panel-container"></div>');
-    resultsItems = resultsItems.concat('</div></div></div></div>');
-    if (local_source.length > 0 || localTestGroups.length > 0) {
+    if (localSource.length > 0) {
         resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3">');
         resultsItems = resultsItems.concat('<label class="control-label">Attachment</label>');
         resultsItems = resultsItems.concat('</div><div class="col-sm-4 col-md-4 col-lg-4">');
         resultsItems = resultsItems.concat('<input type="file" name="documentTypeFile" id="documentTypeFile" accept="image/*,audio/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />');
-        if (filepath != "") {
+        if (filePath != "") {
             resultsItems = resultsItems.concat('</div><div class="col-sm-4 col-md-4 col-lg-4">');
-            resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="' + filepath + '" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>');
+            resultsItems = resultsItems.concat('<a style="text-decoration:none"  href="' + filePath + '" target="_blank" title="Image" class="hvr-icon-grow" ><i class="fa fa-paperclip hvr-icon"></i> Attached report file</a>');
         }
         resultsItems = resultsItems.concat('</div></div>');
         resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-3 col-md-3 col-lg-3"></div><div class="col-sm-6 col-md-6 col-lg-6">');
@@ -401,7 +402,7 @@ function populateResultForm() {
     }
     //end
     resultsItems = resultsItems.concat('<div class="row"><div class="col-sm-2 col-md-2 col-lg-2">');
-    if (local_source.length > 0 || localTestGroups.length > 0) {
+    if (localSource.length > 0) {
         resultsItems = resultsItems.concat('<input type="submit" class ="btn" value="Save Test Result" id="submitBttn" ></input>');
         resultsItems = resultsItems.concat('</div><div class="col-sm-2 col-md-2 col-lg-2">');
     }
@@ -410,7 +411,7 @@ function populateResultForm() {
     console.log("Resultan String : " + resultsItems);
     $("#resultContainer").append(resultsItems);
     //Generate all teh groups;	
-    generateTestGroup();
+    //generateTestGroup();
 
 }
 
@@ -451,88 +452,136 @@ function validation() {
     console.log("is called");
     var emptyErrorMessage = "This field cannot be empty";
     let isValid = true;
-    let txtBool = true, numBool = true, regexBool = true, txtAreaBool = true, dateBool = true;
-    //var localTestGroups;
-    //if(localTestGroups.length > 0)
-    jQuery(local_source).each(function () {
-        var minOccurs = this.minOccurs;
-        var config = this.config;
-        if (this.dataType == 'Text') {
-            if (!getDataTypeValidations(this.dataType, "valueText." + this.id, "error." + this.id, config, minOccurs)) {
-                txtBool = false;
-            }
-            console.log(" text isValid : " + txtBool);
-        }
-        else if (this.dataType == 'Numeric') {
-            if (!getDataTypeValidations(this.dataType, "float." + this.id, "error." + this.id, config, minOccurs)) {
-                numBool = false;
-            }
-            console.log(" numeric isValid : " + numBool);
-        }
-        else if (this.dataType == 'TextArea') {
-            if (!getDataTypeValidations(this.dataType, "valueText." + this.id, "error." + this.id, config, minOccurs)) {
-                txtAreaBool = false;
-            }
-            console.log(" textarea isValid : " + txtAreaBool);
-        }
-        else if (this.dataType == 'Regex') {
-            if (!getDataTypeValidations(this.dataType, "regex." + this.id, "error." + this.id, config, minOccurs)) {
-                regexBool = false;
-            }
-            console.log(" regex isValid : " + regexBool);
-        } else if (this.dataType == 'Date') {
+    let groupValidateArrays = [];
+    let txtBool = true, numBool = true, regexBool = true, txtAreaBool = true, dateBool = true,groupValid =true;
+    jQuery(localSource).each(function () {
+     
+       if(this.details != undefined && this.details.length > 0){
+    	   groupValidateArrays.push(groupValidations(this.details));
+        	//groupValid = groupValidations(this.details);
+        }else{
+        	  var minOccurs = this.minOccurs;
+              var config = this.config;
+              if (this.dataType == 'Text') {
+                  if (!getDataTypeValidations(this.dataType, "valueText." + this.id, "error." + this.id, config, minOccurs)) {
+                      txtBool = false;
+                  }
+                  console.log(" text isValid : " + txtBool);
+              }
+              else if (this.dataType == 'Numeric') {
+                  if (!getDataTypeValidations(this.dataType, "float." + this.id, "error." + this.id, config, minOccurs)) {
+                      numBool = false;
+                  }
+                  console.log(" numeric isValid : " + numBool);
+              }
+              else if (this.dataType == 'TextArea') {
+                  if (!getDataTypeValidations(this.dataType, "valueText." + this.id, "error." + this.id, config, minOccurs)) {
+                      txtAreaBool = false;
+                  }
+                  console.log(" textarea isValid : " + txtAreaBool);
+              }
+              else if (this.dataType == 'Regex') {
+                  if (!getDataTypeValidations(this.dataType, "regex." + this.id, "error." + this.id, config, minOccurs)) {
+                      regexBool = false;
+                  }
+                  console.log(" regex isValid : " + regexBool);
+              } else if (this.dataType == 'Date') {
 
-            if (!getDataTypeValidations(this.dataType, "date." + this.id, "error." + this.id, config, minOccurs)) {
-                dateBool = false;
-            }
-        }
+                  if (!getDataTypeValidations(this.dataType, "date." + this.id, "error." + this.id, config, minOccurs)) {
+                      dateBool = false;
+                  }
+              }
+        }//else is end
+      
     });
-    ///validation for 
-    if (localTestGroups.length > 0) {
-        jQuery(localTestGroups).each(function () {
-            jQuery(this.details).each(function () {
-                var minOccurs = this.minOccurs;
-                var config = this.config;
-                if (this.dataType == 'Text') {
-                    if (!getDataTypeValidations(this.dataType, "valueText." + this.id, "error." + this.id, config, minOccurs)) {
-                        txtBool = false;
-                    }
-                }
-                else if (this.dataType == 'Numeric') {
-                    if (!getDataTypeValidations(this.dataType, "float." + this.id, "error." + this.id, config, minOccurs)) {
-                        numBool = false;
-                    }
-                }
-                else if (this.dataType == 'TextArea') {
-                    if (!getDataTypeValidations(this.dataType, "valueText." + this.id, "error." + this.id, config, minOccurs)) {
-                        txtAreaBool = false;
-                    }
-                }
-                else if (this.dataType == 'Regex') {
-                    if (!getDataTypeValidations(this.dataType, "regex." + this.id, "error." + this.id, config, minOccurs)) {
-                        regexBool = false;
-                    }
-                    console.log(" regex isValid : " + regexBool);
-                } else if (this.dataType == 'Date') {
-
-                    if (!getDataTypeValidations(this.dataType, "date." + this.id, "error." + this.id, config, minOccurs)) {
-                        dateBool = false;
-                    }
-                }
-            });
-
-        });
-    }
-    if (txtBool && numBool && regexBool && txtAreaBool && dateBool) {
+    console.log("check validation ::: "+ groupValidateArrays.includes(false));
+    if (txtBool && numBool && regexBool && txtAreaBool && dateBool && !groupValidateArrays.includes(false)) {
         return true;
     } else {
         return false;
     }
 }
 
+function groupValidations(localTestGroups){
+	  let txtBool = true, numBool = true, regexBool = true, txtAreaBool = true, dateBool = true , multiset =true;
+    if (localTestGroups.length > 0) {
+    	
+        jQuery(localTestGroups).each(function () {   
+                if(this.subDetails != undefined && this.subDetails.length>0){
+                	multiset = subGroupValidations(this.subDetails);  
+                }else{
+                    var minOccurs = this.minOccurs;
+                    var config = this.config;
+                    if (this.dataType == 'Text') {
+                        if (!getDataTypeValidations(this.dataType, "valueText." + this.id, "error." + this.id, config, minOccurs)) {
+                             txtBool = false;
+                        }
+                    }
+                    else if (this.dataType == 'Numeric') {
+                        if (!getDataTypeValidations(this.dataType, "float." + this.id, "error." + this.id, config, minOccurs)) {
+                            numBool = false;
+                        }
+                    }
+                    else if (this.dataType == 'TextArea') {
+                        if (!getDataTypeValidations(this.dataType, "valueText." + this.id, "error." + this.id, config, minOccurs)) {
+                            txtAreaBool = false;
+                        }
+                    }
+                    else if (this.dataType == 'Regex') {
+                        if (!getDataTypeValidations(this.dataType, "regex." + this.id, "error." + this.id, config, minOccurs)) {
+                            regexBool = false;
+                        }
+                        console.log(" regex isValid : " + regexBool);
+                    } else if (this.dataType == 'Date') {
+
+                        if (!getDataTypeValidations(this.dataType, "date." + this.id, "error." + this.id, config, minOccurs)) {
+                            dateBool = false;
+                        }
+                    }
+                }
+            });
+    }
+    if (txtBool && numBool && regexBool && txtAreaBool && dateBool && multiset) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function subGroupValidations(subDetails){
+	  let numBool = true;
+	  let emptyErrorMessage = "Please select at least one option";
+	  let count =0;
+	    if (subDetails.length > 0) {
+	        jQuery(subDetails).each(function () {   
+	                let minOccurs = this.minOccurs;
+	                let config = this.config;
+					let id = "bool." + this.id
+					let boolInputVal = document.getElementById(id).value;
+	                if (boolInputVal == 'false' && minOccurs != 0 ) {
+	                	count++;
+	                }else {
+	                	count--;
+	                }
+	            });
+	        let errorId =  "error." + subDetails[subDetails.length-1].id;
+	        if(count == subDetails.length){
+	        	  document.getElementById(errorId).style.display = 'block';
+                  document.getElementById(errorId).innerHTML = emptyErrorMessage;
+                  numBool = false;    
+	        }else{
+	        	 document.getElementById(errorId).style.display = 'none';
+	        }
+	        console.log("First Index :: "+subDetails[subDetails.length-1].id);
+	    	console.log("Total Count :: "+count+ "Length :: "+subDetails.length );
+	    }
+	    
+	return numBool;    
+}
+
 function getDataTypeValidations(dataType, id, errorId, config, minOccurs) {
     let isValidate = true;
-    let emptyErrorMessage = "This field cannot be empty";
+	  let emptyErrorMessage = "This field cannot be empty";
     if (dataType == 'Text') {
         let textVal = document.getElementById(id).value;
         if (textVal == "" && minOccurs != 0) {
@@ -685,53 +734,66 @@ function betweenRange(x, min, max) {
 }
 
 /*Generate Group List  */
-function generateTestGroup() {
-    var requestItems = "";
-    jQuery(this.localTestGroups).each(function () {
-        requestItems = requestItems.concat('<div class="panel panel-default">');
-        requestItems = requestItems.concat('<div class="panel-heading" role="tab" id="heading' + this.groupName + '">');
-        requestItems = requestItems.concat('<h4 class="panel-title">');
-        requestItems = requestItems.concat('<a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse' + this.groupId + '" aria-expanded="false" aria-controls="collapse' + this.groupId + '">' + this.groupName + '</a>');
-        requestItems = requestItems.concat('</h4></div>');
-        requestItems = requestItems.concat('<div id="collapse' + this.groupId + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading' + this.groupName + '">');
-        requestItems = requestItems.concat('<div class="panel-body">');
-        jQuery(this.details).each(function () {
-
-            if (this.testAttributeId != 'undefined') {
-                requestItems = requestItems.concat('<input  hidden="true" id="testAttributeId.' + this.id + '" name ="testAttributeId.' + this.id + '" value="' + this.testAttributeId + '" />');
-            }
-            else {
-                requestItems = requestItems.concat('<input  hidden="true" id="testAttributeId.' + this.id + '" name ="testAttributeId.' + this.id + '" value="" />');
-            }
-            if (this.dataType == 'Coded') {
-                requestItems = requestItems.concat(codedTags(this.conceptOptions, this.value, this.id, this.name));
-            }
-            else if (this.dataType == 'Text') {
-                requestItems = requestItems.concat(textTags(this.value, this.id, this.name, this.hint));
-            }
-            else if (this.dataType == 'TextArea') {
-                requestItems = requestItems.concat(textAreaTags(this.value, this.id, this.name, this.hint));
-            }
-            else if (this.dataType == 'Numeric') {
-                requestItems = requestItems.concat(numericTags(this.value, this.name, this.id, this.hint));
-            }
-            else if (this.dataType == 'Boolean') {
-                requestItems = requestItems.concat(booleanTags(this.value, this.name, this.id, true));
-            }
-            else if (this.dataType == 'Date') {
-                requestItems = requestItems.concat(dateTags(this.value, this.name, this.id));
-            }
-            else if (this.dataType == 'Regex') {
-                requestItems = requestItems.concat(regexTags(this.value, this.name, this.id, this.hint));
-            }
+function generateTestGroup(localTestGroups,groupName) {
+    var resultsItems = "";
+    let groupIden = groupName.split(" ").join("");
+    let groupIdentity =groupIden.replace(/[&\/\\#,+()$~%.:*?<>{}]/g, '');
+    console.log("Group Id : "+groupIdentity.replace(/[&\/\\#,+()$~%.:*?<>{}]/g, ''));
+    resultsItems = resultsItems.concat('<div class="row">');
+    resultsItems = resultsItems.concat('<div class="col-md-12 col-md-offset-12 col-sm-12 col-sm-offset-12">');
+    resultsItems = resultsItems.concat('<div class="fancy-collapse-panel">');
+    resultsItems = resultsItems.concat('<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">');
+    resultsItems = resultsItems.concat('<div>');
+        resultsItems = resultsItems.concat('<div class="panel panel-default">');
+        resultsItems = resultsItems.concat('<div class="panel-heading" role="tab" id="heading' + groupIdentity+ '">');
+        resultsItems = resultsItems.concat('<h4 class="panel-title">');
+        resultsItems = resultsItems.concat('<a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse' + groupIdentity + '" aria-expanded="false" aria-controls="collapse' + groupIdentity+ '">' + groupName + '</a>');
+        resultsItems = resultsItems.concat('</h4></div>');
+        resultsItems = resultsItems.concat('<div id="collapse' + groupIdentity + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading' + groupIdentity + '">');
+        resultsItems = resultsItems.concat('<div class="panel-body">');
+        jQuery(localTestGroups).each(function () {
+          
+            if(this.subDetails != undefined && this.subDetails.length>0){
+            	resultsItems = resultsItems.concat(multiSelectCheckbox(this.subDetails,this.subGroupName));
+            }else{
+            	  if (this.testAttributeId != 'undefined') {
+                  	resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.' + this.id + '" name ="testAttributeId.' + this.id + '" value="' + this.testAttributeId + '" />');
+                  }
+                  else {
+                  	resultsItems = resultsItems.concat('<input  hidden="true" id="testAttributeId.' + this.id + '" name ="testAttributeId.' + this.id + '" value="" />');
+                  }
+            	   if (this.dataType == 'Coded') {
+                  	resultsItems = resultsItems.concat(codedTags(this.conceptOptions, this.value, this.id, this.name));
+                  }
+                  else if (this.dataType == 'Text') {
+                  	resultsItems = resultsItems.concat(textTags(this.value, this.id, this.name, this.hint));
+                  }
+                  else if (this.dataType == 'TextArea') {
+                  	resultsItems = resultsItems.concat(textAreaTags(this.value, this.id, this.name, this.hint));
+                  }
+                  else if (this.dataType == 'Numeric') {
+                  	resultsItems = resultsItems.concat(numericTags(this.value, this.name, this.id, this.hint));
+                  }
+                  else if (this.dataType == 'Boolean') {
+                  	resultsItems = resultsItems.concat(booleanTags(this.value, this.name, this.id, true));
+                  }
+                  else if (this.dataType == 'Date') {
+                  	resultsItems = resultsItems.concat(dateTags(this.value, this.name, this.id));
+                  }
+                  else if (this.dataType == 'Regex') {
+                  	resultsItems = resultsItems.concat(regexTags(this.value, this.name, this.id, this.hint));
+                  }            }
+            
+           
         });
-        requestItems = requestItems.concat('</div></div>');
-        requestItems = requestItems.concat('</div>');
-    });
-
-    console.log("Result items group : " + requestItems);
-    $("#panel-container").append(requestItems);
+        
+     resultsItems = resultsItems.concat('</div></div>');
+    resultsItems = resultsItems.concat('</div>');
+    resultsItems = resultsItems.concat('</div></div></div></div></div>');
+    console.log("Result items group : " + resultsItems);
+    //$("#panel-container").append(requestItems);
     // document.getElementById("sortweightList").innerHTML = resultsItems;
+    return resultsItems;
 }
 
 ///Htmle tags
@@ -865,6 +927,36 @@ function handleChange(checkbox) {
      	
      }else{
     } */
+}
+
+function multiSelectCheckbox(subGroupDetails,subGroupName){
+	 let multiSelectCheckboxTagItems = "";
+	
+		 multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<div class="row">');
+			 multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<div class="col-sm-3 col-md-3 col-lg-3">'+subGroupName+'</div>');
+			 multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<div class="col-md-6">');
+			  jQuery(subGroupDetails).each(function () { 
+				  if (this.testAttributeId != 'undefined') {
+					  multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<input  hidden="true" id="testAttributeId.' + this.id + '" name ="testAttributeId.' + this.id + '" value="' + this.testAttributeId + '" />');
+			        }
+			        else {
+			        	multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<input  hidden="true" id="testAttributeId.' + this.id + '" name ="testAttributeId.' + this.id + '" value="" />');
+			        }
+				  
+				  multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<div class="checkbox">');
+				 if (this.value == 'undefined') {
+					       multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<label><input type="checkbox" value="false"  id="bool.' + this.id + '" name="bool.' + this.id + '" onchange="handleChange(this);">'+this.name+'</label><span id="error.' + this.id + '" class="text-danger "></span>');
+			        } else {
+			            if (this.value == "true") {
+			            	multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<label><input type="checkbox" value="true"   id="bool.' + this.id + '" name="bool.' + this.id + '" checked="checked" onchange="handleChange(this);">'+this.name+'</label><span id="error.' + this.id + '" class="text-danger "></span>');
+			            } else {
+			            	multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('<label><input type="checkbox" value="false"  id="bool.' + this.id + '" name="bool.' + this.id + '" onchange="handleChange(this);">'+this.name+'</label><span id="error.' + this.id + '" class="text-danger "></span>');
+			            }
+			        }
+				 multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('</div>'); 
+			  });
+		 multiSelectCheckboxTagItems = multiSelectCheckboxTagItems.concat('</div></div>');    
+	return multiSelectCheckboxTagItems;
 }
 
 function dateTags(value, question, id) {
