@@ -166,7 +166,6 @@ public class LabTestResultViewController {
 			objTestSample.addProperty("testTypeId", testTypeId);
 			objTestSample.addProperty("attributeTypeName", labTestAttributeTypeObj.getName());
 			objTestSample.addProperty("sortWeight", labTestAttributeTypeObj.getSortWeight());
-			objTestSample.addProperty("groupId", labTestAttributeTypeObj.getGroupId());
 			objTestSample.addProperty("multisetName", labTestAttributeTypeObj.getMultisetName());
 			objTestSample.addProperty("groupName", labTestAttributeTypeObj.getGroupName());
 			testAttributeArray.add(objTestSample);

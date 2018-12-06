@@ -130,17 +130,7 @@ legend.scheduler-border {
 								<form:textarea class="form-control" maxlength="255"  path="description" id="description" ></form:textarea>
 							    <span id="atrdescription" class="text-danger "> </span>
 						   	</div>
-					  </div>
-					  <!-- Group Id -->
-					  <!--   <div class="row">
-						   <div class="col-md-2">
-								<form:label path="groupId" class="control-label"><spring:message code="commonlabtest.labtestattributetype.groupId" /></form:label>
-							</div>
-						   <div class="col-md-6">
-								<form:input class="form-control" maxlength="3"   path="groupId" id="group_id" onkeypress="return isNumber(event)"></form:input></td>
-							    <span id="groupid" class="text-danger "> </span>
-						   	</div>
-					 	 </div> -->
+					  </div>	
 					 	  <div class="row">
 						   <div class="col-md-2">
 								<form:label path="multisetName" class="control-label"><spring:message code="commonlabtest.labtestattributetype.multisetName" /></form:label>
