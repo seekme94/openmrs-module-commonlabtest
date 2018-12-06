@@ -56,8 +56,8 @@ public class LabTestAttributeType extends BaseAttributeType<LabTest> implements 
 	private String hint;
 	
 	@Field
-	@Column(name = "group_id")
-	private Integer groupId;
+	@Column(name = "multiset_name")
+	private String multisetName;
 	
 	@Field
 	@Column(name = "group_name")
@@ -112,16 +112,16 @@ public class LabTestAttributeType extends BaseAttributeType<LabTest> implements 
 		this.hint = hint;
 	}
 	
-	public Integer getGroupId() {
-		return groupId;
-	}
-	
-	public void setGroupId(Integer groupId) {
-		this.groupId = groupId;
-	}
-	
 	public String getGroupName() {
 		return groupName;
+	}
+	
+	public String getMultisetName() {
+		return multisetName;
+	}
+	
+	public void setMultisetName(String multisetName) {
+		this.multisetName = multisetName;
 	}
 	
 	public void setGroupName(String groupName) {

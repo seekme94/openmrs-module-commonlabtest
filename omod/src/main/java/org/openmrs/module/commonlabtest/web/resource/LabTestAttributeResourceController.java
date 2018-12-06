@@ -9,6 +9,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestAttribute;
 import org.openmrs.module.commonlabtest.api.CommonLabTestService;
+import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
@@ -56,6 +57,11 @@ public class LabTestAttributeResourceController extends DataDelegatingCrudResour
 	@Override
 	public LabTestAttribute save(LabTestAttribute labTestAttribute) {
 		return commonLabTestService.saveLabTestAttribute(labTestAttribute);
+	}
+	
+	@Override
+	public Object create(SimpleObject propertiesToCreate, RequestContext context) throws ResponseException {
+		return super.create(propertiesToCreate, context);
 	}
 	
 	@Override
