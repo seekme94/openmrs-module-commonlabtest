@@ -187,12 +187,6 @@ public class LabTestResultController {
 				}
 			}
 			
-			/*String resultComments = request.getParameter("resultComments");
-			if (!resultComments.equals("") && resultComments != null) {
-				labTest.setResultComments(resultComments);
-				 Context.getService(CommonLabTestService.class).saveLabTest(labTest);//need to review this lines
-			}*/
-			
 			commonLabTestService.saveLabTestAttributes(labTestAttributes);
 		}
 		catch (Exception e) {
@@ -209,7 +203,6 @@ public class LabTestResultController {
 	public String onVoid(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("testOrderId") Integer testOrderId, @RequestParam("patientId") Integer patientId,
 	        @RequestParam("voidReason") String voidReason) {
-		//List<LabTestAttribute> labTestAttributes =  Context.getService(CommonLabTestService.class).getLabTestAttributes(testOrderId);
 		String status;
 		if (Context.getAuthenticatedUser() == null) {
 			return "redirect:../../login.htm";
@@ -287,7 +280,6 @@ public class LabTestResultController {
 		    "org.openmrs.customdatatype.datatype.ConceptDatatype")) {
 			if (labTestAttributeType.getDatatypeConfig() != null && labTestAttributeType.getDatatypeConfig() != ""
 			        && !labTestAttributeType.getDatatypeConfig().isEmpty()) {
-				System.out.println("Data Conf :" + labTestAttributeType.getDatatypeConfig());
 				Concept concept = Context.getConceptService().getConcept(
 				    Integer.parseInt(labTestAttributeType.getDatatypeConfig()));
 				
@@ -362,7 +354,6 @@ public class LabTestResultController {
 				parentJsonArray.add(getAttributeTypeJsonObj(labTestAttributeType, labTestAttributes));
 			}
 		}
-		System.out.println("Array Result : " + parentJsonArray.toString());
 		return parentJsonArray;
 	}
 	

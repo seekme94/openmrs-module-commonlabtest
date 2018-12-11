@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestSample;
 import org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus;
@@ -35,7 +34,6 @@ public class ManageLabTestSampleController {
 	public String showLabTestSample(HttpServletRequest request, @RequestParam(required = true) Integer patientId,
 	        @RequestParam(required = false) Integer testOrderId, @RequestParam(required = false) String save, ModelMap model) {
 		
-		//CommonLabTestService commonLabTestService = (CommonLabTestService) Context.getService(CommonLabTestService.class);
 		List<LabTestSample> testSample;
 		if (testOrderId == null) {
 			testSample = new ArrayList<LabTestSample>();

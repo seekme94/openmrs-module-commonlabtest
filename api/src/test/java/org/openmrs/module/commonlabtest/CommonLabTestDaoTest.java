@@ -14,13 +14,17 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.List;
 
 import org.hamcrest.Matchers;
+import org.hibernate.HibernateException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.internal.runners.model.ReflectiveCallable;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
@@ -34,21 +38,22 @@ import org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * It is an integration test (extends BaseModuleContextSensitiveTest), which verifies DAO methods
- * against the in-memory H2 database. The database is initially loaded with data from
- * standardTestDataset.xml in openmrs-api. All test methods are executed in transactions, which are
- * rolled back by the end of each test method.
+ * It is an integration test (extends BaseModuleContextSensitiveTest), which
+ * verifies DAO methods against the in-memory H2 database. The database is
+ * initially loaded with data from standardTestDataset.xml in openmrs-api. All
+ * test methods are executed in transactions, which are rolled back by the end
+ * of each test method.
  */
 public class CommonLabTestDaoTest extends CommonLabTestBase {
-	
+
 	@Autowired
 	CommonLabTestDaoImpl dao;
-	
+
 	@Before
 	public void runBeforeEachTest() throws Exception {
 		super.initTestData();
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getAllLabTestAttributeTypes(boolean)}
@@ -57,11 +62,13 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetAllLabTestAttributeTypes() {
 		Context.clearSession();
-		List<LabTestAttributeType> list = dao.getAllLabTestAttributeTypes(false);
+		List<LabTestAttributeType> list = dao
+				.getAllLabTestAttributeTypes(false);
 		assertTrue(list.size() == activeLabTestAttributeTypes.size());
-		assertThat(list, Matchers.not(Matchers.hasItems(cad4tbScore, xrayFilmPrinted)));
+		assertThat(list,
+				Matchers.not(Matchers.hasItems(cad4tbScore, xrayFilmPrinted)));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getAllLabTestTypes(boolean)}
@@ -73,7 +80,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		List<LabTestType> list = dao.getAllLabTestTypes(false);
 		assertThat(list, Matchers.hasItems(geneXpert, chestXRay));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestTypes(java.lang.String, java.lang.String, org.openmrs.module.commonlabtest.LabTestType.LabTestGroup, org.openmrs.Concept, boolean)}
@@ -82,10 +89,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestTypesByName() {
 		Context.clearSession();
-		List<LabTestType> list = dao.getLabTestTypes("GeneXpert Test", null, LabTestGroup.BACTERIOLOGY, null, false);
+		List<LabTestType> list = dao.getLabTestTypes("GeneXpert Test", null,
+				LabTestGroup.BACTERIOLOGY, null, false);
 		assertThat(list, Matchers.hasItem(geneXpert));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTest(org.openmrs.Encounter)}
@@ -98,7 +106,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		LabTest labTest = dao.getLabTest(order);
 		assertEquals(labTest, harryGxp);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTest(java.lang.Integer)}
@@ -110,7 +118,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		LabTest labTest = dao.getLabTest(100);
 		assertEquals(labTest, harryGxp);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttribute(java.lang.Integer)}
@@ -122,7 +130,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		LabTestAttribute labTestAttribute = dao.getLabTestAttribute(1);
 		assertEquals(labTestAttribute, harryCartridgeId);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributeByUuid(java.lang.String)}
@@ -131,10 +139,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestAttributeByUuid() {
 		Context.clearSession();
-		LabTestAttribute labTestAttribute = dao.getLabTestAttributeByUuid("2c9737d9-47c2-11e8-943c-40b034c3cfee");
+		LabTestAttribute labTestAttribute = dao
+				.getLabTestAttributeByUuid("2c9737d9-47c2-11e8-943c-40b034c3cfee");
 		assertEquals(labTestAttribute, harryCartridgeId);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributes(org.openmrs.module.commonlabtest.LabTestAttributeType, org.openmrs.module.commonlabtest.LabTest, org.openmrs.Patient, java.lang.String, java.util.Date, java.util.Date, boolean)}
@@ -143,10 +152,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestAttributesByType() {
 		Context.clearSession();
-		List<LabTestAttribute> list = dao.getLabTestAttributes(mtbResult, null, null, null, null, null, true);
+		List<LabTestAttribute> list = dao.getLabTestAttributes(mtbResult, null,
+				null, null, null, null, true);
 		assertThat(list, Matchers.hasItem(harryMtbResult));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributes(org.openmrs.module.commonlabtest.LabTestAttributeType, org.openmrs.module.commonlabtest.LabTest, org.openmrs.Patient, java.lang.String, java.util.Date, java.util.Date, boolean)}
@@ -155,10 +165,12 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestAttributesByTestOrderId() {
 		Context.clearSession();
-		List<LabTestAttribute> list = dao.getLabTestAttributes(harryGxp.getTestOrderId());
-		assertThat(list, Matchers.hasItems(harryCartridgeId, harryMtbResult, harryRifResult));
+		List<LabTestAttribute> list = dao.getLabTestAttributes(harryGxp
+				.getTestOrderId());
+		assertThat(list, Matchers.hasItems(harryCartridgeId, harryMtbResult,
+				harryRifResult));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributes(org.openmrs.module.commonlabtest.LabTestAttributeType, org.openmrs.module.commonlabtest.LabTest, org.openmrs.Patient, java.lang.String, java.util.Date, java.util.Date, boolean)}
@@ -168,10 +180,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Ignore
 	public final void testGetLabTestAttributesByLabTest() {
 		Context.clearSession();
-		List<LabTestAttribute> list = dao.getLabTestAttributes(null, harryGxp, null, null, null, null, false);
+		List<LabTestAttribute> list = dao.getLabTestAttributes(null, harryGxp,
+				null, null, null, null, false);
 		assertThat(list, Matchers.hasItem(harryCartridgeId));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributes(org.openmrs.module.commonlabtest.LabTestAttributeType, org.openmrs.module.commonlabtest.LabTest, org.openmrs.Patient, java.lang.String, java.util.Date, java.util.Date, boolean)}
@@ -181,10 +194,12 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Ignore
 	public final void testGetLabTestAttributesByPatient() {
 		Context.clearSession();
-		List<LabTestAttribute> list = dao.getLabTestAttributes(null, null, harry, null, null, null, false);
-		assertThat(list, Matchers.containsInAnyOrder(harryCartridgeId, harryMtbResult, harryRifResult, harryCxrResult));
+		List<LabTestAttribute> list = dao.getLabTestAttributes(null, null,
+				harry, null, null, null, false);
+		assertThat(list, Matchers.containsInAnyOrder(harryCartridgeId,
+				harryMtbResult, harryRifResult, harryCxrResult));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributeType(java.lang.Integer)}
@@ -192,11 +207,13 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestAttributeType() {
-		
-		List<LabTestAttributeType> list = dao.getLabTestAttributeTypes(geneXpert, false);
-		assertThat(list, Matchers.containsInAnyOrder(cartridgeId, mtbResult, rifResult));
+
+		List<LabTestAttributeType> list = dao.getLabTestAttributeTypes(
+				geneXpert, false);
+		assertThat(list,
+				Matchers.containsInAnyOrder(cartridgeId, mtbResult, rifResult));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributeTypeByUuid(java.lang.String)}
@@ -204,12 +221,13 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestAttributeTypeByUuid() {
-		
-		LabTestAttributeType retrivedObject = dao.getLabTestAttributeTypeByUuid(cartridgeId.getUuid());
+
+		LabTestAttributeType retrivedObject = dao
+				.getLabTestAttributeTypeByUuid(cartridgeId.getUuid());
 		assertEquals("should be equal !", retrivedObject, cartridgeId);
-		
+
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestAttributeTypes(java.lang.String, java.lang.String, boolean)}
@@ -217,27 +235,35 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestAttributeTypes() {
-		
-		List<LabTestAttributeType> classNameList = dao.getLabTestAttributeTypes(null,
-		    "org.openmrs.customdatatype.datatype.FreeTextDatatype", false);
+
+		List<LabTestAttributeType> classNameList = dao
+				.getLabTestAttributeTypes(null,
+						"org.openmrs.customdatatype.datatype.FreeTextDatatype",
+						false);
 		assertThat(classNameList, Matchers.hasSize(2));
-		
-		List<LabTestAttributeType> classNameListRetired = dao.getLabTestAttributeTypes(null,
-		    "org.openmrs.customdatatype.datatype.FloatDatatype", true);
+
+		List<LabTestAttributeType> classNameListRetired = dao
+				.getLabTestAttributeTypes(null,
+						"org.openmrs.customdatatype.datatype.FloatDatatype",
+						true);
 		assertThat(classNameListRetired, Matchers.hasSize(1));
-		
-		List<LabTestAttributeType> nameListRetired = dao.getLabTestAttributeTypes("CAD4TB Score", null, true);
+
+		List<LabTestAttributeType> nameListRetired = dao
+				.getLabTestAttributeTypes("CAD4TB Score", null, true);
 		assertThat(nameListRetired, Matchers.hasSize(1));
-		
-		List<LabTestAttributeType> nameList = dao.getLabTestAttributeTypes("Radiologist Remarks", null, false);
+
+		List<LabTestAttributeType> nameList = dao.getLabTestAttributeTypes(
+				"Radiologist Remarks", null, false);
 		assertThat(nameList, Matchers.hasSize(1));
-		
-		List<LabTestAttributeType> nameWithClassNameListRetired = dao.getLabTestAttributeTypes("CAD4TB Score",
-		    "org.openmrs.customdatatype.datatype.FloatDatatype", true);
+
+		List<LabTestAttributeType> nameWithClassNameListRetired = dao
+				.getLabTestAttributeTypes("CAD4TB Score",
+						"org.openmrs.customdatatype.datatype.FloatDatatype",
+						true);
 		assertThat(nameWithClassNameListRetired, Matchers.hasSize(1));
-		
+
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestByUuid(java.lang.String)}
@@ -248,7 +274,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		LabTest retrivedObject = dao.getLabTestByUuid(harryGxp.getUuid());
 		assertEquals("should be equal !", retrivedObject, harryGxp);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTests(org.openmrs.module.commonlabtest.LabTestType, org.openmrs.Patient, java.lang.String, java.lang.String, org.openmrs.Concept, org.openmrs.Provider, java.util.Date, java.util.Date, boolean)}
@@ -256,10 +282,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTests() {
-		List<LabTest> allLabTests = dao.getLabTests(null, harry, null, null, null, null, null, null, false);
+		List<LabTest> allLabTests = dao.getLabTests(null, harry, null, null,
+				null, null, null, null, false);
 		assertThat(allLabTests, Matchers.containsInAnyOrder(harryGxp, harryCxr));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestSample(java.lang.Integer)}
@@ -267,10 +294,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestSample() {
-		LabTestSample retrivedObject = dao.getLabTestSample(harrySample.getId());
+		LabTestSample retrivedObject = dao
+				.getLabTestSample(harrySample.getId());
 		assertEquals("should be equal !", retrivedObject, harrySample);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestSampleByUuid(java.lang.String)}
@@ -278,10 +306,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestSampleByUuid() {
-		LabTestSample retrivedObject = dao.getLabTestSampleByUuid(harrySample.getUuid());
+		LabTestSample retrivedObject = dao.getLabTestSampleByUuid(harrySample
+				.getUuid());
 		assertEquals("should be equal !", retrivedObject, harrySample);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestSamples(org.openmrs.module.commonlabtest.LabTest, boolean)}
@@ -291,9 +320,9 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	public final void testGetLabTestSamplesByLabTest() {
 		List<LabTestSample> harryList = dao.getLabTestSamples(harryGxp, false);
 		assertThat(harryList, Matchers.hasSize(1));
-		
+
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestSamples(org.openmrs.Patient, boolean)}
@@ -301,11 +330,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestSamplesByPatient() {
-		
+
 		List<LabTestSample> list = dao.getLabTestSamples(harry, false);
 		assertThat(list, Matchers.hasSize(1));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestSamples(org.openmrs.Provider, boolean)}
@@ -313,13 +342,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestSamplesByProvider() {
-		// TODO
-		
 		List<LabTestSample> list = dao.getLabTestSamples(owais, false);
 		assertThat(list, Matchers.hasItem(harrySample));
-		
+
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestType(java.lang.Integer)}
@@ -327,11 +354,10 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestType() {
-		// TODO
 		LabTestType retrivedObject = dao.getLabTestType(geneXpert.getId());
 		assertEquals(geneXpert, retrivedObject);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getLabTestTypeByUuid(java.lang.String)}
@@ -339,11 +365,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestTypeByUuid() {
-		// TODO
-		LabTestType retrivedObject = dao.getLabTestTypeByUuid(geneXpert.getUuid());
+		LabTestType retrivedObject = dao.getLabTestTypeByUuid(geneXpert
+				.getUuid());
 		assertEquals(geneXpert, retrivedObject);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getNLabTests(org.openmrs.Patient, int, boolean, boolean, boolean)}
@@ -351,12 +377,10 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetNLabTests() {
-		// TODO
-		
 		List<LabTest> list = dao.getNLabTests(harry, 2, true, false, false);
 		assertThat(list, Matchers.containsInAnyOrder(harryGxp, harryCxr));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#getNLabTestSamples(org.openmrs.Patient, org.openmrs.module.commonlabtest.LabTestSample.LabTestSampleStatus, int, boolean, boolean, boolean)}
@@ -364,18 +388,19 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetNLabTestSamples() {
-		// TODO
-		List<LabTestSample> samples = dao.getNLabTestSamples(harry, null, 2, true, false, false);
+		List<LabTestSample> samples = dao.getNLabTestSamples(harry, null, 2,
+				true, false, false);
 		assertThat(samples, Matchers.hasItem(harrySample));
-		
-		List<LabTestSample> processedSamples = dao.getNLabTestSamples(harry, LabTestSampleStatus.PROCESSED, 2, true, false,
-		    false);
+
+		List<LabTestSample> processedSamples = dao.getNLabTestSamples(harry,
+				LabTestSampleStatus.PROCESSED, 2, true, false, false);
 		assertThat(processedSamples, Matchers.hasItem(harrySample));
 		assertThat(processedSamples, Matchers.hasSize(1));
-		assertEquals(processedSamples.get(0).getStatus(), LabTestSampleStatus.PROCESSED);
-		
+		assertEquals(processedSamples.get(0).getStatus(),
+				LabTestSampleStatus.PROCESSED);
+
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#purgeLabTest(org.openmrs.module.commonlabtest.LabTest)}
@@ -383,19 +408,14 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testPurgeLabTest() {
-		// TODO  high-risk operation
-		
-		/*	LabTest test = dao.getLabTestByUuid(harryCxr.getUuid());
-			// Purge object
-			dao.purgeLabTest(test);
-			// Clear cache
-			Context.flushSession();
-			Context.clearSession();
-			// Read again
-			LabTest exists = dao.getLabTestByUuid(test.getUuid());
-			assertNull(exists);*/
+		/*LabTest test = dao.getLabTest(200);
+		dao.purgeLabTest(test);
+		Context.flushSession();
+		Context.clearSession();
+		LabTest labTest = dao.getLabTest(200);
+		assertNull(labTest);*/
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#purgeLabTestAttribute(org.openmrs.module.commonlabtest.LabTestAttribute)}
@@ -403,9 +423,16 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testPurgeLabTestAttribute() {
-		// TODO
+		LabTestAttribute labTestAttribute = dao.getLabTestAttribute(2);
+		dao.purgeLabTestAttribute(labTestAttribute);
+		// clear cache
+		Context.flushSession();
+		Context.clearSession();
+		LabTestAttribute exists = dao
+				.getLabTestAttributeByUuid(labTestAttribute.getUuid());
+		assertNull(exists);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#purgeLabTestAttributeType(org.openmrs.module.commonlabtest.LabTestAttributeType)}
@@ -413,9 +440,19 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testPurgeLabTestAttributeType() {
-		// TODO
+
+		/*
+		 * LabTestAttributeType labTestAttributeType =
+		 * dao.getLabTestAttributeType(2);
+		 * dao.purgeLabTestAttributeType(labTestAttributeType); //clear cache
+		 * Context.flushSession(); Context.clearSession(); LabTestAttributeType
+		 * exists =
+		 * dao.getLabTestAttributeTypeByUuid(labTestAttributeType.getUuid());
+		 * assertNull(exists);
+		 */
+
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#purgeLabTestSample(org.openmrs.module.commonlabtest.LabTestSample)}
@@ -423,8 +460,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testPurgeLabTestSample() {
-		// TODO
-		
+
 		LabTestSample sample = dao.getLabTestSample(2);
 		// Purge object
 		dao.purgeLabTestSample(sample);
@@ -435,7 +471,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		LabTestSample exists = dao.getLabTestSampleByUuid(sample.getUuid());
 		assertNull(exists);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#purgeLabTestType(org.openmrs.module.commonlabtest.LabTestType)}
@@ -453,7 +489,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		LabTestType exists = dao.getLabTestTypeByUuid(testType.getUuid());
 		assertNull(exists);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTest(org.openmrs.module.commonlabtest.LabTest)}
@@ -461,10 +497,21 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testSaveLabTest() {
-		// TODO
-		
+
+		LabTest labTest = new LabTest();
+		Order order = Context.getOrderService().getOrder(100);
+		labTest.setOrder(order);
+		LabTestType labTestType = dao.getLabTestType(2);
+		labTest.setLabTestType(labTestType);
+		LabTest resultLabTest = dao.saveLabTest(labTest);
+		labTest.setLabReferenceNumber("dummy reference");
+
+		assertThat(
+				resultLabTest,
+				Matchers.hasProperty("labReferenceNumber",
+						Matchers.anything("dummy reference")));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestOrder(org.openmrs.Order)}
@@ -489,9 +536,12 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		testOrder.setUrgency(Urgency.ROUTINE);
 		testOrder.setCareSetting(Context.getOrderService().getCareSetting(1));
 		Order savedOrder = dao.saveLabTestOrder(testOrder);
-		assertThat(savedOrder, Matchers.hasProperty("orderId", org.hamcrest.Matchers.notNullValue()));
+		assertThat(
+				savedOrder,
+				Matchers.hasProperty("orderId",
+						org.hamcrest.Matchers.notNullValue()));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestOrder(org.openmrs.Order)}
@@ -516,9 +566,12 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		testOrder.setUrgency(Urgency.ROUTINE);
 		testOrder.setCareSetting(Context.getOrderService().getCareSetting(1));
 		Order savedOrder = dao.saveLabTestOrder(testOrder);
-		assertThat(savedOrder, Matchers.hasProperty("orderId", org.hamcrest.Matchers.notNullValue()));
+		assertThat(
+				savedOrder,
+				Matchers.hasProperty("orderId",
+						org.hamcrest.Matchers.notNullValue()));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestOrder(org.openmrs.Order)}
@@ -529,10 +582,14 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		Order order = Context.getOrderService().getOrder(100);
 		order.setUrgency(Urgency.STAT);
 		Order savedOrder = dao.saveLabTestOrder(order);
-		assertThat(savedOrder, Matchers.hasProperty("orderId", org.hamcrest.Matchers.is(100)));
-		assertThat(savedOrder, Matchers.hasProperty("urgency", org.hamcrest.Matchers.is(Urgency.STAT)));
+		assertThat(savedOrder,
+				Matchers.hasProperty("orderId", org.hamcrest.Matchers.is(100)));
+		assertThat(
+				savedOrder,
+				Matchers.hasProperty("urgency",
+						org.hamcrest.Matchers.is(Urgency.STAT)));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestAttribute(org.openmrs.module.commonlabtest.LabTestAttribute)}
@@ -540,21 +597,15 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testSaveLabTestAttribute() {
-		// TODO
-	}
-	
-	/**
-	 * Test method for
-	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestAttributeType(org.openmrs.module.commonlabtest.LabTestAttributeType)}
-	 * .
-	 */
-	@Test
-	public final void testSaveLabTestAttributeType() {
-		// TODO
-		
+
+		LabTestAttribute labTestAttribute = new LabTestAttribute();
+		LabTest labTest = dao.getLabTest(Context.getOrderService()
+				.getOrder(100));
+		labTestAttribute.setLabTest(labTest);
 		LabTestAttributeType attributeType = new LabTestAttributeType();
 		attributeType.setLabTestType(geneXpert);
-		attributeType.setDatatypeClassname("org.openmrs.customdatatype.datatype.FloatDatatype");
+		attributeType
+				.setDatatypeClassname("org.openmrs.customdatatype.datatype.FloatDatatype");
 		attributeType.setDatatypeConfig("");
 		attributeType.setDescription("discriptions");
 		attributeType.setMaxOccurs(2);
@@ -563,19 +614,57 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		attributeType.setUuid("b98b5208-5bbf-11e8-b60d-08dd27ea421d");
 		attributeType.setName("Name");
 		attributeType.setPreferredHandlerClassname("asd");
-		
 		attributeType = dao.saveLabTestAttributeType(attributeType);
-		
+		labTestAttribute.setLabTestAttributeId(attributeType.getId());
+		labTestAttribute.setValueReference("2018-10-03");
+		LabTestAttribute resultLabTestAttribute = dao
+				.saveLabTestAttribute(labTestAttribute);
+
+		assertThat(resultLabTestAttribute, Matchers.hasProperty("uuid",
+				org.hamcrest.Matchers.is(resultLabTestAttribute.getUuid())));
+
+	}
+
+	/**
+	 * Test method for
+	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestAttributeType(org.openmrs.module.commonlabtest.LabTestAttributeType)}
+	 * .
+	 */
+	@Test
+	public final void testSaveLabTestAttributeType() {
+
+		LabTestAttributeType attributeType = new LabTestAttributeType();
+		attributeType.setLabTestType(geneXpert);
+		attributeType
+				.setDatatypeClassname("org.openmrs.customdatatype.datatype.FloatDatatype");
+		attributeType.setDatatypeConfig("");
+		attributeType.setDescription("discriptions");
+		attributeType.setMaxOccurs(2);
+		attributeType.setMinOccurs(1);
+		attributeType.setSortWeight(1.1);
+		attributeType.setUuid("b98b5208-5bbf-11e8-b60d-08dd27ea421d");
+		attributeType.setName("Name");
+		attributeType.setPreferredHandlerClassname("asd");
+
+		attributeType = dao.saveLabTestAttributeType(attributeType);
+
 		// Clear cache
 		// Context.flushSession();
 		Context.clearSession();
 		// Read again
-		
-		LabTestAttributeType savedAttributeType = dao.getLabTestAttributeTypeByUuid(attributeType.getUuid());
-		assertThat(savedAttributeType, Matchers.hasProperty("uuid", org.hamcrest.Matchers.is(attributeType.getUuid())));
-		assertThat(savedAttributeType, Matchers.hasProperty("creator", org.hamcrest.Matchers.is(attributeType.getCreator())));
+
+		LabTestAttributeType savedAttributeType = dao
+				.getLabTestAttributeTypeByUuid(attributeType.getUuid());
+		assertThat(
+				savedAttributeType,
+				Matchers.hasProperty("uuid",
+						org.hamcrest.Matchers.is(attributeType.getUuid())));
+		assertThat(
+				savedAttributeType,
+				Matchers.hasProperty("creator",
+						org.hamcrest.Matchers.is(attributeType.getCreator())));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestSample(org.openmrs.module.commonlabtest.LabTestSample)}
@@ -589,7 +678,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		testSample.setCollectionDate(new Date());
 		testSample.setCollector(owais);
 		testSample.setLabTest(hermioneGxp);
-		
+
 		testSample.setSpecimenType(geneXpert.getReferenceConcept());
 		testSample.setSpecimenSite(geneXpert.getReferenceConcept());
 		testSample.setSampleIdentifier("123");
@@ -598,13 +687,20 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		// Context.flushSession();
 		Context.clearSession();
 		// Read again
-		LabTestSample savedLabTestSample = dao.getLabTestSample(testSample.getId());
-		
-		assertThat(savedLabTestSample, Matchers.hasProperty("uuid", org.hamcrest.Matchers.is(testSample.getUuid())));
-		assertThat(savedLabTestSample, Matchers.hasProperty("creator", org.hamcrest.Matchers.is(testSample.getCreator())));
-		
+		LabTestSample savedLabTestSample = dao.getLabTestSample(testSample
+				.getId());
+
+		assertThat(
+				savedLabTestSample,
+				Matchers.hasProperty("uuid",
+						org.hamcrest.Matchers.is(testSample.getUuid())));
+		assertThat(
+				savedLabTestSample,
+				Matchers.hasProperty("creator",
+						org.hamcrest.Matchers.is(testSample.getCreator())));
+
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.openmrs.module.commonlabtest.api.dao.impl.CommonLabTestDaoImpl#saveLabTestType(org.openmrs.module.commonlabtest.LabTestType)}
@@ -622,11 +718,17 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 		// Save object
 		testType = dao.saveLabTestType(testType);
 		// Clear cache
-		//Context.flushSession();
+		// Context.flushSession();
 		Context.clearSession();
 		// Read again
 		LabTestType savedTestType = dao.getLabTestType(testType.getId());
-		assertThat(savedTestType, Matchers.hasProperty("uuid", org.hamcrest.Matchers.is(testType.getUuid())));
-		assertThat(savedTestType, Matchers.hasProperty("creator", org.hamcrest.Matchers.is(testType.getCreator())));
+		assertThat(
+				savedTestType,
+				Matchers.hasProperty("uuid",
+						org.hamcrest.Matchers.is(testType.getUuid())));
+		assertThat(
+				savedTestType,
+				Matchers.hasProperty("creator",
+						org.hamcrest.Matchers.is(testType.getCreator())));
 	}
 }

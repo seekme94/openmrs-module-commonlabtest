@@ -128,7 +128,6 @@ public class LabTestRequestController {
 		String status = "";
 		boolean boolStatus = Boolean.TRUE;
 		try {
-			System.out.println(json);
 			JsonArray arry = (JsonArray) new JsonParser().parse(json);
 			List<LabTest> labTestArray = new ArrayList<LabTest>();
 			for (int i = 0; i < arry.size(); i++) {

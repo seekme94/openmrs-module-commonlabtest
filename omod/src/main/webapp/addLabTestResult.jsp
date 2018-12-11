@@ -410,9 +410,6 @@ function populateResultForm() {
     resultsItems = resultsItems.concat('</div></div></form>');
     console.log("Resultan String : " + resultsItems);
     $("#resultContainer").append(resultsItems);
-    //Generate all teh groups;	
-    //generateTestGroup();
-
 }
 
 function validateBlur(ref) {

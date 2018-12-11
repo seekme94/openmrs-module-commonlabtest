@@ -1,9 +1,7 @@
 package org.openmrs.module.commonlabtest.web.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -79,7 +77,6 @@ public class LabTestResultViewController {
 								if (conceptConfig.getDatatype().getName().equals("Coded")) {
 									Concept concept = Context.getConceptService().getConcept(
 									    Integer.parseInt(labTestResult.getValueReference()));
-									byte[] byteArray = Base64.decodeBase64(concept.getName().getName().getBytes());
 									objTestResult.addProperty("valuesReference", concept.getName().getName());
 								} else {
 									objTestResult.addProperty("valuesReference", labTestResult.getValueReference());
@@ -94,22 +91,12 @@ public class LabTestResultViewController {
 					testResultArray.add(objTestResult);
 				}
 			}
-			
-			/*String comments = labTest.getResultComments();
-			if (!comments.equals("")) {
-				JsonObject objTestResult = new JsonObject();
-				objTestResult.addProperty("question", "Comments");
-				objTestResult.addProperty("valuesReference", comments);
-				testResultArray.add(objTestResult);
-			}*/
 		}
 		
 		catch (Exception e) {
-			e.printStackTrace();
 			testResultList.add("sample", testSampleArray);
 			testResultList.add("result", testResultArray);
 		}
-		System.out.println("Result : " + testResultArray.toString());
 		testResultList.add("sample", testSampleArray);
 		testResultList.add("result", testResultArray);
 		

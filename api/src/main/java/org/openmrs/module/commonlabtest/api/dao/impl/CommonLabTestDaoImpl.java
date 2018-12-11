@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.commonlabtest.api.dao.impl;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,11 +25,9 @@ import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.openmrs.Concept;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
@@ -189,39 +188,11 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	@SuppressWarnings("unchecked")
 	public List<LabTestAttribute> getLabTestAttributes(LabTestAttributeType labTestAttributeType, LabTest labTest,
 	        Patient patient, String valueReference, Date from, Date to, boolean includeVoided) {
-		//		// Terrible, terrible way
-		//		StringBuffer query = new StringBuffer();
-		//		query.append("SELECT * FROM commonlab_test_attribute as lta ");
-		//		query.append("INNER JOIN commonlab_test as lt on lt.lab_test_id = lta.test_order_id ");
-		//		query.append("INNER JOIN orders as o on o.order_id = lta.test_order_id ");
-		//		query.append("INNER JOIN patient as p on p.patient_id = o.patient_id ");
-		//		query.append("WHERE 1 = 1 ");
-		//		if (labTestAttributeType != null) {
-		//			query.append("AND lta.attribute_type_id = " + labTestAttributeType.getId());
-		//		}
-		//		if (labTest != null) {
-		//			query.append("AND lt.test_order_id = " + labTest.getId());
-		//		}
-		//		if (patient != null) {
-		//			query.append("AND p.patient_id = " + patient.getPatientId());
-		//		}
-		//		if (valueReference != null) {
-		//			query.append("AND lta.value_reference like '%" + valueReference + "%'");
-		//		}
-		//		if (from != null && to != null) {
-		//			// TODO:
-		//		}
-		//		if (!includeVoided) {
-		//			query.append("AND lta.voided = 0");
-		//		}
-		//		return sessionFactory.getCurrentSession().createSQLQuery(query.toString()).list();
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestAttribute.class);
 		if (labTestAttributeType != null) {
 			criteria.add(Restrictions.eqOrIsNull("attributeTypeId.labTestAttributeTypeId", labTestAttributeType.getId()));
 		}
-		if (labTest != null) {
-			// TODO: criteria.add(Restrictions.eqOrIsNull("labTest", labTest));
-		}
+		if (labTest != null) {}
 		if (patient != null) {
 			criteria.add(Restrictions.eqOrIsNull("owner.order.patient.patientId", patient.getId()));
 		}
@@ -270,7 +241,6 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		}
 		
 		if (datatypeClassname != null) {
-			System.out.println(datatypeClassname);
 			criteria.add(Restrictions.eq("datatypeClassname", datatypeClassname));
 		}
 		if (!includeRetired) {
@@ -454,11 +424,6 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		List<LabTest> firstN = null;
 		List<LabTest> lastN = null;
 		if (patient != null) {
-			/*DetachedCriteria criteriaChild = DetachedCriteria.forClass(org.openmrs.Order.class);
-			
-			criteriaChild.add(Restrictions.eq("patient.personId", patient.getPatientId()));
-			
-			criteria.add(Subqueries.exists(criteriaChild));*/
 			criteria.createAlias("order", "o", CriteriaSpecification.INNER_JOIN).setFetchMode("o", FetchMode.JOIN)
 			        .add(Restrictions.eq("o.patient.personId", patient.getPatientId()));
 		}
@@ -500,7 +465,6 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestSample.class);
 		List<LabTestSample> firstN = null;
 		List<LabTestSample> lastN = null;
-		//criteria.add(Restrictions.eq("labTest.order.patient.patientId", patient.getPatientId()));
 		criteria.createAlias("labTest", "labTest", CriteriaSpecification.INNER_JOIN).setFetchMode("labTest", FetchMode.JOIN)
 		        .createAlias("labTest.order", "order", CriteriaSpecification.INNER_JOIN)
 		        .setFetchMode("order", FetchMode.JOIN)

@@ -306,15 +306,6 @@ $(document).ready(function () {
 
 function setSpecimenTypeVal(id) {
     document.getElementById('sample_identifier').value = (new Date).toISOString().replace(/z|t/gi, ' ').trim();
-    /*  var testType = specimentTypeArray.find(o => o.id == id);
-     let testName = "" ;
-     testName = testType.name;
-     console.log("change : "+testName);
-     if(testName == null || testName === ""){
-          document.getElementById('sample_identifier').value = id+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
-      }else{
-          document.getElementById('sample_identifier').value = testName.toLowerCase().trim()+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();
-      }	 */
 }
 
 
@@ -376,21 +367,7 @@ function validate(form) {
     else {
         document.getElementById("quantityError").style.display = 'none';
     }
-
-    /*Unites  */
-    /* 		if(units == ""){
-                    document.getElementById("unitsError").style.display= 'block';		
-                    document.getElementById('unitsError').innerHTML =emptyErorMessage;
-                    isValidate = false;
-                } */
-    /*  if(!reText.test(units) && units != "" ){
-            document.getElementById("unitsError").style.display= 'block';		
-              document.getElementById('unitsError').innerHTML =regErrorMesssage;
-            isValidate = false;
-        }
-    else {
-        document.getElementById("unitsError").style.display= 'none';		
-    } */
+   
     /* Collection Date */
     if (datepicker == "") {
         document.getElementById("collectiondate").style.display = 'block';
@@ -400,14 +377,9 @@ function validate(form) {
     else {
         document.getElementById("collectiondate").style.display = 'none';
     }
-
-
-    //console.log(form_data); 
-
     return isValidate;
 }
 //On Refereshing the parameter value ...
-
 jQuery(function () {
 
     if (performance.navigation.type == 1) {

@@ -113,8 +113,6 @@ public class LabTestTypeController {
 	@RequestMapping(method = RequestMethod.POST, value = "/module/commonlabtest/retirelabtesttype.form")
 	public String onRetire(ModelMap model, HttpSession httpSession, HttpServletRequest request,
 	        @RequestParam("uuid") String uuid, @RequestParam("retireReason") String retireReason) {
-		/*	CommonLabTestService service = Context.getService(CommonLabTestService.class);
-		*/
 		LabTestType labTestType = commonLabTestService.getLabTestTypeByUuid(uuid);
 		
 		String status;

@@ -262,51 +262,8 @@ legend.scheduler-border {
 var localSource;
 var testTypeArray;
 
-
-var current_effect = 'win8_linear'; //
-function run_waitMe(effect){
-	$('#container').waitMe({
-	//none, rotateplane, stretch, orbit, roundBounce, win8, 
-	//win8_linear, ios, facebook, rotation, timer, pulse, 
-	//progressBar, bouncePulse or img
-	effect: 'win8_linear',
-
-	//place text under the effect (string).
-	text: 'Please wait, We are saving your Test Order',
-
-	//background for container (string).
-	bg: 'rgba(255,255,255,0.7)',
-
-	//color for background animation and text (string).
-	color: '#000',
-
-	//max size
-	maxSize: '',
-
-	//wait time im ms to close
-	waitTime: -1,
-
-	//url to image
-	source: '',
-
-	//or 'horizontal'
-	textPos: 'vertical',
-
-	//font size
-	fontSize: '',
-
-	// callback
-	onClose: function() {}
-
-	});
-}
 $(document).ready(function () {
 
-	//If there is any error thrown while saving/voiding test order, in that case we stop the loader.
-	/* <c:if test="${not empty error}">
-	   jQuery('#container').waitMe('hide');    
-	</c:if> */
-	
     $('#conceptId').val(document.getElementById("testType").value);
     localSource = new Array();
     <c:if test="${not empty encounters}">
@@ -343,19 +300,9 @@ $(document).ready(function () {
 
 function setTestTypeVal(id) {
     document.getElementById('labReferenceNumber').value = (new Date).toISOString().replace(/z|t/gi, ' ').trim();
-    /*  var testType = testTypeArray.find(o => o.id == id);
-     let testShortName = "" ;
-     testShortName = testType.shortName;
-     console.log("change : "+testShortName);
-     if(testShortName == null || testShortName === ""){
-          document.getElementById('labReferenceNumber').value = id+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();	
-      }else{
-          document.getElementById('labReferenceNumber').value = testShortName+"-"+ (new Date).toISOString().replace(/z|t/gi,' ').trim();
-      }	 */
 }
 
 function validate() {
-	 /*  run_waitMe(current_effect); */
     var referenceNumber = document.getElementById('labReferenceNumber').value;
     var testType = document.getElementById('testType').value;
     var encounter = document.getElementById('encounter').value
@@ -397,14 +344,6 @@ function validate() {
         document.getElementById('testtype').innerHTML = errorMessage;
         isValidate = false;
     }
-    /*  if(testType != "") {
-           document.getElementById("testtype").style.display= 'none';		
-          }   
-       */
-       /* if(!isValidate){
-    	   $('#container').waitMe('hide');
-       } */
-  
     return isValidate;
 }
 

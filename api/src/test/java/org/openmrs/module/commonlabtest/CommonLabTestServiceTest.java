@@ -20,13 +20,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -228,8 +232,6 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestAttributesByPatient() {
-		// TODO
-		
 		when(dao.getLabTestAttributes(null, null, harry, null, null, null, false)).thenReturn(
 		    Arrays.asList(harryCartridgeId, harryMtbResult, harryRifResult));
 		List<LabTestAttribute> list = service.getLabTestAttributes(harry, false);
@@ -318,7 +320,6 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestType() {
-		// TODO
 		when(dao.getLabTestType(any(Integer.class))).thenReturn(geneXpert);
 		LabTestType labTestType = service.getLabTestType(geneXpert.getId());
 		assertThat(labTestType, Matchers.equalTo(geneXpert));
@@ -367,7 +368,6 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestsByProvider() {
-		// TODO
 		when(
 		    dao.getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class), isNull(String.class),
 		        isNull(Concept.class), any(Provider.class), isNull(Date.class), isNull(Date.class), any(Boolean.class)))
@@ -387,7 +387,6 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestsByPatient() {
-		// TODO
 		when(
 		    dao.getLabTests(isNull(LabTestType.class), any(Patient.class), isNull(String.class), isNull(String.class),
 		        isNull(Concept.class), isNull(Provider.class), isNull(Date.class), isNull(Date.class), any(Boolean.class)))
@@ -407,7 +406,6 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestsByReferenceNumber() {
-		// TODO
 		when(
 		    dao.getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class), any(String.class),
 		        isNull(Concept.class), isNull(Provider.class), isNull(Date.class), isNull(Date.class), any(Boolean.class)))
@@ -427,17 +425,15 @@ public class CommonLabTestServiceTest extends CommonLabTestBase {
 	 */
 	@Test
 	public final void testGetLabTestsByDateRange() {
-		// TODO No method in service for this
-		/*when(
-			    dao.getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class), isNull(String.class),
-			        isNull(Concept.class), isNull(Provider.class), any(Date.class), any(Date.class), any(Boolean.class)))
-			        .thenReturn(Arrays.asList(harryGxp));
-			
-			List<LabTest> list = service.getLabTests(harryGxp.getLabReferenceNumber(), false);
-			assertThat(list, Matchers.hasItems(harryGxp));
-			verify(dao, times(1)).getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class),
-					isNull(String.class), isNull(Concept.class), isNull(Provider.class), any(Date.class), any(Date.class),
-			    any(Boolean.class));*/
+		when(
+		    dao.getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class), isNull(String.class),
+		        isNull(Concept.class), isNull(Provider.class), any(Date.class), any(Date.class), any(Boolean.class)))
+		        .thenReturn(Arrays.asList(harryGxp));
+		List<LabTest> list = service.getLabTests(null, null, null, null, null, null, new Date(), new Date(), false);
+		assertThat(list, Matchers.hasItems(harryGxp));
+		verify(dao, times(1)).getLabTests(isNull(LabTestType.class), isNull(Patient.class), isNull(String.class),
+		    isNull(String.class), isNull(Concept.class), isNull(Provider.class), any(Date.class), any(Date.class),
+		    any(Boolean.class));
 	}
 	
 	/**
