@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
@@ -143,7 +142,7 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	@Test
 	public final void testGetLabTestAttributesByType() {
 		Context.clearSession();
-		List<LabTestAttribute> list = dao.getLabTestAttributes(mtbResult, null, null, null, null, null, true);
+		List<LabTestAttribute> list = dao.getLabTestAttributes(mtbResult, null, null, null, true);
 		assertThat(list, Matchers.hasItem(harryMtbResult));
 	}
 	
@@ -165,10 +164,9 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 * .
 	 */
 	@Test
-	@Ignore
 	public final void testGetLabTestAttributesByLabTest() {
 		Context.clearSession();
-		List<LabTestAttribute> list = dao.getLabTestAttributes(null, harryGxp, null, null, null, null, false);
+		List<LabTestAttribute> list = dao.getLabTestAttributes(harryGxp.getTestOrderId());
 		assertThat(list, Matchers.hasItem(harryCartridgeId));
 	}
 	
@@ -178,11 +176,11 @@ public class CommonLabTestDaoTest extends CommonLabTestBase {
 	 * .
 	 */
 	@Test
-	@Ignore
 	public final void testGetLabTestAttributesByPatient() {
 		Context.clearSession();
-		List<LabTestAttribute> list = dao.getLabTestAttributes(null, null, harry, null, null, null, false);
-		assertThat(list, Matchers.containsInAnyOrder(harryCartridgeId, harryMtbResult, harryRifResult, harryCxrResult));
+		List<LabTestAttribute> list = dao.getLabTestAttributes(harry, null, false);
+		assertThat(list,
+		    Matchers.hasItems(harryCartridgeId, harryMtbResult, harryRifResult, harryCxrResult, harryRadiologistRemarks));
 	}
 	
 	/**

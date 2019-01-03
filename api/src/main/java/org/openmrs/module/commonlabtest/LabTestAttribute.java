@@ -23,7 +23,6 @@ import org.openmrs.attribute.BaseAttribute;
  * 
  * @author owais.hussain@ihsinformatics.com
  */
-
 public class LabTestAttribute extends BaseAttribute<LabTestAttributeType, LabTest> implements Attribute<LabTestAttributeType, LabTest> {
 	
 	private static final long serialVersionUID = 22986710762598701L;
@@ -58,7 +57,6 @@ public class LabTestAttribute extends BaseAttribute<LabTestAttributeType, LabTes
 		setOwner(labTest);
 	}
 	
-
 	@Override
 	public Integer getId() {
 		return getLabTestAttributeId();
@@ -69,4 +67,8 @@ public class LabTestAttribute extends BaseAttribute<LabTestAttributeType, LabTes
 		setLabTestAttributeId(id);
 	}
 	
+	@Override
+	public String toString() {
+		return labTestAttributeId + ", " + getOwner() + ", " + getAttributeType() + ", " + getValueReference();
+	}
 }
