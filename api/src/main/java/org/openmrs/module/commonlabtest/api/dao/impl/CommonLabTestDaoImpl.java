@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.commonlabtest.api.dao.impl;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.api.db.hibernate.HibernateOrderDAO;
 import org.openmrs.module.commonlabtest.LabTest;
 import org.openmrs.module.commonlabtest.LabTestAttribute;
@@ -175,7 +175,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	@Override
 	public List<LabTestAttribute> getLabTestAttributes(Integer testOrderId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestAttribute.class);
-		criteria.add(Restrictions.eq("testOrderId.testOrderId", testOrderId));
+		criteria.add(Restrictions.eq("labTest.testOrderId", testOrderId));
 		return criteria.list();
 	}
 	
@@ -190,7 +190,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	        Patient patient, String valueReference, Date from, Date to, boolean includeVoided) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(LabTestAttribute.class);
 		if (labTestAttributeType != null) {
-			criteria.add(Restrictions.eqOrIsNull("attributeTypeId.labTestAttributeTypeId", labTestAttributeType.getId()));
+			criteria.add(Restrictions.eqOrIsNull("attributeType.labTestAttributeTypeId", labTestAttributeType.getId()));
 		}
 		if (labTest != null) {}
 		if (patient != null) {
@@ -205,7 +205,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));
 		}
-		criteria.addOrder(Order.asc("testOrderId.testOrderId")).addOrder(Order.asc("voided")).list();
+		criteria.addOrder(Order.asc("labTest.testOrderId")).addOrder(Order.asc("voided")).list();
 		return criteria.list();
 	}
 	
@@ -577,6 +577,7 @@ public class CommonLabTestDaoImpl implements CommonLabTestDao {
 	 */
 	@Override
 	public LabTestAttribute saveLabTestAttribute(LabTestAttribute labTestAttribute) {
+		
 		sessionFactory.getCurrentSession().saveOrUpdate(labTestAttribute);
 		return labTestAttribute;
 	}

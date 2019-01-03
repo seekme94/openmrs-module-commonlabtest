@@ -9,26 +9,53 @@ import org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResou
 public class LabTestAttributeResourceControllerTest extends BaseDelegatingResourceTest<LabTestAttributeResourceController, LabTestAttribute> {
 	
 	@Before
-	public void before() throws Exception {
+	public void setup() throws Exception {
 		executeDataSet("CommonLabTestService-initialData.xml");
 	}
 	
 	@Override
 	public String getDisplayProperty() {
-		// TODO Auto-generated method stub
 		return "1301";
 	}
 	
 	@Override
 	public String getUuidProperty() {
-		// TODO Auto-generated method stub
 		return "2c9737d9-47c2-11e8-943c-40b034c3cfee";
 	}
 	
 	@Override
 	public LabTestAttribute newObject() {
-		// TODO Auto-generated method stub
 		return Context.getService(CommonLabTestService.class).getLabTestAttributeByUuid(getUuidProperty());
+	}
+	
+	@Override
+	public void validateRefRepresentation() throws Exception {
+		super.validateRefRepresentation();
+		assertPropEquals("voided", null);
+	}
+	
+	@Override
+	public void validateDefaultRepresentation() throws Exception {
+		super.validateDefaultRepresentation();
+		/*	assertPropEquals("labTestAttributeId", getObject().getAttributeType());
+			assertPropEquals("testOrderId", getObject().getTestOrderId());
+			assertPropEquals("valueReference", getObject().getValueReference());*/
+	}
+	
+	@Override
+	public void validateFullRepresentation() throws Exception {
+		super.validateFullRepresentation();
+		/*		assertPropEquals("labTestAttributeId", getObject().getAttributeTypeId());
+				assertPropEquals("testOrderId", getObject().getTestOrderId());
+				assertPropEquals("valueReference", getObject().getValueReference());
+				
+				assertPropEquals("dateCreated", getObject().getDateCreated());
+				
+				assertPropEquals("changedBy", getObject().getChangedBy());
+				assertPropEquals("dateChanged", getObject().getDateChanged());
+				
+				assertPropEquals("voided", getObject().getVoided());*/
+		
 	}
 	
 }
